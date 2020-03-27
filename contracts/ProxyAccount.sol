@@ -1,8 +1,9 @@
 pragma solidity ^0.6.0;
 
 import "./ERC725.sol";
+import "./Ownable.sol";
 
-contract ProxyAccount is ERC725 {
+contract ProxyAccount is ERC725, Ownable {
   /*
    *  Storage
    */
