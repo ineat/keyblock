@@ -107,6 +107,25 @@
 					console.log("Call isadmin : "+isAdmin);
 					$('#userAdmin').text((isAdmin)=="true");
 				});
+
+
+				ethereum
+				  .request({
+					method: 'eth_sign',
+					params: [
+						account
+						, "message a signer" //web3.utils.toHex("message")
+					]
+				  })
+				  .then((result) => {
+					console.log("Sign: "+result);
+				  })
+				  .catch((error) => {
+					console.log("Sign fail: "+error);
+				  });
+
+
+
 			})
 			.catch( (error) => {
 				console.error("Error getting accounts : "+error);
