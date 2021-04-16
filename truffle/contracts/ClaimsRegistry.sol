@@ -1,8 +1,8 @@
 pragma solidity ^0.6.0;
 
-import "./ERC780.sol";
+import "./IERC780.sol";
 
-contract ClaimsRegistry is ERC780 {
+contract ClaimsRegistry is IERC780 {
 
     mapping(address => mapping(address => mapping(bytes32 => bytes32))) public registry;
 

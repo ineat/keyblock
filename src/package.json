@@ -1,15 +1,15 @@
 {
-  "name": "keyblock-api",
+  "name": "web3",
   "version": "1.0.0",
   "description": "",
-  "main": "api.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ethereumjs-tx": "^2.1.2",
-    "fs": "0.0.1-security"
+    "express": "^4.17.1",
+    "web3": "^1.3.5"
   }
 }

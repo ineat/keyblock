@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Web3 browser</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/babel-polyfill/dist/polyfill.min.js"></script>
+
+	<!-- web3.js framework -->
+	<script type="text/javascript" src="./web3.min.js"></script>
+
+	<!-- smart contract -->
+	<script type="text/javascript" src="./contract.js"></script>
+
+</head>
+
+<body>
+    <script>
+
+		/**
+		* Init connections and display data when page is loaded.
+		*/
+        window.addEventListener('load', async() => {
+        	/* Create connection to blockchain */
+			initWeb3();
+
+			/* Load the contract */
+			loadContract();
+			
+			/* Display data read from blockchain */
+			displayBlockchainInfo();
+
+			/* Display data read from blockchain */
+			displayUserInfo();
+        });
+
+		/**
+		* Create a Web3 object to connect to blockchain
+		*/
+		async function initWeb3() {
+			// Modern dapp browsers...
+			if (window.ethereum) {
+				ethereum.autoRefreshOnNetworkChange = true;
+				window.web3 = new Web3(ethereum);
+				try {
+					// Request account access if needed
+					await ethereum.enable();
+					console.log("Ethereum enabled with account : "+ethereum.selectedAddress);
+				} catch (error) {
+					console.error("Access denied for metamask by user");
+				}
+
+				// refresh page on account change
+				ethereum.on("accountsChanged", (accounts) => { document.location.reload(true); });
+
+			}
+			// Legacy dapp browsers...
+			else if (window.web3) {
+				window.web3 = new Web3(web3.currentProvider);
+			}
+			// Non-dapp browsers...
+			else {
+				console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+			}
+
+			console.log("web3 : "+web3.version);
+		}
+
+		/**
+		* Retrieve and basic info from blockchain node
+		*/
+		async function displayBlockchainInfo() {
+			$('#web3Version').text(web3.version);
+			$('#nodeInfo').text(await web3.eth.getNodeInfo());
+			$('#blockNumber').text(await web3.eth.getBlockNumber());
+
+			web3.eth.getAccounts()
+			.then( async (accounts) => {
+
+				let account = accounts[0];
+				console.log("Account : "+account);
+				$('#account').text(account);
+
+				let balance = await web3.eth.getBalance(account);
+				let balanceInEth = web3.utils.fromWei(balance);
+				console.log("Balance : "+balanceInEth);
+				$('#balance').text(balanceInEth);
+			})
+			.catch( (error) => {
+				console.error("Error getting accounts : "+error);
+			});
+
+		}
+
+		async function displayUserInfo() {
+			web3.eth.getAccounts()
+			.then( async (accounts) => {
+				let account = accounts[0];
+				$('#userIdentity').text(account);
+
+				var result = contract.methods.getClaim(account, "isadmin").call({from:account})
+				.then((isAdmin) => {
+					console.log("Call isadmin : "+isAdmin);
+					$('#userAdmin').text((isAdmin)=="true");
+				});
+			})
+			.catch( (error) => {
+				console.error("Error getting accounts : "+error);
+			});
+		}
+
+		/**
+		* Init the contract objects
+		*/
+		async function loadContract() {
+			if(contractAddress) {
+				console.log("Load contract at : "+contractAddress);
+				try {
+					contract =  new web3.eth.Contract(abi, contractAddress);
+				}
+				catch(error) {
+					console.error("Error loading contract : "+error);
+				}
+			}
+		}
+    </script>
+
+	<div class="container-fluid">
+		<br/>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card">
+					<h5 class="card-header">Blockchain info</h5>
+					<div class="card-body">
+						Web3 version : <span id="web3Version"></span>
+						<br/>					
+						Node info : <span id="nodeInfo"></span>
+						<br/>
+						Block number : <span id="blockNumber"></span>
+						<br/>
+						Account : <span id="account"></span>
+						<br/>
+						Account balance : <span id="balance"></span> ETH
+						<br/>
+					</div>
+				</div>
+			</div>
+		</div>
+<br/>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card">
+					<h5 class="card-header">User info</h5>
+					<div class="card-body">
+						Identifié en tant que : <span id="userIdentity"></span>
+						<br/>
+						Vous êtes : <span id="userName"></span>
+						<br/>
+						Administrateur : <span id="userAdmin"></span>
+						<br/>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+	</div>
+</body>
+
+</html>
