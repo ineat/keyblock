@@ -43,29 +43,29 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - API de connexion avec la blockchain pour l'ID provider
 
 ## Step 1 (initialisation)
--[X] Page web minimaliste avec web3
--[X] Connexion / identification avec Metamask
+- [X] Page web minimaliste avec web3
+- [X] Connexion / identification avec Metamask
   
 ## Step 2 (smart contract)
--[X] Smart contract ClaimHolder (alimentation des claims manuellement pour le moment)
--[ ] Paramétrer dans l'appli les claims possibles et leurs fournisseurs de confiance
--[X] Lecture des claims dans le smart contract depuis l'interface de gestion
--[ ] L'application affiche les claims de l'utilisateur et indique celles qu'il n'a pas
+- [X] Smart contract ClaimHolder (alimentation des claims manuellement pour le moment)
+- [ ] Paramétrer dans l'appli les claims possibles et leurs fournisseurs de confiance
+- [X] Lecture des claims dans le smart contract depuis l'interface de gestion
+- [ ] L'application affiche les claims de l'utilisateur et indique celles qu'il n'a pas
 
 ## Step 3 (provider)
--[ ] API d'écriture/modification/suppression d'une claim
--[ ] IAM (keycloak)
--[ ] Identité Ethereum pour IAM (avec gestion de la clé privée)
--[ ] Identification keycloak depuis l'appli web
--[ ] Génération de la claim par keycloak
--[ ] Vérification de la signature de la claim
+- [ ] API d'écriture/modification/suppression d'une claim
+- [ ] IAM (keycloak)
+- [ ] Identité Ethereum pour IAM (avec gestion de la clé privée)
+- [ ] Identification keycloak depuis l'appli web
+- [ ] Génération de la claim par keycloak
+- [ ] Vérification de la signature de la claim
 
 ## Step 4 (amélioration)
--[ ] IHM plus belle pour présentation plus visuelle
--[ ] Rapprocher le smart contract des standards ERC-735 et ERC-780
--[ ] Plusieurs keycloak ou ID providers
--[ ] Vérifier la compliance zero knowledge proof et verifiable credential
--[ ] L'appli web demande l'accès à une claim, l'utilisateur l'accord ou non
+- [ ] IHM plus belle pour présentation plus visuelle
+- [ ] Rapprocher le smart contract des standards ERC-735 et ERC-780
+- [ ] Plusieurs keycloak ou ID providers
+- [ ] Vérifier la compliance zero knowledge proof et verifiable credential
+- [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accord ou non
 
 
 
