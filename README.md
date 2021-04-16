@@ -22,11 +22,11 @@ L'appli connait l'adresse publique du provider (keyvloak). Elle peut donc vérif
 - [X] Connexion à Metamask
 - [X] Smart contract ClaimHolder
 - [X] Lecture d'une claim dans le smart contract depuis la page web
-- [] API d'écriture/modification/suppression d'une claim
-- [] IAM (keycloak) 
-- [] Identification keycloak depuis l'appli web
-- [] Génération de la claim par keycloak
-- [] Vérification de la signature de la claim
+- [ ] API d'écriture/modification/suppression d'une claim
+- [ ] IAM (keycloak) 
+- [ ] Identification keycloak depuis l'appli web
+- [ ] Génération de la claim par keycloak
+- [ ] Vérification de la signature de la claim
 
 
 
