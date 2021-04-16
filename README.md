@@ -22,6 +22,8 @@ Nous allons mettre en place un exemple d'une telle organisation avec la blockcha
 
 ## Résumé
 
+Premier exemple simple : une application veut savoir si donner ou non un accès admin à un utilisateur.
+
 D'un côté, un IAM (Keycloak) connait un utilisateur sous son login/pwd habituel et sait s'il est paramétré admin ou non.
 
 D'un autre côté, une application web qui identifie ses utilisateurs via leur identité Ethereum (adresse publique) contenue dans le wallet (Metamask) du navigateur.
