@@ -37,10 +37,12 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 ## Composants
 
 - smart contract ClaimHolder
-- application de gestion des claims
-- application que l'utilisateur veut utiliser
+- application de gestion des claims (Node.js + Fwk front, Web3.js dist version + Metamask)
+- application que l'utilisateur veut utiliser (Node.js + Fwk front, Web3.js dist version + Metamask)
 - ID provider (Keycloak)
-- API de connexion avec la blockchain pour l'ID provider
+- API de connexion avec la blockchain pour l'ID provider (Node.js, Web3.js)
+
+(Pour simplifier, les 2 applications web peuvent être une seule et même application, avec 2 pages ou 2 zones différentes)
 
 ## Step 1 (initialisation)
 - [X] Page web minimaliste avec web3
@@ -57,8 +59,8 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - [ ] IAM (keycloak)
 - [ ] Identité Ethereum pour IAM (avec gestion de la clé privée)
 - [ ] Identification keycloak depuis l'appli web
-- [ ] Génération de la claim par keycloak
-- [ ] Vérification de la signature de la claim
+- [ ] Génération de la claim par keycloak via l'API
+- [ ] Vérification de la signature de la claim par l'appli web
 
 ## Step 4 (amélioration)
 - [ ] IHM plus belle pour présentation plus visuelle
