@@ -60,6 +60,13 @@ Les utilisateurs souhaite que leurs données restent le moins regroupés et le p
 
 La solution mise en place par ce poc permet de répondre à ces besoins en amenant aux fournisseurs de services les données strictement nécessaires sans regrouper ni divulguer plus qu'il n'en faut.
 
+### #3
+
+En complément du #2, on peut imaginer un système ou l'utilisateur possède ses credentials et que lorsqu'un service souhaite accéder à une donnée, il doivent payer l'utilisateur pour y accéder.
+
+Certains credentials peuvent être identifiés comme nécessaires pour accéder à un service et rester gratuit à l'usage. D'autres peuvent être utilisés à des fins de marketing ciblé ou autres pratiques commerciales et n'être mise à disposition que par son propriétaire et contre rémunération.
+
+Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant les credentials pour remplir cette fonction.
 
 
 ## Composants
