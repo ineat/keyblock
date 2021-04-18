@@ -71,7 +71,24 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - [ ] Vérifier la compliance zero knowledge proof et verifiable credential
 - [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accord ou non
 
+# Technique
 
+## Fichiers
+
+- `src/index.html` la page web qui affiche l'application
+- `src/index.js` fichier node.js qui sert index.html sur http://localhost:3000
+- `src/api.js` l'api node.js d'accès au smart contract
+- `src/contract.js` ABI, adresse et objet client du smart contract
+- `src/web3.min.js` framework web3.js pour la version embarquée
+- `contracts/` répertoire des smart contracts
+- `truffle/` anciennes versions des smart contracts gérés avec Truffle
+
+
+## Run
+
+`node src/index.js` lance l'application sur http://localhost:3000
+
+`node src/api.js` lance l'API
 
 ## Docs
 
