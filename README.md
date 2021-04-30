@@ -92,8 +92,8 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] L'application affiche les claims de l'utilisateur et indique celles qu'il n'a pas
 
 ## Step 3 (provider)
-- [ ] IAM (keycloak)
-- [ ] Identité Ethereum pour IAM (avec gestion de la clé privée)
+- [ ] Mettre en place un IAM (keycloak ?)
+- [ ] Créer une identité Ethereum pour IAM (avec gestion de la clé privée dans un vault ?)
 - [ ] Module blockchain pour l'IAM
 - [ ] Génération de la claim par keycloak via l'API
 - [ ] Vérification de la signature de la claim par l'appli web
