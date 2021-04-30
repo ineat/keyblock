@@ -42,9 +42,11 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - application de gestion des claims (Node.js + Fwk front, Web3.js dist version + Metamask)
 - application que l'utilisateur veut utiliser (Node.js + Fwk front, Web3.js dist version + Metamask)
 - ID provider (Keycloak)
-- API de connexion avec la blockchain pour l'ID provider (Node.js, Web3.js)
+- Module de connexion avec la blockchain pour l'ID provider (avec [web3J](http://web3j.io/))
 
 (Pour simplifier, les 2 applications web peuvent être une seule et même application, avec 2 pages ou 2 zones différentes)
+
+![Composants](images/keyblock.png)
 
 ## Step 1 (initialisation)
 - [X] Page web minimaliste avec web3
@@ -57,10 +59,9 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - [ ] L'application affiche les claims de l'utilisateur et indique celles qu'il n'a pas
 
 ## Step 3 (provider)
-- [ ] API d'écriture/modification/suppression d'une claim
 - [ ] IAM (keycloak)
 - [ ] Identité Ethereum pour IAM (avec gestion de la clé privée)
-- [ ] Identification keycloak depuis l'appli web
+- [ ] Module blockchain pour l'IAM
 - [ ] Génération de la claim par keycloak via l'API
 - [ ] Vérification de la signature de la claim par l'appli web
 
@@ -69,9 +70,8 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - [ ] Rapprocher le smart contract des standards ERC-735 et ERC-780
 - [ ] Plusieurs keycloak ou ID providers
 - [ ] Vérifier la compliance zero knowledge proof et verifiable credential
-- [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accord ou non
-
-
+- [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accorde ou non
+- [ ] Demande de génération de claim avec authent IAM depuis l'appli web
 
 ## Docs
 
@@ -82,3 +82,5 @@ https://eth.wiki/json-rpc/API
 https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
 
 https://medium.com/metamask/scaling-web3-with-signtypeddata-91d6efc8b290
+
+http://web3j.io/
