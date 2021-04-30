@@ -36,6 +36,39 @@ L'utilisateur peut demander une nouvelle claim. Une requête est alors envoyée 
 
 De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il se connecte à l'application web, elle peut vérifier les claims et lui accorder les services correspondant à ses droits.
 
+## Extrapolation du besoin
+
+### #1
+
+Considérons un consortium regroupant plusieurs entreprises ou organisation différentes ayant un objectif business commun sans pour autant être 100% en collaboration les unes avec les autres.
+
+D'une part, elles ont besoin de partager un système d'informations commun pour atteindre leur but, donc de faire cohabiter les identités numériques de leurs utilisateurs dans un même système.
+
+D'autre part, elles souhaitent conserver le secret sur leur organisation interne vis-à-vis des autres.
+
+La solution mise en place par ce poc permet de faire cohabiter dans un tel systeme des informations sur les utilisateurs ouvrant droit à certains privilèges, sans devoir se baser de façon transparente sur les paramétrages internes.
+
+### #2
+
+Autre exemple, considérons des particuliers, utilisateurs indépendants de certains services.
+
+Les fournisseurs de services nécessitent de connaître certaines informations sur ces utilisateurs pour fournir le service attendu.
+
+Ces informations sont réparties dans différentes sources, chacun gérant les données propre à son périmètre.
+
+Les utilisateurs souhaite que leurs données restent le moins regroupés et le plus protégé possible.
+
+La solution mise en place par ce poc permet de répondre à ces besoins en amenant aux fournisseurs de services les données strictement nécessaires sans regrouper ni divulguer plus qu'il n'en faut.
+
+### #3
+
+En complément du #2, on peut imaginer un système ou l'utilisateur possède ses credentials et que lorsqu'un service souhaite accéder à une donnée, il doivent payer l'utilisateur pour y accéder.
+
+Certains credentials peuvent être identifiés comme nécessaires pour accéder à un service et rester gratuit à l'usage. D'autres peuvent être utilisés à des fins de marketing ciblé ou autres pratiques commerciales et n'être mise à disposition que par son propriétaire et contre rémunération.
+
+Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant les credentials pour remplir cette fonction.
+
+
 ## Composants
 
 - smart contract ClaimHolder
@@ -72,6 +105,37 @@ De cette façon, l'utilisateur se constitue un portefeuille de claims. Quand il 
 - [ ] Vérifier la compliance zero knowledge proof et verifiable credential
 - [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accorde ou non
 - [ ] Demande de génération de claim avec authent IAM depuis l'appli web
+
+# Technique
+
+## Fichiers
+
+- `src/index.html` la page web qui affiche l'application
+- `src/index.js` fichier node.js qui sert index.html sur http://localhost:3000
+- `src/api.js` l'api node.js d'accès au smart contract
+- `src/contract.js` ABI, adresse et objet client du smart contract
+- `src/web3.min.js` framework web3.js pour la version embarquée
+- `contracts/` répertoire des smart contracts
+- `truffle/` anciennes versions des smart contracts gérés avec Truffle
+
+
+## Run
+
+`node src/index.js` lance l'application sur http://localhost:3000
+
+`node src/api.js` lance l'API
+
+
+## ERC-734 vs ERC-780
+
+[ERC-735, Claim Holder](https://github.com/ethereum/EIPs/issues/735) et [ERC-780, Claim Registry](https://github.com/ethereum/EIPs/issues/780) sont deux propositions de standards assez similaires proposés pour gérer un ensemble de claims.
+Pour le moment, aucun des deux n'a été validé officiellement pas la communauté.
+
+ERC-735 va identifier les claims via un ID unique pour chaque. Il va également nécessiter une signature de l'issuer pour chaque claim.
+
+ERC-780 va plutôt identifier les claims avec un tuple adresse de l'issuer, adresse du subject, key. Le concept de signature n'est pas géré.
+
+Dans notre exemple, nous allons nous éloigner de ces deux standards car nous allons gérer les claims par le tuple adresse du subject/key. L'adresse de l'issuer ne servira que pour identifier l'émetteur de confiance et le vérifier au moyen de la clé publique et la signature. Nous allons donc mixer ces deux propositions de standards et gérer pour chaque claims : issuer, subject, signature, key, value.
 
 ## Docs
 
