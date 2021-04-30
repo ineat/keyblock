@@ -84,6 +84,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 ## Step 1 (initialisation)
 - [X] Page web minimaliste avec web3
 - [X] Connexion / identification avec Metamask
+- [X] Authentification avec Metamask par signature de données
   
 ## Step 2 (smart contract)
 - [X] Smart contract ClaimHolder (alimentation des claims manuellement pour le moment)
@@ -95,7 +96,8 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] Mettre en place un IAM (keycloak ?)
 - [ ] Créer une identité Ethereum pour IAM (avec gestion de la clé privée dans un vault ?)
 - [ ] Module blockchain pour l'IAM
-- [ ] Génération de la claim par keycloak via l'API
+- [ ] Création des claims par l'IAM
+- [ ] Révocation des claims par l'IAM  
 - [ ] Vérification de la signature de la claim par l'appli web
 
 ## Step 4 (amélioration)
