@@ -21,18 +21,16 @@ window.addEventListener('load', async() => {
 async function initWeb3() {
     // Modern dapp browsers...
     if (window.ethereum) {
-        ethereum.autoRefreshOnNetworkChange = true;
-        window.web3 = new Web3(ethereum);
-        try {
-            // Request account access if needed
-            await ethereum.enable();
-            console.log("Ethereum enabled with account : "+ethereum.selectedAddress);
-        } catch (error) {
-            console.error("Access denied for metamask by user");
-        }
 
-        // refresh page on account change
-        ethereum.on("accountsChanged", (accounts) => { document.location.reload(true); });
+        window.web3 = new Web3(ethereum);
+
+        ethereum.request({ method: 'eth_requestAccounts' })
+        .then( (account) => { console.log("Ethereum enabled with account : "+account);} )
+        .catch( (error) => {console.error(error);} )
+
+        // refresh page on account or network change
+        ethereum.on("accountsChanged", (accounts) => { window.location.reload(true); });
+        ethereum.on("chainChanged", (accounts) => { window.location.reload(true); });
 
     }
     // Legacy dapp browsers...
@@ -66,6 +64,10 @@ async function displayBlockchainInfo() {
         let balanceInEth = web3.utils.fromWei(balance);
         console.log("Balance : "+balanceInEth);
         $('#balance').text(balanceInEth);
+
+        console.log("Request user signature for "+account);
+        askForSignature(account);
+
     })
     .catch( (error) => {
         console.error("Error getting accounts : "+error);
@@ -84,24 +86,6 @@ async function displayUserInfo() {
             console.log("Call isadmin : "+isAdmin);
             $('#userAdmin').text((isAdmin)=="true");
         });
-
-        console.log("Request user signature");
-        ethereum
-          .request({
-            method: 'eth_sign',
-            params: [
-                account
-                , web3.utils.toHex("message")
-            ]
-          })
-          .then((result) => {
-            console.log("Sign: "+result);
-          })
-          .catch((error) => {
-            console.log("Sign fail: "+error);
-          });
-
-
 
     })
     .catch( (error) => {
@@ -122,4 +106,70 @@ async function loadContract() {
             console.error("Error loading contract : "+error);
         }
     }
+}
+
+async function askForSignature(account) {
+
+ /*   var data = {
+        types:{
+            "EIP712Domain":[
+                {name:"name",type:"string"}
+                ,{name:"version",type:"string"}
+                ,{name:"chainId",type:"uint256"}
+                ,{name:"verifyingContract",type:"address"}
+            ]
+            ,Person:[
+                {name:"name",type:"string"}
+                ,{name:"wallet",type:"address"}
+            ]
+            ,Mail:[
+                {name:"from",type:"Person"}
+                ,{name:"to",type:"Person"}
+                ,{name:"contents",type:"string"}
+            ]
+           }
+        ,primaryType:"Mail"
+        ,domain:{name:"Keyblock",version:"1",chainId:3,verifyingContract:"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}
+        ,message:{
+            from:{name:"Cow",wallet:"0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"}
+            ,to:{name:"Bob",wallet:"0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"}
+            ,contents:"Hello, Bob!"
+        }
+    };
+*/
+
+var data = {
+        types:{
+            "EIP712Domain":[
+                {name:"name",type:"string"}
+                ,{name:"version",type:"string"}
+                ,{name:"chainId",type:"uint256"}
+                ,{name:"verifyingContract",type:"address"}
+            ]
+            ,Message:[
+                  {name:"content",type:"string"}
+            ]
+
+           }
+        ,primaryType:"Message"
+        ,domain:{name:"Keyblock",version:"1",chainId:3,verifyingContract:"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}
+        ,message:{content:"coucou"}
+    };
+
+        ethereum
+          .request({
+            method: 'eth_signTypedData_v4',
+            params: [
+                account,
+                JSON.stringify(data)
+            ]
+          })
+          .then((result) => {
+            console.log("Sign: "+result);
+          })
+          .catch((error) => {
+            console.log("Sign fail: "+JSON.parse(error));
+          });
+
+
 }

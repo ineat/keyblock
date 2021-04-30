@@ -148,3 +148,9 @@ https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
 https://medium.com/metamask/scaling-web3-with-signtypeddata-91d6efc8b290
 
 http://web3j.io/
+
+-----
+
+Authent = signature avec Metamask : https://eips.ethereum.org/EIPS/eip-712
+
+ex: https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
