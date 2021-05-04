@@ -156,3 +156,7 @@ http://web3j.io/
 Authent = signature avec Metamask : https://eips.ethereum.org/EIPS/eip-712
 
 ex: https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
+
+https://www.codementor.io/@yosriady/signing-and-verifying-ethereum-signatures-vhe8ro3h6
+
+https://docs.soliditylang.org/en/latest/solidity-by-example.html?highlight=sign#creating-the-signature

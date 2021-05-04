@@ -47,7 +47,7 @@ contract ClaimsRegistry {
 
     function getClaim(address subject, string calldata key) public view returns(string memory) {
         Claim memory claim = registry[subject][key];
-        require(claim.subject == subject,"Unknown user");
+        require(claim.subject == subject,"Unknown user or key");
         return claim.value;
     }
 
@@ -55,6 +55,10 @@ contract ClaimsRegistry {
         require(msg.sender == issuer);
         delete registry[subject][key];
         emit ClaimRemoved(msg.sender, subject, key, block.timestamp);
+    }
+
+    function checkSignature(bytes32 msgHash, uint8 v, bytes32 r, bytes32 s) public pure returns (address) {
+        return ecrecover(msgHash, v, r, s);
     }
 
 }

@@ -46,6 +46,7 @@ async function displayBlockchainInfo() {
     $('#web3Version').text(web3.version);
     $('#nodeInfo').text(await web3.eth.getNodeInfo());
     $('#blockNumber').text(await web3.eth.getBlockNumber());
+    $('#contractAddress').text(contractAddress);
 }
 
 function identification() {
@@ -57,19 +58,25 @@ function identification() {
     .catch( (error) => {console.error(error);} )
 }
 
-function authentication() {
+function authentication(id) {
     web3.eth.getAccounts()
     .then( async (accounts) => {
         let account = accounts[0];
-        askForSignature(account);
+        switch(id) {
+            case 0:
+                askForSignatureEthPersonal(account);
+                break;
+            case 1:
+                askForSignatureEIP712(account);
+                break;
+            case 2:
+                askForSignatureEthSign(account);
+                break;
+        }
     })
     .catch( (error) => {
         console.error("Error getting accounts : "+error);
     });
-}
-
-function checkSignature(signature, account) {
-
 }
 
 function checkClaims() {
@@ -108,11 +115,15 @@ async function loadContract() {
     }
 }
 
-function messageHash(msg) {
-	return web3.utils.sha3('\x19Ethereum Signed Message:\n' + msg.length + msg);
+function prefixedMsg(msg) {
+    return '\x19Ethereum Signed Message:\n' + msg.length + msg;
 }
 
-async function askForSignature(account) {
+function messageHash(msg) {
+	return web3.utils.sha3(prefixedMsg(msg));
+}
+
+async function askForSignatureEIP712(account) {
 
     var data = {
             types:{
@@ -158,12 +169,88 @@ async function askForSignature(account) {
         $('#userAuthent').text("Yes");
         $('#signature').text(signature);
 
-        web3.eth.personal.ecRecover(JSON.stringify(data), signature)
+        checkSignature(signature, account, JSON.stringify(data));
+
+       /* web3.eth.personal.ecRecover(JSON.stringify(data), signature)
         .then(
             (resultAccount) => {
+                $('#recover').text( resultAccount);
                 $('#signatureCheck').text( (resultAccount==account) );
           })
         .catch(console.error);
+*/
+    })
+    .catch((error) => {
+        console.log("Sign fail: "+error.message);
+        $('#userAuthent').text(error.message);
+    });
+}
+
+function checkSignature(signature, account, message) {
+
+    var r = signature.slice(0, 66);
+    var s = '0x' + signature.slice(66, 130);
+    var v = '0x' + signature.slice(130, 132);
+    v = web3.utils.toDecimal(v);
+    var msg = web3.utils.sha3(message);
+    //msg = messageHash(message);
+   msg = '0x' + msg;
+
+    console.log('r:', r);
+    console.log('s:', s);
+    console.log('v:', v);
+    console.log("msg: ",msg);
+
+    var result = contract.methods.checkSignature(msg, v, r, s).call({from:account})
+    .then( (resultAddress) => {
+         $('#recover').text( resultAddress);
+         $('#signatureCheck').text( (resultAddress==account) );
+    });
+}
+
+function askForSignatureEthSign(account) {
+
+    var message = "You are going to use your private key to sign this data and be authenticated for claim holder contract.";
+
+    var msg = web3.utils.toHex(message);
+    web3.eth.sign(msg, account)
+    .then(
+      (signature) => {
+        console.log("Signature: "+signature);
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+
+        web3.eth.personal.ecRecover(message, signature)
+        .then(
+            (result) => {
+                 $('#recover').text( result);
+                 $('#signatureCheck').text( (result.toLowerCase() === account.toLowerCase())? "ok" : "ko" );
+          });
+
+    })
+    .catch((error) => {
+        console.log("Sign fail: "+error.message);
+        $('#userAuthent').text(error.message);
+    });
+}
+
+async function askForSignatureEthPersonal(account) {
+
+    var message = "You are going to use your private key to sign this data and be authenticated for claim holder contract.";
+
+    web3.eth.personal.sign(message, account)
+    .then(
+      (signature) => {
+        console.log("Signature: "+signature);
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+
+        web3.eth.personal.ecRecover(message, signature)
+        .then(
+            (result) => {
+                 $('#recover').text( result);
+                 $('#signatureCheck').text( (result.toLowerCase() === account.toLowerCase())? "ok" : "ko" );
+          });
 
     })
     .catch((error) => {
