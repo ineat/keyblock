@@ -47,6 +47,7 @@ contract ClaimsRegistry {
 
     function getClaim(address subject, string calldata key) public view returns(string memory) {
         Claim memory claim = registry[subject][key];
+        require(claim.subject == subject,"Unknown user");
         return claim.value;
     }
 

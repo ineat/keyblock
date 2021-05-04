@@ -84,7 +84,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 ## Step 1 (initialisation)
 - [X] Page web minimaliste avec web3
 - [X] Connexion / identification avec Metamask
-- [X] Authentification avec Metamask par signature de données
+- [X] Authentification avec Metamask par signature de données (selon [EIP-712](https://eips.ethereum.org/EIPS/eip-712))
   
 ## Step 2 (smart contract)
 - [X] Smart contract ClaimHolder (alimentation des claims manuellement pour le moment)

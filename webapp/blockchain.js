@@ -11,8 +11,6 @@ window.addEventListener('load', async() => {
     /* Display data read from blockchain */
     displayBlockchainInfo();
 
-    /* Display data read from blockchain */
-    displayUserInfo();
 });
 
 /**
@@ -23,10 +21,6 @@ async function initWeb3() {
     if (window.ethereum) {
 
         window.web3 = new Web3(ethereum);
-
-        ethereum.request({ method: 'eth_requestAccounts' })
-        .then( (account) => { console.log("Ethereum enabled with account : "+account);} )
-        .catch( (error) => {console.error(error);} )
 
         // refresh page on account or network change
         ethereum.on("accountsChanged", (accounts) => { window.location.reload(true); });
@@ -52,39 +46,41 @@ async function displayBlockchainInfo() {
     $('#web3Version').text(web3.version);
     $('#nodeInfo').text(await web3.eth.getNodeInfo());
     $('#blockNumber').text(await web3.eth.getBlockNumber());
+}
 
+function identification() {
+    ethereum.request({ method: 'eth_requestAccounts' })
+    .then( (account) => {
+        console.log("Ethereum enabled with account : "+account);
+        $('#userIdentity').text(account);
+     })
+    .catch( (error) => {console.error(error);} )
+}
+
+function authentication() {
     web3.eth.getAccounts()
     .then( async (accounts) => {
-
         let account = accounts[0];
-        console.log("Account : "+account);
-        $('#account').text(account);
-
-        let balance = await web3.eth.getBalance(account);
-        let balanceInEth = web3.utils.fromWei(balance);
-        console.log("Balance : "+balanceInEth);
-        $('#balance').text(balanceInEth);
-
-        console.log("Request user signature for "+account);
         askForSignature(account);
-
     })
     .catch( (error) => {
         console.error("Error getting accounts : "+error);
     });
-
 }
 
-async function displayUserInfo() {
+function checkClaims() {
     web3.eth.getAccounts()
     .then( async (accounts) => {
         let account = accounts[0];
-        $('#userIdentity').text(account);
 
         var result = contract.methods.getClaim(account, "isadmin").call({from:account})
         .then((isAdmin) => {
             console.log("Call isadmin : "+isAdmin);
-            $('#userAdmin').text((isAdmin)=="true");
+            $('#userAdmin').text(isAdmin+" (using claim holder "+contractAddress+")");
+        })
+        .catch( (error) => {
+              $('#userAdmin').text(error);
+              console.log(error);
         });
 
     })
@@ -146,14 +142,27 @@ var data = {
                 ,{name:"chainId",type:"uint256"}
                 ,{name:"verifyingContract",type:"address"}
             ]
-            ,Message:[
+            ,Contract:[
+                {name:"name", type:"string"}
+                ,{name:"address", type:"address"}
+            ]
+            ,User:[
+                {name:"account", type:"address"}
+            ]
+            ,MessageToSign:[
                   {name:"content",type:"string"}
+                  ,{name:"contract", type:"Contract"}
+                  ,{name:"forUser", type:"User"}
             ]
 
            }
-        ,primaryType:"Message"
+        ,primaryType:"MessageToSign"
         ,domain:{name:"Keyblock",version:"1",chainId:3,verifyingContract:"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}
-        ,message:{content:"coucou"}
+        ,message:{
+            content:"You are going to use your private key to sign this data and be authenticated for claim holder contract."
+            ,contract:{name:"Claim holder", address: contractAddress}
+            ,forUser:{account: account}
+            }
     };
 
         ethereum
@@ -166,10 +175,10 @@ var data = {
           })
           .then((result) => {
             console.log("Sign: "+result);
+            $('#userAuthent').text("Yes, with signature: "+result);
           })
           .catch((error) => {
-            console.log("Sign fail: "+JSON.parse(error));
+            console.log("Sign fail: "+error.message);
+            $('#userAuthent').text(error.message);
           });
-
-
 }

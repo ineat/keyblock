@@ -39,26 +39,36 @@
 						<br/>
 						Block number : <span id="blockNumber"></span>
 						<br/>
-						Account : <span id="account"></span>
-						<br/>
-						Account balance : <span id="balance"></span> ETH
-						<br/>
 					</div>
 				</div>
 			</div>
 		</div>
 <br/>
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-md-4">
 				<div class="card">
-					<h5 class="card-header">User info</h5>
+					<h5 class="card-header">Identification</h5>
 					<div class="card-body">
-						Identifié en tant que : <span id="userIdentity"></span>
-						<br/>
-						Vous êtes : <span id="userName"></span>
-						<br/>
-						Administrateur : <span id="userAdmin"></span>
-						<br/>
+						<p><button type="button" class="btn btn-primary" onclick="javascript: identification();">Identification</button></p>
+						<p>Identified as: <span id="userIdentity">not identified</span></p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<h5 class="card-header">Authentication</h5>
+					<div class="card-body">
+						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication();">Authentication</button></p>
+						<p>Authenticated: <span id="userAuthent"> not authenticated</span></p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<h5 class="card-header">Claims</h5>
+					<div class="card-body">
+						<p><button type="button" class="btn btn-primary" onclick="javascript: checkClaims();">Check claims</button></p>
+						<p>Is admin: <span id="userAdmin">unknown</span></p>
 					</div>
 				</div>
 			</div>
