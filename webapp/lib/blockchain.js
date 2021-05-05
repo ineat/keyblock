@@ -175,7 +175,13 @@ async function askForSignatureEIP712(account) {
         console.log("Signature: "+signature);
         $('#userAuthent').text("Yes");
         $('#signature').text(signature);
+
         checkSignature(signature, account, JSON.stringify(data));
+
+        const recovered = recoverTypedSignature_v4({
+            data: data
+            , signature
+        });
     })
     .catch((error) => {
         console.log("Sign fail: "+error.message);
@@ -206,12 +212,12 @@ function checkSignature(signature, account, message) {
 * Sign using eth_sign
 * Not recommended because message is displayed in hex to user
 */
-function askForSignatureEthSign(account) {
+async function askForSignatureEthSign(account) {
 
     var message = "You are going to use your private key to sign this data and be authenticated for claim holder contract.";
+    console.log("eth.sign");
 
-    var msg = web3.utils.toHex(message);
-    web3.eth.sign(msg, account)
+    web3.eth.sign(message, account)
     .then(
       (signature) => {
         console.log("Signature: "+signature);

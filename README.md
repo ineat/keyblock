@@ -129,8 +129,9 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 `node src/index.js` lance l'application sur http://localhost:3000
 
+## Choix techniques
 
-## ERC-734 vs ERC-780
+### ERC-734 vs ERC-780
 
 [ERC-735, Claim Holder](https://github.com/ethereum/EIPs/issues/735) et [ERC-780, Claim Registry](https://github.com/ethereum/EIPs/issues/780) sont deux propositions de standards assez similaires proposés pour gérer un ensemble de claims.
 Pour le moment, aucun des deux n'a été validé officiellement pas la communauté.
@@ -140,6 +141,25 @@ ERC-735 va identifier les claims via un ID unique pour chaque. Il va également 
 ERC-780 va plutôt identifier les claims avec un tuple adresse de l'issuer, adresse du subject, key. Le concept de signature n'est pas géré.
 
 Dans notre exemple, nous allons nous éloigner de ces deux standards car nous allons gérer les claims par le tuple adresse du subject/key. L'adresse de l'issuer ne servira que pour identifier l'émetteur de confiance et le vérifier au moyen de la clé publique et la signature. Nous allons donc mixer ces deux propositions de standards et gérer pour chaque claims : issuer, subject, signature, key, value.
+
+### Méthode de signature
+
+#### Côté front
+
+`web3.eth.sign / eth_sign` : n'affiche pas le message de façon intelligible. Quoi que l'on demande de signer, c'est affiché en hexa à l'utilisateur. Il ne sait donc pas ce qu'il signe.
+
+`eth_signTypedData_v4` : OK, mais techniquement difficile de vérifier en mode browser. 
+C'est la meilleure solution, basée sur ERC-712, afin de rendre l'utilisateur conscient de ce qu'il signe et éviter de lui faire signer des transactions non voulues. Mais attention à la vérification de la signature qui nécessite une manipulation technique hasardeuse tant que le standard n'est pas implémenté de base dans web3 ou les interface RPC.
+
+`web3.eth.personal.sign` : OK, meilleure solution côté client pour signer et vérifier
+
+`web3.eth.accounts.sign `: nécessite de passer la clé privée directement. Nous ne la possédons pas, l'utilisateur doit donc la donner manuellement. C'est techniquement compliqué et très peu sécurisé.
+
+### Côté IAM
+
+L'IAM doit signer les claims qu'il émet. Il peut se baser sur `eth_sign` et exploiter sa clé privée depuis un vault. Attention à la vérification, certains clients Ethereum préfixent et hashent les données avant de les faire signer, il faut savoir ce qu'on doit vérifier.
+
+Une méthode de vérification peut être placée dans le smart contract avec `ecrecover` mais nécessite en amont de savoir découper la clé ECDSA et d'avoir la bonne donnée en entrée.
 
 ## Docs
 
