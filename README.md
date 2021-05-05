@@ -84,8 +84,8 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 ## Step 1 (initialisation)
 - [X] Page web minimaliste avec web3
 - [X] Connexion / identification avec Metamask
-- [X] Authentification avec Metamask par signature de données (selon [EIP-712](https://eips.ethereum.org/EIPS/eip-712))
-  
+- [X] Authentification avec Metamask par signature de données et vérification (avec [eth.personal, sign et ecRecover](https://web3js.readthedocs.io/en/v1.3.4/web3-eth-personal.html#sign))
+
 ## Step 2 (smart contract)
 - [X] Smart contract ClaimHolder (alimentation des claims manuellement pour le moment)
 - [ ] Paramétrer dans l'appli les claims possibles et leurs fournisseurs de confiance
@@ -107,25 +107,27 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] Vérifier la compliance zero knowledge proof et verifiable credential
 - [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accorde ou non
 - [ ] Demande de génération de claim avec authent IAM depuis l'appli web
+- [ ] Rendre l'authent Metamask compatible avec [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
+- [ ] Vérfier l'authent via ecrecover de Solidity dans le smart contract
 
 # Technique
 
 ## Fichiers
 
-- `src/index.html` la page web qui affiche l'application
-- `src/index.js` fichier node.js qui sert index.html sur http://localhost:3000
-- `src/api.js` l'api node.js d'accès au smart contract
-- `src/contract.js` ABI, adresse et objet client du smart contract
-- `src/web3.min.js` framework web3.js pour la version embarquée
+- `webapp/index.html` la page web qui affiche l'application
+- `webapp/index.js` fichier node.js qui sert index.html sur http://localhost:3000
+- `webapp/lib/contract.js` ABI, adresse et objet client du smart contract
+- `webapp/lib/web3.min.js` framework web3.js pour la version embarquée
+- `webapp/lib/blockchain.js` fonctions d'accès à la blockchain pour la webapp
 - `contracts/` répertoire des smart contracts
 - `truffle/` anciennes versions des smart contracts gérés avec Truffle
 
 
 ## Run
 
-`node src/index.js` lance l'application sur http://localhost:3000
+`npm install`
 
-`node src/api.js` lance l'API
+`node src/index.js` lance l'application sur http://localhost:3000
 
 
 ## ERC-734 vs ERC-780
