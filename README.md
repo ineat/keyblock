@@ -107,20 +107,23 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] Vérifier la compliance zero knowledge proof et verifiable credential
 - [ ] L'appli web demande l'accès à une claim, l'utilisateur l'accorde ou non
 - [ ] Demande de génération de claim avec authent IAM depuis l'appli web
-- [ ] Rendre l'authent Metamask compatible avec [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
+- [X] Rendre l'authent Metamask compatible avec [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
 - [ ] Vérfier l'authent via ecrecover de Solidity dans le smart contract
 
 # Technique
 
 ## Fichiers
 
+- `contracts/` répertoire des smart contracts
+- `truffle/` anciennes versions des smart contracts gérés avec Truffle
 - `webapp/index.html` la page web qui affiche l'application
 - `webapp/index.js` fichier node.js qui sert index.html sur http://localhost:3000
 - `webapp/lib/contract.js` ABI, adresse et objet client du smart contract
 - `webapp/lib/web3.min.js` framework web3.js pour la version embarquée
 - `webapp/lib/blockchain.js` fonctions d'accès à la blockchain pour la webapp
-- `contracts/` répertoire des smart contracts
-- `truffle/` anciennes versions des smart contracts gérés avec Truffle
+- `wepapp/lib/bundles/` modules Node.js packagés pour navigateur
+    - ethSigUtil.js : `browserify main.js --standalone sigUtil > ethSigUtil.js`
+
 
 
 ## Run
@@ -144,18 +147,18 @@ Dans notre exemple, nous allons nous éloigner de ces deux standards car nous al
 
 ### Méthode de signature
 
-#### Côté front
+#### Côté web app
 
 `web3.eth.sign / eth_sign` : n'affiche pas le message de façon intelligible. Quoi que l'on demande de signer, c'est affiché en hexa à l'utilisateur. Il ne sait donc pas ce qu'il signe.
 
 `eth_signTypedData_v4` : OK, mais techniquement difficile de vérifier en mode browser. 
 C'est la meilleure solution, basée sur ERC-712, afin de rendre l'utilisateur conscient de ce qu'il signe et éviter de lui faire signer des transactions non voulues. Mais attention à la vérification de la signature qui nécessite une manipulation technique hasardeuse tant que le standard n'est pas implémenté de base dans web3 ou les interface RPC.
 
-`web3.eth.personal.sign` : OK, meilleure solution côté client pour signer et vérifier
+`web3.eth.personal.sign` : OK, bonne solution côté client pour signer et vérifier. (La doc réclame de passer la clé privée, mais en réalité si on ne la passe pas, Metamask s'active pour demander la signature).
 
 `web3.eth.accounts.sign `: nécessite de passer la clé privée directement. Nous ne la possédons pas, l'utilisateur doit donc la donner manuellement. C'est techniquement compliqué et très peu sécurisé.
 
-### Côté IAM
+#### Côté IAM
 
 L'IAM doit signer les claims qu'il émet. Il peut se baser sur `eth_sign` et exploiter sa clé privée depuis un vault. Attention à la vérification, certains clients Ethereum préfixent et hashent les données avant de les faire signer, il faut savoir ce qu'on doit vérifier.
 

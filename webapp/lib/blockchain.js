@@ -1,3 +1,5 @@
+//const sigUtil = require("./bundles/ethSigUtil.js");
+
 /**
 * Init connections and display data when page is loaded.
 */
@@ -176,12 +178,20 @@ async function askForSignatureEIP712(account) {
         $('#userAuthent').text("Yes");
         $('#signature').text(signature);
 
-        checkSignature(signature, account, JSON.stringify(data));
+        //checkSignature(signature, account, JSON.stringify(data));²
 
-        const recovered = recoverTypedSignature_v4({
+        const recovered = sigUtil.recoverTypedSignature_v4({
             data: data
-            , signature
+            , sig: signature
         });
+
+        console.log("Rec: "+recovered);
+
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+        $('#recover').text( recovered);
+        $('#signatureCheck').text( (account.toLowerCase() === recovered.toLowerCase()) );
+
     })
     .catch((error) => {
         console.log("Sign fail: "+error.message);

@@ -16,7 +16,8 @@
 	<!-- smart contract -->
 	<script type="text/javascript" src="./lib/contract.js"></script>
 
-	<script type="text/javascript" src="./lib/ethSigUtil.js"></script>
+	<!-- browserified eth-sig-util -->
+	<script type="text/javascript" src="./lib/bundles/ethSigUtil.js"></script>
 
 	<!-- blockchain functions -->
 	<script type="text/javascript" src="./lib/blockchain.js"></script>
@@ -62,7 +63,7 @@
 					<div class="card-body">
 						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(0);">Authentication eth.personal</button></p>
 						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(1);">Authentication EIP 712</button></p>
-						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(2);">Authentication eth.sig</button></p>
+						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(2);">Authentication eth.sign</button></p>
 						<p>Authenticated: <span id="userAuthent"> not authenticated</span></p>
 						<p>Signature: <span id="signature"></span></p>
 						<p>Recover: <span id="recover"></span></p>
