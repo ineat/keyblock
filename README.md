@@ -128,9 +128,24 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ## Run
 
+### Blockchain
+
+Smart contract déployé sur Ropsten : [0x85ff1399bc70b3e8116d970d209c17af84bfb0fa](https://ropsten.etherscan.io/address/0x85ff1399bc70b3e8116d970d209c17af84bfb0fa)
+
+### Client
+
+Installer [Metamask](https://metamask.io) sur le navigateur.
+
+(Pas besoin d'Ether côté client)
+
+### Serveur (web app)
+
 `npm install`
 
-`node src/index.js` lance l'application sur http://localhost:3000
+`node src/index.js` lance l'application sur http://localhost:3000 dans le navigateur équipé de Metamask
+
+### Serveur IAM
+
 
 ## Choix techniques
 
