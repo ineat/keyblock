@@ -20,6 +20,7 @@
 	<script type="text/javascript" src="./lib/bundles/ethSigUtil.js"></script>
 
 	<!-- blockchain functions -->
+	<script type="text/javascript" src="./lib/db.js"></script>
 	<script type="text/javascript" src="./lib/blockchain.js"></script>
 
 	<script type="text/javascript">
@@ -46,7 +47,7 @@
 				</div>
 			</div>
 		</div>
-<br/>
+	<br/>
 		<div class="row">
 			<div class="col-md-4">
 				<div class="card">
@@ -77,7 +78,13 @@
 					<div class="card-body">
 						<p>Smart contract address: <span id="contractAddress"></span></p>
 						<p><button type="button" class="btn btn-primary" onclick="javascript: checkClaims();">Check claims</button></p>
-						<p>Is admin: <span id="userAdmin">unknown</span></p>
+						<p>Is admin: <span id="isadmin">unknown</span></p>
+					</div>
+				</div>
+				<div class="card">
+					<h5 class="card-header">Create claim</h5>
+					<div class="card-body">
+						<p><button type="button" class="btn btn-primary" onclick="javascript: callCreateClaim();">Create claim</button></p>
 					</div>
 				</div>
 			</div>

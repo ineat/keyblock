@@ -32,9 +32,12 @@ contract ClaimsRegistry {
 
     }
 
-    function setClaim(address subject, string calldata key, string calldata value) public {
+    function setClaim(address subject, string calldata key, string calldata value, bytes memory signature) public {
 
-        bytes32 signature = keccak256(abi.encode(subject, key, value));
+
+        bytes32 claimHash = prefixed(keccak256(abi.encodePacked(msg.sender, subject, key, value)));
+
+        require(recoverSigner(claimHash, signature) == msg.sender,"Do you really sign this?");
 
         Claim memory claim = Claim(subject, msg.sender, block.timestamp, signature, key, value);
         registry[subject][key] = claim;
@@ -47,7 +50,7 @@ contract ClaimsRegistry {
 
     function getClaim(address subject, string calldata key) public view returns(string memory) {
         Claim memory claim = registry[subject][key];
-        require(claim.subject == subject,"Unknown user or key");
+        // require(claim.subject == subject,"Unknown user or key");
         return claim.value;
     }
 
@@ -55,6 +58,33 @@ contract ClaimsRegistry {
         require(msg.sender == issuer);
         delete registry[subject][key];
         emit ClaimRemoved(msg.sender, subject, key, block.timestamp);
+    }
+
+
+    function splitSignature(bytes memory sig) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
+        require(sig.length == 65);
+
+        assembly {
+        // first 32 bytes, after the length prefix.
+            r := mload(add(sig, 32))
+        // second 32 bytes.
+            s := mload(add(sig, 64))
+        // final byte (first byte of the next 32 bytes).
+            v := byte(0, mload(add(sig, 96)))
+        }
+
+        return (v, r, s);
+    }
+
+
+    function recoverSigner(bytes32 message, bytes memory sig) internal pure returns (address) {
+        (uint8 v, bytes32 r, bytes32 s) = splitSignature(sig);
+        return ecrecover(message, v, r, s);
+    }
+
+    /// builds a prefixed hash to mimic the behavior of eth_sign.
+    function prefixed(bytes32 hash) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
 
     function checkSignature(bytes32 msgHash, uint8 v, bytes32 r, bytes32 s) public pure returns (address) {

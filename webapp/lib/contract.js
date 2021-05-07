@@ -1,5 +1,5 @@
 
-var contractAddress = "0x85ff1399bc70b3e8116d970d209c17af84bfb0fa";
+var contractAddress = "0xd28479Fb937ff6B1f8bDfedB67217dA7D350f164";
 var contract;
 
 var abi = [
@@ -75,6 +75,70 @@ var abi = [
           		],
           		"name": "ClaimSet",
           		"type": "event"
+          	},
+          	{
+          		"inputs": [
+          			{
+          				"internalType": "address",
+          				"name": "issuer",
+          				"type": "address"
+          			},
+          			{
+          				"internalType": "address",
+          				"name": "subject",
+          				"type": "address"
+          			},
+          			{
+          				"internalType": "string",
+          				"name": "key",
+          				"type": "string"
+          			}
+          		],
+          		"name": "removeClaim",
+          		"outputs": [],
+          		"stateMutability": "nonpayable",
+          		"type": "function"
+          	},
+          	{
+          		"inputs": [
+          			{
+          				"internalType": "address",
+          				"name": "subject",
+          				"type": "address"
+          			},
+          			{
+          				"internalType": "string",
+          				"name": "key",
+          				"type": "string"
+          			},
+          			{
+          				"internalType": "string",
+          				"name": "value",
+          				"type": "string"
+          			}
+          		],
+          		"name": "setClaim",
+          		"outputs": [],
+          		"stateMutability": "nonpayable",
+          		"type": "function"
+          	},
+          	{
+          		"inputs": [
+          			{
+          				"internalType": "string",
+          				"name": "key",
+          				"type": "string"
+          			},
+          			{
+          				"internalType": "string",
+          				"name": "value",
+          				"type": "string"
+          			}
+          		],
+          		"name": "setSelfClaim",
+          		"outputs": [],
+          		"stateMutability": "nonpayable",
+          		"type": "function"
           	},
           	{
           		"inputs": [
@@ -181,70 +245,6 @@ var abi = [
           			}
           		],
           		"stateMutability": "view",
-          		"type": "function"
-          	},
-          	{
-          		"inputs": [
-          			{
-          				"internalType": "address",
-          				"name": "issuer",
-          				"type": "address"
-          			},
-          			{
-          				"internalType": "address",
-          				"name": "subject",
-          				"type": "address"
-          			},
-          			{
-          				"internalType": "string",
-          				"name": "key",
-          				"type": "string"
-          			}
-          		],
-          		"name": "removeClaim",
-          		"outputs": [],
-          		"stateMutability": "nonpayable",
-          		"type": "function"
-          	},
-          	{
-          		"inputs": [
-          			{
-          				"internalType": "address",
-          				"name": "subject",
-          				"type": "address"
-          			},
-          			{
-          				"internalType": "string",
-          				"name": "key",
-          				"type": "string"
-          			},
-          			{
-          				"internalType": "string",
-          				"name": "value",
-          				"type": "string"
-          			}
-          		],
-          		"name": "setClaim",
-          		"outputs": [],
-          		"stateMutability": "nonpayable",
-          		"type": "function"
-          	},
-          	{
-          		"inputs": [
-          			{
-          				"internalType": "string",
-          				"name": "key",
-          				"type": "string"
-          			},
-          			{
-          				"internalType": "string",
-          				"name": "value",
-          				"type": "string"
-          			}
-          		],
-          		"name": "setSelfClaim",
-          		"outputs": [],
-          		"stateMutability": "nonpayable",
           		"type": "function"
           	}
           ];

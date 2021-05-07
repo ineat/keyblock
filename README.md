@@ -109,6 +109,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] Demande de génération de claim avec authent IAM depuis l'appli web
 - [X] Rendre l'authent Metamask compatible avec [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
 - [ ] Vérfier l'authent via ecrecover de Solidity dans le smart contract
+- [ ] Chaque émetteur publie un manifeste de ses claims (format, valeurs, utilité ...)
 
 # Technique
 
@@ -130,7 +131,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ### Blockchain
 
-Smart contract déployé sur Ropsten : [0x85ff1399bc70b3e8116d970d209c17af84bfb0fa](https://ropsten.etherscan.io/address/0x85ff1399bc70b3e8116d970d209c17af84bfb0fa)
+Smart contract déployé sur Ropsten : [0x207831778e1d7d45c529f7b3d74b6ae0580083f7](https://ropsten.etherscan.io/address/0x207831778e1d7d45c529f7b3d74b6ae0580083f7)
 
 ### Client
 
@@ -178,6 +179,26 @@ C'est la meilleure solution, basée sur ERC-712, afin de rendre l'utilisateur co
 L'IAM doit signer les claims qu'il émet. Il peut se baser sur `eth_sign` et exploiter sa clé privée depuis un vault. Attention à la vérification, certains clients Ethereum préfixent et hashent les données avant de les faire signer, il faut savoir ce qu'on doit vérifier.
 
 Une méthode de vérification peut être placée dans le smart contract avec `ecrecover` mais nécessite en amont de savoir découper la clé ECDSA et d'avoir la bonne donnée en entrée.
+
+Création de claim :
+- créer la claim avec les champs suivants : adresse de l'émetteur, adresse du destinataire, clé, valeur
+- création d'un message à signer par concaténation : issuerAddress+subjectAddress+key+value
+- hashage du message en SHA3 (keccak256) pour obtenir une longueur fixe de 32 octets  
+- signature avec `eth_sign` (via infura ? via une API ? noeud local ?)
+-- implicitement `eth_sign` modifie le message de cette façon : "\x19Ethereum Signed Message:\n" + message.length (soit 32) + message
+- appel de `setClaim(address subject, string calldata key, string calldata value, bytes memory signature)` du smart contract
+- le smart contract reconstitue la claim, le message de signature, le hash préfixé et recover l'adresse
+- si l'adresse retrouvée correspond à `msg.sender`, la création de claim est validée
+- la signature est enregistrée dans la claim
+
+Lecture de la claim :
+- le client récupère la claim avec `getClaim(address subject, string calldata key)`
+- création d'un message à signer par concaténation : issuerAddress+subjectAddress+key+value
+- signature avec `eth_sign`
+- vérification
+-- 1) comparaison de la signature obtenue et de la signature stockée, elles doivent être identiques 
+-- 2) comparaison de l'adresse de l'emetteur avec celle obtenue par appel à `function recoverSigner(bytes32 message, bytes memory sig)`
+
 
 ## Docs
 
