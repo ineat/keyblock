@@ -20,7 +20,7 @@ contract ClaimsRegistry {
         address subject;
         address issuer;
         uint issuedAt;
-        bytes32 issuerSignature;
+        bytes issuerSignature;
         string key;
         string value;
     }
@@ -37,21 +37,26 @@ contract ClaimsRegistry {
 
         bytes32 claimHash = prefixed(keccak256(abi.encodePacked(msg.sender, subject, key, value)));
 
-        require(recoverSigner(claimHash, signature) == msg.sender,"Do you really sign this?");
+        //require(recoverSigner(claimHash, signature) == msg.sender,"Do you really sign this?");
 
         Claim memory claim = Claim(subject, msg.sender, block.timestamp, signature, key, value);
         registry[subject][key] = claim;
         emit ClaimSet(msg.sender, subject, key, value, block.timestamp);
     }
 
-    function setSelfClaim(string calldata key, string calldata value) public {
-        setClaim(msg.sender, key, value);
+    function setSelfClaim(string calldata key, string calldata value, bytes memory signature) public {
+        setClaim(msg.sender, key, value, signature);
     }
 
-    function getClaim(address subject, string calldata key) public view returns(string memory) {
+    function getClaim(address subject, string calldata key) public view returns(uint, string memory, address) {
         Claim memory claim = registry[subject][key];
-        // require(claim.subject == subject,"Unknown user or key");
-        return claim.value;
+
+        if(claim.subject != subject) {
+            return (1, "Subject or key not found", address(0));
+        }
+
+
+        return (0, claim.value, claim.issuer);
     }
 
     function removeClaim(address issuer, address subject, string calldata key) public {

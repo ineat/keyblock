@@ -1,5 +1,5 @@
 
-var contractAddress = "0xd28479Fb937ff6B1f8bDfedB67217dA7D350f164";
+var contractAddress = "0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b";
 var contract;
 
 var abi = [
@@ -115,6 +115,11 @@ var abi = [
           				"internalType": "string",
           				"name": "value",
           				"type": "string"
+          			},
+          			{
+          				"internalType": "bytes",
+          				"name": "signature",
+          				"type": "bytes"
           			}
           		],
           		"name": "setClaim",
@@ -133,6 +138,11 @@ var abi = [
           				"internalType": "string",
           				"name": "value",
           				"type": "string"
+          			},
+          			{
+          				"internalType": "bytes",
+          				"name": "signature",
+          				"type": "bytes"
           			}
           		],
           		"name": "setSelfClaim",
@@ -190,9 +200,19 @@ var abi = [
           		"name": "getClaim",
           		"outputs": [
           			{
+          				"internalType": "uint256",
+          				"name": "",
+          				"type": "uint256"
+          			},
+          			{
           				"internalType": "string",
           				"name": "",
           				"type": "string"
+          			},
+          			{
+          				"internalType": "address",
+          				"name": "",
+          				"type": "address"
           			}
           		],
           		"stateMutability": "view",
@@ -229,9 +249,9 @@ var abi = [
           				"type": "uint256"
           			},
           			{
-          				"internalType": "bytes32",
+          				"internalType": "bytes",
           				"name": "issuerSignature",
-          				"type": "bytes32"
+          				"type": "bytes"
           			},
           			{
           				"internalType": "string",

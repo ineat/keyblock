@@ -185,7 +185,7 @@ Création de claim :
 - création d'un message à signer par concaténation : issuerAddress+subjectAddress+key+value
 - hashage du message en SHA3 (keccak256) pour obtenir une longueur fixe de 32 octets  
 - signature avec `eth_sign` (via infura ? via une API ? noeud local ?)
--- implicitement `eth_sign` modifie le message de cette façon : "\x19Ethereum Signed Message:\n" + message.length (soit 32) + message
+  - implicitement `eth_sign` modifie le message de cette façon : "\x19Ethereum Signed Message:\n" + message.length (soit 32) + message
 - appel de `setClaim(address subject, string calldata key, string calldata value, bytes memory signature)` du smart contract
 - le smart contract reconstitue la claim, le message de signature, le hash préfixé et recover l'adresse
 - si l'adresse retrouvée correspond à `msg.sender`, la création de claim est validée
@@ -196,8 +196,8 @@ Lecture de la claim :
 - création d'un message à signer par concaténation : issuerAddress+subjectAddress+key+value
 - signature avec `eth_sign`
 - vérification
--- 1) comparaison de la signature obtenue et de la signature stockée, elles doivent être identiques 
--- 2) comparaison de l'adresse de l'emetteur avec celle obtenue par appel à `function recoverSigner(bytes32 message, bytes memory sig)`
+  - 1) comparaison de la signature obtenue et de la signature stockée, elles doivent être identiques 
+  - 2) comparaison de l'adresse de l'emetteur avec celle obtenue par appel à `function recoverSigner(bytes32 message, bytes memory sig)`
 
 
 ## Docs

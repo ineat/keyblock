@@ -288,7 +288,11 @@ function checkClaims() {
             // contract call
             var result = contract.methods.getClaim(account, claimName).call({from:account})
             .then((result) => {
-                $('#'+claimName).text(result);
+                console.log(result);
+                // result[0] -> 0 = ok, 1 = ko
+                // result[1] -> value or error message
+                // TODO check result[2] that contains issuer address
+                $('#'+claimName).text(result[1]);
             })
             .catch( (error) => {
                    console.error("call error");
@@ -329,7 +333,7 @@ function callCreateClaim() {
     createClaim(db.claims[0], "true", "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14")
 }
 
-function createClaim(claimName, claimValue, subject) {
+async function createClaim(claimName, claimValue, subject) {
 
     console.log("claimName: "+claimName);
     console.log("claimValue: "+claimValue);
@@ -358,59 +362,68 @@ function createClaim(claimName, claimValue, subject) {
         */
 
         // hash and prefix serialized claim object
-        const hashedClaim = web3.utils.sha3(claim.issuer + claim.subject + claim.key + claim.value);
+        const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
+
+        console.log("hashedClaim: "+hashedClaim);
 
         // sign hashed and prefixed claim
-        const signedClaim = sign(hashedClaim);
 
-        // set signature
-        claim.issuerSignature = signedClaim;
+       web3.eth.sign(hashedClaim, account)
+        .then(
+          (signature) => {
+            console.log("Claim signed: "+signature);
 
-        contract.methods.setClaim(subject, claimName, claimValue).estimateGas({from: account})
-        .then(function(gasAmount){
-            console.log("gas: "+gasAmount);
+                contract.methods.setClaim(subject, claimName, claimValue, signature).estimateGas({from: account})
+                .then(function(gasAmount){
+                    console.log("gas: "+gasAmount);
 
-            // call contract to create
-            contract.methods.setClaim(subject, claimName, claimValue).send({from:account, gas:gasAmount})
-            .then((result) => {
-                console.log(result);
-            })
-           .catch( (error) => {
-                  console.log(error);
-            });
+                    // call contract to create
+                    contract.methods.setClaim(subject, claimName, claimValue, signature).send({from:account, gas:gasAmount})
+                    .then((result) => {
+                        console.log(result);
+                    })
+                   .catch( (error) => {
+                          console.log(error);
+                    });
 
-        })
-        .catch(function(error){
-            console.log(error);
+                })
+                .catch(function(error){
+                    console.log(error);
+                });
         });
 
     })
     .catch( (error) => {
-        console.error("Error getting accounts : "+error);
+        console.error("createClaim : Error getting accounts : "+error);
     });
 
 }
 
-function sign(message) {
+async function sign(message) {
+    return new Promise ( (resolve, reject) => {
 
-    ethereum.request({ method: 'eth_requestAccounts' })
-    .then( async (accounts) => {
-        let account = accounts[0];
+         console.log("Sign: "+message);
 
-        web3.eth.sign(message, account)
-        .then(
-          (signature) => {
-            console.log("Claim signed: "+signature);
-            return signature;
+        ethereum.request({ method: 'eth_requestAccounts' })
+        .then( async (accounts) => {
+            let account = accounts[0];
+
+            web3.eth.sign(message, account)
+            .then(
+              (signature) => {
+                console.log("Claim signed: "+signature);
+                resolve(signature);
+            })
+            .catch((error) => {
+                console.log("Claim signature fail: "+error.message);
+            });
+
         })
-        .catch((error) => {
-            console.log("Claim signature fail: "+error.message);
+        .catch( (error) => {
+            console.error("Sign : Error getting accounts : "+error);
         });
 
-    })
-    .catch( (error) => {
-        console.error("Error getting accounts : "+error);
-    });
+        reject();
 
-    return null;
+    });
 }
