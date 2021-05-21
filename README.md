@@ -71,7 +71,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ## Composants
 
-- smart contract ClaimHolder
+- smart contract ClaimRegistry
 - application de gestion des claims (Node.js + Fwk front, Web3.js dist version + Metamask)
 - application que l'utilisateur veut utiliser (Node.js + Fwk front, Web3.js dist version + Metamask)
 - ID provider (Keycloak)
@@ -117,23 +117,31 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ## Fichiers
 
-- `contracts/` répertoire des smart contracts
-- `truffle/` anciennes versions des smart contracts gérés avec Truffle
-- `webapp/index.html` la page web qui affiche l'application
-- `webapp/index.js` fichier node.js qui sert index.html sur http://localhost:3000
-- `webapp/lib/contract.js` ABI, adresse et objet client du smart contract
-- `webapp/lib/web3.min.js` framework web3.js pour la version embarquée
-- `webapp/lib/blockchain.js` fonctions d'accès à la blockchain pour la webapp
-- `wepapp/lib/bundles/` modules Node.js packagés pour navigateur
+`contracts/` répertoire des smart contracts
+- `ClaimsRegistry` smart contract principale
+- `SimpleClaimsRegistry` version simplifiée de `ClaimsRegistry` sans gestion des signatures
+- `compile.sh` compile les contrats, génère les ABI et les binaires et les copie dans le [blockchain-connector]https://github.com/ineat/keyblock/tree/master/java/blockchain-connector  
+- `build` répertoire output de `compile.sh`
+---
+`webapp/` application web visitée par l'utilisateur
+- `index.html` la page web qui affiche l'application
+- `index.js` fichier node.js qui sert index.html sur http://localhost:3000
+- `lib/web3.min.js` framework web3.js pour la version embarquée
+- `lib/blockchain.js` fonctions d'accès à la blockchain pour la webapp
+- `lib/bundles/` modules Node.js packagés pour navigateur
     - ethSigUtil.js : `browserify main.js --standalone sigUtil > ethSigUtil.js`
-
-
+---
+- `java/blockchain-connector` connecteur à la blockchain pour l'IAM
+---
+- [Archivé] `truffle/` anciennes versions des smart contracts gérés avec Truffle
 
 ## Run
 
 ### Blockchain
 
-Smart contract déployé sur Ropsten : [0x207831778e1d7d45c529f7b3d74b6ae0580083f7](https://ropsten.etherscan.io/address/0x207831778e1d7d45c529f7b3d74b6ae0580083f7)
+Smart contract déployé sur Ropsten : 
+- SimpleClaimsRegistry [0xad9388311e96031d9cF2D1370826D8940d057362](https://ropsten.etherscan.io/address/0xad9388311e96031d9cF2D1370826D8940d057362)
+- ClaimsRegistry [0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b](https://ropsten.etherscan.io/address/0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b)
 
 ### Client
 
@@ -201,45 +209,22 @@ Lecture de la claim :
   - 1) comparaison de la signature obtenue et de la signature stockée, elles doivent être identiques 
   - 2) comparaison de l'adresse de l'emetteur avec celle obtenue par appel à `function recoverSigner(bytes32 message, bytes memory sig)`
 
-## .
-
-### Compte Ethereum pour IAM
-
-Attention, comptes de test sur Ropsten uniquement :
-
-Seed : 
-`suit blade rigid hat glue broccoli music blind scorpion column yard now`
-
-Compte 1
-Adresse : 0x41f6B225846863E3C037e92F229cD40f5d575258
-Clé privée : 85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723
-https://ropsten.etherscan.io/address/0x41f6b225846863e3c037e92f229cd40f5d575258
-
-Compte 2
-Adresse : 0x5Db6617D5A8BB274379cD815D765722aF5088F8a
-Clé privée : 6484e4896a53883b15451347df3bd63a8e9b935310e194cd162fa64159086b07
-https://ropsten.etherscan.io/address/0x5Db6617D5A8BB274379cD815D765722aF5088F8a
-
 
 ## Docs
 
-https://ethereum.stackexchange.com/questions/90680/metamask-display-for-signing-data-with-eth-signtypeddata-v4
+#### Ethereum
+- https://eth.wiki/json-rpc/API
 
-https://eth.wiki/json-rpc/API
+#### Signature
+- https://ethereum.stackexchange.com/questions/90680/metamask-display-for-signing-data-with-eth-signtypeddata-v4
+- https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
+- https://medium.com/metamask/scaling-web3-with-signtypeddata-91d6efc8b290
+- https://eips.ethereum.org/EIPS/eip-712
+- https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
+- https://www.codementor.io/@yosriady/signing-and-verifying-ethereum-signatures-vhe8ro3h6
+- https://docs.soliditylang.org/en/latest/solidity-by-example.html?highlight=sign#creating-the-signature
 
-https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
-
-https://medium.com/metamask/scaling-web3-with-signtypeddata-91d6efc8b290
-
-http://web3j.io/
-
------
-
-Authent = signature avec Metamask : https://eips.ethereum.org/EIPS/eip-712
-
-ex: https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-it-bb92fd1a7a26
-
-https://www.codementor.io/@yosriady/signing-and-verifying-ethereum-signatures-vhe8ro3h6
-
-https://docs.soliditylang.org/en/latest/solidity-by-example.html?highlight=sign#creating-the-signature
+#### We3j
+- http://web3j.io/
+- http://docs.web3j.io/latest/quickstart/
 
