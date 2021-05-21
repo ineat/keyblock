@@ -15,10 +15,13 @@ import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.ClientTransactionManager;
+import org.web3j.tx.FastRawTransactionManager;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.response.TransactionReceiptProcessor;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -165,25 +168,52 @@ public class SimpleClaimsRegistryConnector {
         String claimSignature = "";
 
         try {
-            RawTransactionManager txManager = new RawTransactionManager(web3j, credentials);
+ /*           RawTransactionManager txManager = new RawTransactionManager(web3j, credentials);
             RawTransaction rawTx = createRawTx(subjectAddress, claimId, claimValue);
             String signedMessage = txManager.sign(rawTx);
 
-           /* txManager.sendCall(DefaultParams.contractAddress, signedMessage, )
+           txManager.sendCall(DefaultParams.contractAddress, signedMessage, );
             EthSendTransaction ethSendTx = txManager.signAndSend(rawTx);
 
             Optional<TransactionReceipt> transactionReceipt =
                     web3j.ethGetTransactionReceipt(ethSendTx.getTransactionHash()).send().getTransactionReceipt();
-*/
+
             org.web3j.protocol.core.methods.response.EthSendTransaction transactionResponse =
                     web3j.ethSendRawTransaction(signedMessage).sendAsync().get();
 
             String transactionHash = transactionResponse.getTransactionHash();
+*/
 
-            log.info("tx: "+transactionResponse.getTransactionHash());
-            log.info("rpc: "+transactionResponse.getJsonrpc());
-            log.info("raw: "+transactionResponse.getRawResponse());
-            log.info("res: "+transactionResponse.getResult());
+            Function function = new Function(
+                    "setClaim",
+                    Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())),
+                    Collections.emptyList());
+/*
+            String encodedFunction = FunctionEncoder.encode(function);
+
+            EthSendTransaction transactionResponse = txManager.sendTransaction(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT, DefaultParams.contractAddress, encodedFunction, new BigInteger("0"), false);
+*/
+
+
+            //Encode function values in transaction data format
+            String txData = FunctionEncoder.encode(function);
+
+            TransactionManager txManager = new FastRawTransactionManager(web3j, credentials);
+
+            String txHash = txManager.sendTransaction(new BigInteger("900000000"), new BigInteger("410000000000"),
+                    DefaultParams.contractAddress, txData, BigInteger.ZERO).getTransactionHash();
+
+            log.info("tx: "+txHash);
+
+            TransactionReceiptProcessor receiptProcessor =
+                    new PollingTransactionReceiptProcessor(web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
+                            TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+
+            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+
+           log.info("txReceipt: "+txReceipt);
+           /*  log.info("raw: "+transactionResponse.getRawResponse());
+            log.info("res: "+transactionResponse.getResult());*/
 
 
         } catch (Exception e) {
