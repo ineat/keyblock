@@ -1,4 +1,14 @@
-//const sigUtil = require("./bundles/ethSigUtil.js");
+var simpleClaimsRegistry = {
+    address: "0xad9388311e96031d9cF2D1370826D8940d057362"
+    ,abi: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"uint256","name":"removedAt","type":"uint256"}],"name":"ClaimRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"ClaimSet","type":"event"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"getClaim","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"name":"registry","outputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"address","name":"issuer","type":"address"},{"internalType":"uint256","name":"issuedAt","type":"uint256"},{"internalType":"bytes","name":"issuerSignature","type":"bytes"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"issuer","type":"address"},{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"removeClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setSelfClaim","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+};
+
+var claimsRegistry = {
+    address: "0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b"
+    , abi: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"uint256","name":"removedAt","type":"uint256"}],"name":"ClaimRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"ClaimSet","type":"event"},{"inputs":[{"internalType":"bytes32","name":"msgHash","type":"bytes32"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"checkSignature","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"getClaim","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"name":"registry","outputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"address","name":"issuer","type":"address"},{"internalType":"uint256","name":"issuedAt","type":"uint256"},{"internalType":"bytes","name":"issuerSignature","type":"bytes"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"issuer","type":"address"},{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"removeClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setSelfClaim","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+}
+
+var contractData = simpleClaimsRegistry;
 
 /**
 * Init connections and display data when page is loaded.
@@ -46,10 +56,10 @@ async function initWeb3() {
 * Init the contract objects
 */
 async function loadContract() {
-    if(contractAddress) {
-        console.log("Load contract at : "+contractAddress);
+    if(contractData.address) {
+        console.log("Load contract : "+JSON.stringify(contractData));
         try {
-            contract =  new web3.eth.Contract(abi, contractAddress);
+            contract =  new web3.eth.Contract(contractData.abi, contractData.address);
         }
         catch(error) {
             console.error("Error loading contract : "+error);
@@ -64,7 +74,7 @@ async function displayBlockchainInfo() {
     $('#web3Version').text(web3.version);
     $('#nodeInfo').text(await web3.eth.getNodeInfo());
     $('#blockNumber').text(await web3.eth.getBlockNumber());
-    $('#contractAddress').text(contractAddress);
+    $('#contractAddress').text(contractData.address);
 }
 
 function identification() {
@@ -113,7 +123,7 @@ function authentication(id) {
          ,domain:{name:"Keyblock",version:"1",chainId:3,verifyingContract:"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"}
          ,message:{
              content:"You are going to use your private key to sign this data and be authenticated for claim holder contract."
-             ,contract:{name:"Claim holder", address: contractAddress}
+             ,contract:{name:"Claim holder", address: contractData.address}
              ,forUser:{account: null}
              }
      };
@@ -296,8 +306,8 @@ function checkClaims() {
             })
             .catch( (error) => {
                    console.error("call error");
-                  var errorObject = extractError(error);
-                  $('#'+claimName).text(errorObject.message);
+                  var errorMessage = extractError(error);
+                  $('#'+claimName).text(errorMessage);
                   console.log(errorObject.message);
             });
         })
@@ -313,6 +323,7 @@ function checkClaims() {
 * @return an error object
 */
 function extractError(errorMessage) {
+
     // return is "Object" typed, must be casted to string
     errorMessage = errorMessage.toString();
 
@@ -321,11 +332,17 @@ function extractError(errorMessage) {
 
     if(textObject) {
         // parse json to object then return
-        var errorObject = JSON.parse(textObject);
-        return errorObject.originalError;
+        try{
+            var errorObject = JSON.parse(textObject);
+            return errorObject.originalError.message;
+        }
+        catch(error) {
+            console.error(error);
+            return errorMessage;
+        }
     }
     else {
-        return null;
+        return errorMessage;
     }
 }
 

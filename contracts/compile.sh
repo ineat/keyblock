@@ -7,8 +7,24 @@
 # sudo apt-get update
 # sudo apt-get install solc
 
+
+echo "Compile SimpleClaimsRegistry..."
+solc SimpleClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
+
+# copy abi and binary to java connector
+echo "Copy file to java connector..."
+cp ./build/SimpleClaimsRegistry.abi ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.abi
+cp ./build/SimpleClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.bin
+
+# generate web3j classe for contract
+echo "Generate java wrapper..."
+web3j generate solidity -a=./build/SimpleClaimsRegistry.abi -b=./build/SimpleClaimsRegistry.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
+
+echo "Done"
+
+
 # compile contract
-echo "Compile..."
+echo "Compile ClaimsRegistry..."
 solc ClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
 
 # copy abi and binary to java connector
@@ -18,7 +34,6 @@ cp ./build/ClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/Cl
 
 # generate web3j classe for contract
 echo "Generate java wrapper..."
-cd build
-web3j generate solidity -a=ClaimsRegistry.abi -b=ClaimsRegistry.bin -o=../../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
+web3j generate solidity -a=./build/ClaimsRegistry.abi -b=./build/ClaimsRegistry.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
 
 echo "Done"
