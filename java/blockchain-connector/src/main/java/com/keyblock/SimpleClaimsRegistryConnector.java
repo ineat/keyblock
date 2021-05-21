@@ -38,7 +38,7 @@ public class SimpleClaimsRegistryConnector {
         private static String endpointUrl = "https://f89ad600453b458d8dd44554ab59500a@ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98";
         private static String ethereumPublicKey = "0x41f6B225846863E3C037e92F229cD40f5d575258";
         private static String ethereumPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
-        private static String contractAddress = "0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b";
+        private static String contractAddress = "0xad9388311e96031d9cF2D1370826D8940d057362";
     }
 
     /**
@@ -108,13 +108,24 @@ public class SimpleClaimsRegistryConnector {
         return result;
     }
 
-    public String getClaim(String subjectAddress, String claimId) {
+    /**
+     * Read a @Claim from smart contract
+     * @param subjectAddress address of user
+     * @param claimId id of claim
+     * @return the @Claim that represents the stored value, null il not found
+     */
+    public Claim getClaim(String subjectAddress, String claimId) {
 
         try {
             Tuple3<BigInteger, String, String> result = contract.getClaim(subjectAddress, claimId).send();
-            System.out.println("BigInteger: "+result.component1());
-            System.out.println("String 1: "+result.component2());
-            System.out.println("String 2: "+result.component3());
+
+            return new Claim(subjectAddress
+                            , result.component3()
+                            , 0
+                            , null
+                            , claimId
+                            , result.component2());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
