@@ -94,8 +94,10 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ## Step 3 (provider)
 - [ ] Mettre en place un IAM (keycloak ?)
-- [ ] Créer une identité Ethereum pour IAM (avec gestion de la clé privée dans un vault ?)
-- [ ] Module blockchain pour l'IAM
+- [X] Créer une identité Ethereum pour IAM
+- [ ] Gérer les secrets dans un secret manager 
+- [ ] Initialiser un connecteur blockchain pour l'IAM
+- [ ] Mapper le connecteur sur chaque fonction du smart contract 
 - [ ] Création des claims par l'IAM
 - [ ] Révocation des claims par l'IAM  
 - [ ] Vérification de la signature de la claim par l'appli web
@@ -199,6 +201,25 @@ Lecture de la claim :
   - 1) comparaison de la signature obtenue et de la signature stockée, elles doivent être identiques 
   - 2) comparaison de l'adresse de l'emetteur avec celle obtenue par appel à `function recoverSigner(bytes32 message, bytes memory sig)`
 
+## .
+
+### Compte Ethereum pour IAM
+
+Attention, comptes de test sur Ropsten uniquement :
+
+Seed : 
+`suit blade rigid hat glue broccoli music blind scorpion column yard now`
+
+Compte 1
+Adresse : 0x41f6B225846863E3C037e92F229cD40f5d575258
+Clé privée : 85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723
+https://ropsten.etherscan.io/address/0x41f6b225846863e3c037e92f229cd40f5d575258
+
+Compte 2
+Adresse : 0x5Db6617D5A8BB274379cD815D765722aF5088F8a
+Clé privée : 6484e4896a53883b15451347df3bd63a8e9b935310e194cd162fa64159086b07
+https://ropsten.etherscan.io/address/0x5Db6617D5A8BB274379cD815D765722aF5088F8a
+
 
 ## Docs
 
@@ -221,3 +242,4 @@ ex: https://medium.com/metamask/eip712-is-coming-what-to-expect-and-how-to-use-i
 https://www.codementor.io/@yosriady/signing-and-verifying-ethereum-signatures-vhe8ro3h6
 
 https://docs.soliditylang.org/en/latest/solidity-by-example.html?highlight=sign#creating-the-signature
+
