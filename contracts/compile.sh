@@ -19,6 +19,6 @@ cp ./build/ClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/Cl
 # generate web3j classe for contract
 echo "Generate java wrapper..."
 cd build
-web3j generate solidity -a=ClaimsRegistry.abi -b=ClaimsRegistry.bin -o=../../java/blockchain-connector/src/main/java/com/keyblock/contract --package=com.keyblock.contract
+web3j generate solidity -a=ClaimsRegistry.abi -b=ClaimsRegistry.bin -o=../../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
 
 echo "Done"
