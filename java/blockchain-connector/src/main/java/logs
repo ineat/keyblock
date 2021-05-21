@@ -1,0 +1,10 @@
+Downloading https://services.gradle.org/distributions/gradle-5.6-bin.zip
+.........................................................................................
+npm notice created a lockfile as package-lock.json. You should commit this file.
+up to date in 0.456s
+found 0 vulnerabilities
+
+Solidity version 0.7.6 is not installed. Downloading and installing it to ~/.web3j/solc/0.7.6
+Compiler run successful. Artifact(s) can be found in directory build/resources/main/solidity.
+Generating org.web3j.generated.contracts.HelloWorld ... File written to /home/alexandrevan/ilab/identity-ethereum/java/blockchain-connector/src/main/java/Web3App/build/generated/sources/web3j/main/java
+
