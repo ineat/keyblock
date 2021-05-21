@@ -1,6 +1,8 @@
 package com.keyblock;
 
 import com.keyblock.contract.SimpleClaimsRegistry;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
@@ -17,6 +19,9 @@ import java.util.concurrent.ExecutionException;
  * Connection wrapper to use @SimpleClaimsRegistry
  */
 public class SimpleClaimsRegistryConnector {
+
+    private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryConnector.class);
+
     /**
      * The @Web3j object that wraps blockchain RPC
      */
@@ -70,7 +75,7 @@ public class SimpleClaimsRegistryConnector {
      */
     private void connection(String endpointUrl) {
         this.web3j = Web3j.build(new HttpService(endpointUrl));
-        System.out.println("Connected, get current head: "+getBlockNumber().getBlockNumber());
+        log.info("Connected, get current head: "+getBlockNumber().getBlockNumber());
     }
 
     /**
@@ -82,9 +87,9 @@ public class SimpleClaimsRegistryConnector {
         assert (credentials != null);
         ContractGasProvider cgp = new DefaultGasProvider();
         this.contract = SimpleClaimsRegistry.load(contractAddress, this.web3j, this.credentials, cgp);
-        System.out.println("Contract loaded: "+contract.getContractAddress());
+        log.info("Contract loaded: "+contract.getContractAddress());
         try {
-            System.out.println("Contract check: "+contract.isValid());
+            log.info("Contract check: "+contract.isValid());
         } catch (IOException e) {
             e.printStackTrace();
         }
