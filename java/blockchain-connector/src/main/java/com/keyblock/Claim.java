@@ -1,9 +1,11 @@
 package com.keyblock;
 
+import java.time.Instant;
+
 public class Claim {
         private String subjectAddress;
         private String issuerAddress;
-        private long issuedAt;
+        private Instant issuedAt;
         private String signature;
         private String key;
         private String value;
@@ -11,7 +13,7 @@ public class Claim {
     public Claim() {
     }
 
-    public Claim(String subjectAddress, String issuerAddress, long issuedAt, String signature, String key, String value) {
+    public Claim(String subjectAddress, String issuerAddress, Instant issuedAt, String signature, String key, String value) {
         this.subjectAddress = subjectAddress;
         this.issuerAddress = issuerAddress;
         this.issuedAt = issuedAt;
@@ -36,11 +38,11 @@ public class Claim {
         this.issuerAddress = issuerAddress;
     }
 
-    public long getIssuedAt() {
+    public Instant getIssuedAt() {
         return issuedAt;
     }
 
-    public void setIssuedAt(long issuedAt) {
+    public void setIssuedAt(Instant issuedAt) {
         this.issuedAt = issuedAt;
     }
 
