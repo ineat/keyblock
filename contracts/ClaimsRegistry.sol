@@ -34,7 +34,6 @@ contract ClaimsRegistry {
 
     function setClaim(address subject, string calldata key, string calldata value, bytes memory signature) public {
 
-
         bytes32 claimHash = prefixed(keccak256(abi.encodePacked(msg.sender, subject, key, value)));
 
         //require(recoverSigner(claimHash, signature) == msg.sender,"Do you really sign this?");
