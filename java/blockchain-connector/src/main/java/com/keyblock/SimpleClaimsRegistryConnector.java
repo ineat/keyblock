@@ -81,13 +81,8 @@ public class SimpleClaimsRegistryConnector {
      */
     public SimpleClaimsRegistryConnector(String endpointUrl, String contractAddress, String address, String privateKey) {
         connection(endpointUrl);
-
-        this.credentials =  Credentials.create(privateKey, this.getPublicKeyInHex(privateKey));
-        /*log.info("Address: "+credentials.getAddress());
-        log.info("Pub k: "+credentials.getEcKeyPair().getPublicKey());
-        log.info("Priv k: "+credentials.getEcKeyPair().getPrivateKey());*/
-
-        this.clientTxManager = new ClientTransactionManager(this.web3j, DefaultParams.ethereumAddress);
+        this.credentials =  Credentials.create(privateKey);
+        this.clientTxManager = new ClientTransactionManager(this.web3j, address);
         loadContract(contractAddress);
     }
 
@@ -113,7 +108,7 @@ public class SimpleClaimsRegistryConnector {
         log.info("Contract loaded: "+contract.getContractAddress());
 
         try {
-            log.info("Contract check: "+contract.isValid());
+            log.info("Contract check: "+contract.isValid()); // TODO find out how it works
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,7 +135,7 @@ public class SimpleClaimsRegistryConnector {
     /**
      * Read a @Claim from smart contract
      * @param subjectAddress address of user
-     * @param claimId id of claim
+     * @param claimId key of @Claim
      * @return the @Claim that represents the stored value, null il not found
      */
     public Claim getClaim(String subjectAddress, String claimId) {
@@ -162,12 +157,16 @@ public class SimpleClaimsRegistryConnector {
         return null;
     }
 
+    /**
+     * Call smart contract function SimpleClaimsRegistry.setClaim to create a new @Claim
+     * @param subjectAddress user address the @Claim is related to
+     * @param claimId key of @Claim to set
+     * @param claimValue value of @Claim to set
+     */
     public void setClaim(String subjectAddress, String claimId, String claimValue) {
         String claimSignature = "";
 
         try {
-            //RawTransactionManager rawTxManager = new RawTransactionManager(this.web3j, this.credentials, ChainIdLong.ROPSTEN);
-
             // compute nonce
             EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
                     DefaultParams.ethereumAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
@@ -177,7 +176,7 @@ public class SimpleClaimsRegistryConnector {
             // build function call
             Function function = new Function(
                     "setClaim",
-                    Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())),
+                    Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(claimSignature.getBytes())),
                     Collections.emptyList());
 
             // encode function call to tx data
@@ -187,8 +186,8 @@ public class SimpleClaimsRegistryConnector {
             RawTransaction rawTx = RawTransaction.createTransaction(
                     nonce
                     ,DefaultGasProvider.GAS_PRICE
-                    ,BigInteger.valueOf(600000L)
-                    ,DefaultParams.contractAddress
+                    ,BigInteger.valueOf(600000L) // TODO find a way to compute it more accurately
+                    ,contract.getContractAddress()
                     ,BigInteger.ZERO
                     ,encodedFunction);
 
@@ -197,7 +196,7 @@ public class SimpleClaimsRegistryConnector {
 
             EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
             if(ethSendTransaction.getError() != null)
-                log.info(ethSendTransaction.getError().getMessage());
+                log.error(ethSendTransaction.getError().getMessage());
 
             String transactionHash = ethSendTransaction.getTransactionHash();
             log.info("Tx hash: "+transactionHash);
@@ -216,38 +215,11 @@ public class SimpleClaimsRegistryConnector {
         }
     }
 
-    public RawTransaction createRawTx(String subjectAddress, String claimId, String claimValue) throws ExecutionException, InterruptedException {
-
-        // compute Claim signature
-        String signature = "";
-
-        // compute nonce
-        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-                DefaultParams.ethereumAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
-        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-        log.debug("nonce: "+nonce.toString());
-
-        // build function call
-        Function function = new Function(
-                "setClaim",
-                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(signature.getBytes())),
-                Collections.emptyList());
-
-        // encode function call to tx data
-        String encodedFunction = FunctionEncoder.encode(function);
-        log.debug("encodedFunction: "+encodedFunction);
-
-        RawTransaction rawTx = RawTransaction.createTransaction(
-                nonce
-                ,DefaultGasProvider.GAS_PRICE.multiply(new BigInteger("10"))
-                ,DefaultGasProvider.GAS_LIMIT.multiply(new BigInteger("10"))
-                ,DefaultParams.contractAddress
-                ,BigInteger.ZERO
-                ,encodedFunction);
-
-        return rawTx;
-    }
-
+    /**
+     * Retreive an ECDSA public key from the related private key
+     * @param privateKeyInHex the private key, encoded in hexadecimal
+     * @return the public key in hexadecimal
+     */
     public  String getPublicKeyInHex(String privateKeyInHex) {
         BigInteger privateKeyInBT = new BigInteger(privateKeyInHex, 16);
         ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
