@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Connection wrapper to use @SimpleClaimsRegistry
  */
-public class SimpleClaimsRegistryConnector {
+public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
 
     private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryConnector.class);
 
@@ -57,11 +57,11 @@ public class SimpleClaimsRegistryConnector {
     private static class DefaultParams {
 
         // TODO move to secret manager
-        private static String endpointUrl = "https://f89ad600453b458d8dd44554ab59500a@ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98";
-        private static String ethereumAddress = "0x41f6B225846863E3C037e92F229cD40f5d575258";
-        private static String ethereumPublicKey = "";
-        private static String ethereumPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
-        private static String contractAddress = "0xad9388311e96031d9cF2D1370826D8940d057362";
+        private static final String endpointUrl = "https://f89ad600453b458d8dd44554ab59500a@ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98";
+        private static final String ethereumAddress = "0x41f6B225846863E3C037e92F229cD40f5d575258";
+        private static final String ethereumPublicKey = "";
+        private static final String ethereumPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
+        private static final String contractAddress = "0xad9388311e96031d9cF2D1370826D8940d057362";
     }
 
     /**
@@ -140,6 +140,7 @@ public class SimpleClaimsRegistryConnector {
      * @param claimId key of @Claim
      * @return the @Claim that represents the stored value, null il not found
      */
+    @Override
     public Claim getClaim(String subjectAddress, String claimId) {
 
         try {
@@ -165,6 +166,7 @@ public class SimpleClaimsRegistryConnector {
      * @param claimId key of @Claim to set
      * @param claimValue value of @Claim to set
      */
+    @Override
     public void setClaim(String subjectAddress, String claimId, String claimValue) {
         String claimSignature = "";
 

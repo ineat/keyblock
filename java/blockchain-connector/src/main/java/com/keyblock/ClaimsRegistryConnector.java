@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Connection wrapper to use @ClaimsRegistry
  */
-public class ClaimsRegistryConnector {
+public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     /**
      * The @Web3j object that wraps blockchain RPC
      */
@@ -108,17 +108,13 @@ public class ClaimsRegistryConnector {
         return result;
     }
 
-    public String getClaim(String subjectAddress, String claimId) {
-
-        try {
-            Tuple3<BigInteger, String, String> result = contract.getClaim(subjectAddress, claimId).send();
-            System.out.println("BigInteger: "+result.component1());
-            System.out.println("String 1: "+result.component2());
-            System.out.println("String 2: "+result.component3());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    @Override
+    public Claim getClaim(String subjectAddress, String claimId) {
         return null;
+    }
+
+    @Override
+    public void setClaim(String subjectAddress, String claimId, String claimValue) {
+        
     }
 }
