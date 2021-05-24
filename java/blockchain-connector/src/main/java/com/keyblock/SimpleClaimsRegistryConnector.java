@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.*;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
@@ -14,7 +13,8 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple3;
-import org.web3j.tx.*;
+import org.web3j.tx.ClientTransactionManager;
+import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
@@ -26,7 +26,6 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Connection wrapper to use @SimpleClaimsRegistry
@@ -41,15 +40,18 @@ public class SimpleClaimsRegistryConnector {
     private Web3j web3j;
 
     /**
-     * @SimpleClaimsRegistry smart contract object
+     * @com.keyblock.contract.SimpleClaimsRegistry smart contract object
      */
     private SimpleClaimsRegistry contract;
 
     /**
-     * @Credential that represents the Ethereum account used to create transactions
+     * @org.web3j.crypto.Credentials that represents the Ethereum account used to create transactions
      */
     private Credentials credentials;
 
+    /**
+     * @org.web3j.tx.TransactionManager that handles smart contract operation
+     */
     private TransactionManager clientTxManager;
 
     private static class DefaultParams {
@@ -73,7 +75,7 @@ public class SimpleClaimsRegistryConnector {
     }
 
     /**
-     * Create a BlockchainCoonector with provided parameters
+     * Create a BlockchainConnector with provided parameters
      * @param endpointUrl RPC endpoint of Ethereum node to connect to
      * @param contractAddress @ClaimsRegistry smart contract address to use
      * @param address public address of account used to create transactions
@@ -213,19 +215,6 @@ public class SimpleClaimsRegistryConnector {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Retreive an ECDSA public key from the related private key
-     * @param privateKeyInHex the private key, encoded in hexadecimal
-     * @return the public key in hexadecimal
-     */
-    public  String getPublicKeyInHex(String privateKeyInHex) {
-        BigInteger privateKeyInBT = new BigInteger(privateKeyInHex, 16);
-        ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
-        BigInteger publicKeyInBT = aPair.getPublicKey();
-        String sPublickeyInHex = publicKeyInBT.toString(16);
-        return sPublickeyInHex;
     }
 }
 
