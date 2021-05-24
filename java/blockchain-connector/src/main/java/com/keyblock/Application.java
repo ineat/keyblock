@@ -14,12 +14,9 @@ public class Application {
         String claimId = "isadmin";
         String subjectAddress = "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14";
 
-        log.info(subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
+       log.info(subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
 
         bc.setClaim(subjectAddress, claimId, "false");
-
-       // log.info(subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
-
 
     }
 
