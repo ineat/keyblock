@@ -9,14 +9,14 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- *
+ * Manage blockchain context for the connector
  */
 public class Context {
 
     private static final Logger log = LogManager.getLogger(Context.class);
 
     /**
-     *
+     * Available contexts
      */
     public enum ContextFlavor {
 
@@ -39,38 +39,38 @@ public class Context {
     }
 
     /**
-     *
+     * Blockchain RPC endpoint
      */
     private static final String ENDPOINT_URL_KEY ="endpoint.url";
 
     /**
-     *
+     * Ethereum address to use to create transactions
      */
     private static final String ETHEREUM_ADDRESS_KEY ="ethereum.address";
 
     /**
-     *
+     * Public key of Ethereum address used to create transactions
      */
     private static final String ETHEREUM_PUBLIC_KEY_KEY ="ethereum.publicKey" ;
 
     /**
-     *
+     * Private key of Ethereum address used to create transactions
      */
     private static final String ETHEREUM_PRIVATE_KEY_KEY ="ethereum.privateKey";
 
     /**
-     *
+     * Smart contract address
      */
     private static final String CONTRACT_ADDRESS_KEY ="contract.address";
 
     /**
-     *
+     * Set of properties initialized according to selected flavor
      */
     private static Properties properties;
 
     /**
-     *
-     * @param flavor
+     * Create a context, with a set of properties, according to given flavor
+     * @param flavor the @ContextFlavor
      */
     public Context(ContextFlavor flavor) {
 
@@ -89,7 +89,7 @@ public class Context {
 
     /**
      *
-     * @return
+     * @return Blockchain RPC endpoint
      */
     public String getEndpointUrl() {
         return this.properties.getProperty(ENDPOINT_URL_KEY);
@@ -98,7 +98,7 @@ public class Context {
 
     /**
      *
-     * @return
+     * @return Ethereum address to use to create transactions
      */
     public String getEthereumAddress() {
         return this.properties.getProperty(ETHEREUM_ADDRESS_KEY);
@@ -106,7 +106,7 @@ public class Context {
 
     /**
      *
-     * @return
+     * @return Public key of Ethereum address used to create transactions
      */
     public String getEthereumPublicKey() {
         return this.properties.getProperty(ETHEREUM_PUBLIC_KEY_KEY);
@@ -114,7 +114,7 @@ public class Context {
 
     /**
      *
-     * @return
+     * @return Private key of Ethereum address used to create transactions
      */
     public String getEthereumPrivateKey() {
         // TODO move to secret manager instead of properties file
@@ -123,7 +123,7 @@ public class Context {
 
     /**
      *
-     * @return
+     * @return Smart contract address
      */
     public String getContractAddress() {
         return this.properties.getProperty(CONTRACT_ADDRESS_KEY);
