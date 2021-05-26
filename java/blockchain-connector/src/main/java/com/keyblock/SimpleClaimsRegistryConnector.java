@@ -200,5 +200,15 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public Claim setClaimSync(String subjectAddress, String claimId, String claimValue) {
+        return null;
+    }
+
+    @Override
+    public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
+        return null;
+    }
 }
 

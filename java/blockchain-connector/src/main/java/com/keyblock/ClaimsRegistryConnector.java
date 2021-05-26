@@ -117,4 +117,14 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     public void setClaim(String subjectAddress, String claimId, String claimValue) {
         
     }
+
+    @Override
+    public Claim setClaimSync(String subjectAddress, String claimId, String claimValue) {
+        return null;
+    }
+
+    @Override
+    public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
+        return null;
+    }
 }

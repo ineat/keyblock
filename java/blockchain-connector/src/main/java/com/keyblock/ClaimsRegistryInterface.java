@@ -17,4 +17,8 @@ public interface ClaimsRegistryInterface {
      * @param claimValue value of @com.keyblock.Claim to set
      */
     public void setClaim(String subjectAddress, String claimId, String claimValue);
+
+    public Claim setClaimSync(String subjectAddress, String claimId, String claimValue);
+
+    public String setClaimAsync(String subjectAddress, String claimId, String claimValue);
 }
