@@ -35,7 +35,7 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
     private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryConnector.class);
 
     /**
-     * The @Web3j object that wraps blockchain RPC
+     * @org.web3j.protocol.Web3j object that wraps blockchain RPC
      */
     private Web3j web3j;
 
@@ -54,24 +54,18 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
      */
     private TransactionManager clientTxManager;
 
-    private static class DefaultParams {
-
-        // TODO move to secret manager
-        private static final String endpointUrl = "https://f89ad600453b458d8dd44554ab59500a@ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98";
-        private static final String ethereumAddress = "0x41f6B225846863E3C037e92F229cD40f5d575258";
-        private static final String ethereumPublicKey = "";
-        private static final String ethereumPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
-        private static final String contractAddress = "0xad9388311e96031d9cF2D1370826D8940d057362";
-    }
+    private Context context;
 
     /**
      * Create a BlockchainConnector with default parameters
      */
-    public SimpleClaimsRegistryConnector() {
-        this(DefaultParams.endpointUrl
-            , DefaultParams.contractAddress
-            , DefaultParams.ethereumAddress
-            , DefaultParams.ethereumPrivateKey);
+    public SimpleClaimsRegistryConnector(Context context) {
+        this(context.getEndpointUrl()
+        , context.getContractAddress()
+        , context.getEthereumAddress()
+        , context.getEthereumPrivateKey());
+
+        this.context = context;
     }
 
     /**
@@ -94,7 +88,7 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
      */
     private void connection(String endpointUrl) {
         this.web3j = Web3j.build(new HttpService(endpointUrl));
-        log.info("Connected, get current head: "+getBlockNumber().getBlockNumber());
+        log.info("Connected, current head: "+getBlockNumber().getBlockNumber());
     }
 
     /**
@@ -102,8 +96,8 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
      * @param contractAddress @ClaimsRegistry smart contract address to use
      */
     private void loadContract(String contractAddress) {
-        assert (web3j != null);
-        assert (credentials != null);
+        assert (this.web3j != null);
+        assert (this.credentials != null);
 
         ContractGasProvider cgp = new DefaultGasProvider();
         this.contract = SimpleClaimsRegistry.load(contractAddress, this.web3j, this.clientTxManager, cgp);
@@ -134,17 +128,11 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
         return result;
     }
 
-    /**
-     * Read a @Claim from smart contract
-     * @param subjectAddress address of user
-     * @param claimId key of @Claim
-     * @return the @Claim that represents the stored value, null il not found
-     */
     @Override
     public Claim getClaim(String subjectAddress, String claimId) {
 
         try {
-            Tuple3<BigInteger, String, String> result = contract.getClaim(subjectAddress, claimId).send();
+            Tuple3<BigInteger, String, String> result = this.contract.getClaim(subjectAddress, claimId).send();
 
             return new Claim(subjectAddress
                             , result.component3()
@@ -160,20 +148,14 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
         return null;
     }
 
-    /**
-     * Call smart contract function SimpleClaimsRegistry.setClaim to create a new @Claim
-     * @param subjectAddress user address the @Claim is related to
-     * @param claimId key of @Claim to set
-     * @param claimValue value of @Claim to set
-     */
     @Override
     public void setClaim(String subjectAddress, String claimId, String claimValue) {
         String claimSignature = "";
 
         try {
             // compute nonce
-            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-                    DefaultParams.ethereumAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
+            EthGetTransactionCount ethGetTransactionCount = this.web3j.ethGetTransactionCount(
+                    context.getEthereumAddress(), DefaultBlockParameterName.LATEST).sendAsync().get();
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
             log.debug("nonce: "+nonce.toString());
 
@@ -191,14 +173,14 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
                     nonce
                     ,DefaultGasProvider.GAS_PRICE
                     ,BigInteger.valueOf(600000L) // TODO find a way to compute it more accurately
-                    ,contract.getContractAddress()
+                    ,this.contract.getContractAddress()
                     ,BigInteger.ZERO
                     ,encodedFunction);
 
             byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
             String hexValue = Numeric.toHexString(signedMessage);
 
-            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
+            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();
             if(ethSendTransaction.getError() != null)
                 log.error(ethSendTransaction.getError().getMessage());
 
