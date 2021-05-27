@@ -2,6 +2,7 @@ package com.keyblock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class Application {
 
@@ -14,8 +15,16 @@ public class Application {
         String claimId = "isadmin";
         String subjectAddress = "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14";
 
-       log.info(subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
+        log.info("1. "+subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
 
-        bc.setClaim(subjectAddress, claimId, "false");
+        TransactionReceipt txR = bc.setClaimSync(subjectAddress, claimId, "true");
+
+        log.info("2. "+bc.getClaim(subjectAddress,claimId).getValue());
+
+        String txH = bc.setClaimAsync(subjectAddress, claimId, "false");
+
+        log.info("3. "+bc.getClaim(subjectAddress,claimId).getValue());
+
+        log.info("Done");
     }
 }

@@ -11,6 +11,7 @@ import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.ClientTransactionManager;
@@ -148,8 +149,7 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
         return null;
     }
 
-    @Override
-    public void setClaim(String subjectAddress, String claimId, String claimValue) {
+    private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) {
         String claimSignature = "";
 
         try {
@@ -187,28 +187,46 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
             String transactionHash = ethSendTransaction.getTransactionHash();
             log.info("Tx hash: "+transactionHash);
 
-            // Wait for receipt
-           TransactionReceiptProcessor receiptProcessor =
-                    new PollingTransactionReceiptProcessor(web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
-                            TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
-
-            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
-            log.info("Block number: "+txReceipt.getBlockNumber());
-
+            return transactionHash;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    public Claim setClaimSync(String subjectAddress, String claimId, String claimValue) {
-        return null;
+    public void setClaim(String subjectAddress, String claimId, String claimValue) {
+
+    }
+
+    @Override
+    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
+
+        // Send raw transaction
+        String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
+
+        // Wait for receipt
+        TransactionReceiptProcessor receiptProcessor =
+                new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
+                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+
+        TransactionReceipt txReceipt = null;
+        try {
+            txReceipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
+            log.info("Block number: "+txReceipt.getBlockNumber());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransactionException e) {
+            e.printStackTrace();
+        }
+
+        return txReceipt;
     }
 
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
-        return null;
+        return sendClaimTransaction(subjectAddress,claimId, claimValue);
     }
 }
 

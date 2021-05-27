@@ -4,6 +4,7 @@ import com.keyblock.contract.ClaimsRegistry;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.gas.ContractGasProvider;
@@ -119,7 +120,7 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     }
 
     @Override
-    public Claim setClaimSync(String subjectAddress, String claimId, String claimValue) {
+    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
         return null;
     }
 
