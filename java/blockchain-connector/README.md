@@ -7,6 +7,10 @@ Client Java pour accéder au smart contract ClaimsRegistry sur Ethereum
 - `ClaimsRegistry` : smart contract de gestion des claims.
 - `SimpleClaimsRegistry` : version simplifiée de `ClaimsRegistry` sans gestion des signatures.
 
+## Fichiers
+
+- `resources/` : ABI et code compilé des smart contract, générés avec web3j depuis les fichiers .sol du projet racine
+- `resources/properties` : différents jeux de properties définissant des contextes de connexions différents (ethereum provider, adresse du smart contract ...)
 
 ## Compte Ethereum pour l'IAM
 
@@ -37,6 +41,9 @@ ClaimsRegistryConnector registry = new ClaimsRegistryConnector(new Context(Conte
 ```
 
 #### Contextes disponibles
+
+(Définis dans les fichiers properties, exploités par `Context.ContextFlavor`)
+
 - `SIMPLECLAIMREGISTRY_INFURA_ROPSTEN` Contrat SimpleClaimRegistry sur Ropsten via Infura.
 - `SIMPLECLAIMREGISTRY_GANACHE` Contrat SimpleClaimRegistry en local avec Ganache.
 - `CLAIMREGISTRY_INFURA_ROPSTEN` Contrat ClaimRegistry sur Ropsten via Infura.
