@@ -1,8 +1,9 @@
 package com.keyblock;
 
 import com.keyblock.api.Claim;
+import com.keyblock.observable.TransactionNotifierInterface;
 
-public interface ClaimsRegistryInterface {
+public interface ClaimsRegistryInterface extends TransactionNotifierInterface {
 
     /**
      * Read a @com.keyblock.Claim from smart contract

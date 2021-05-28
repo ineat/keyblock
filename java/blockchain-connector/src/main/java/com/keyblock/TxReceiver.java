@@ -1,11 +1,11 @@
 package com.keyblock;
 
-import com.keyblock.observable.TransactionListener;
+import com.keyblock.observable.TransactionListenerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-public class TxReceiver implements TransactionListener {
+public class TxReceiver implements TransactionListenerInterface {
 
     private static final Logger log = LogManager.getLogger(TxReceiver.class);
 

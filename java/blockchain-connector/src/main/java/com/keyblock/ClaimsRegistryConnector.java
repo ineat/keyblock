@@ -2,6 +2,7 @@ package com.keyblock;
 
 import com.keyblock.api.Claim;
 import com.keyblock.contract.ClaimsRegistry;
+import com.keyblock.observable.TransactionListenerInterface;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
@@ -30,6 +31,11 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
      * @Credential that represents the Ethereum account used to create transactions
      */
     private Credentials credentials;
+
+    @Override
+    public void subscribe(String transactionHash, TransactionListenerInterface listener) {
+
+    }
 
     private static class DefaultParams {
 

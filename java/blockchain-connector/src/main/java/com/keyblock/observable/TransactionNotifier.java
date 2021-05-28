@@ -20,7 +20,7 @@ public class TransactionNotifier {
 
     private static final Logger log = LogManager.getLogger(TransactionNotifier.class);
 
-    private HashMap<String, TransactionListener> listeners = new HashMap<String, TransactionListener>();
+    private HashMap<String, TransactionListenerInterface> listeners = new HashMap<String, TransactionListenerInterface>();
 
     private Web3j web3j;
 
@@ -33,7 +33,7 @@ public class TransactionNotifier {
      * @param transactionHash the hash of expected transaction
      * @param listener the com.keyblock.observable.TransactionListener that will be notified when transaction is validated
      */
-    public void subscribe(String transactionHash, TransactionListener listener) {
+    public void subscribe(String transactionHash, TransactionListenerInterface listener) {
 
         log.info("New subscription for: "+transactionHash);
 
@@ -56,7 +56,7 @@ public class TransactionNotifier {
      * @param transactionHash the listening transaction
      * @param listener the listener to remove
      */
-    public void unsubscribe(String transactionHash, TransactionListener listener) {
+    public void unsubscribe(String transactionHash, TransactionListenerInterface listener) {
         if(this.listeners.get(transactionHash).equals(listener))
             this.listeners.remove(transactionHash);
     }
@@ -83,7 +83,7 @@ public class TransactionNotifier {
      * @param transactionReceipt
      */
     private void notify(String transactionHash, TransactionReceipt transactionReceipt) {
-        TransactionListener listener = this.listeners.get(transactionHash);
+        TransactionListenerInterface listener = this.listeners.get(transactionHash);
         if(listener != null){
             listener.notify(transactionReceipt);
         }
@@ -104,7 +104,7 @@ public class TransactionNotifier {
     private class TxListeningRunner implements Runnable {
 
         private String transactionHash;
-        private TransactionListener listener;
+        private TransactionListenerInterface listener;
         private Web3j web3j;
 
         /**
@@ -113,7 +113,7 @@ public class TransactionNotifier {
          * @param listener the listener to be notified
          * @param web3j the web3 object with blockchain connection
          */
-        public TxListeningRunner(String transactionHash, TransactionListener listener, Web3j web3j) {
+        public TxListeningRunner(String transactionHash, TransactionListenerInterface listener, Web3j web3j) {
             this.transactionHash = transactionHash;
             this.listener = listener;
             this.web3j = web3j;

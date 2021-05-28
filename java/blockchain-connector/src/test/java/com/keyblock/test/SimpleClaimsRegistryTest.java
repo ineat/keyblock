@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SimpleClaimsRegistryTest {
+public class SimpleClaimsRegistryTest  {
 
     private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryTest.class);
 
@@ -121,4 +121,5 @@ public class SimpleClaimsRegistryTest {
         Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
         assertNull(claim);
     }
+
 }

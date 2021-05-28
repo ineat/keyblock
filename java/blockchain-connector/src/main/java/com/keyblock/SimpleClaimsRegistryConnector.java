@@ -244,7 +244,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
     }
 
     @Override
-    public com.keyblock.api. TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
+    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
 
         // Send tx and uses hash to wait for receipt
         String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
