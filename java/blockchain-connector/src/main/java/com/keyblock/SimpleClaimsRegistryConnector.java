@@ -135,7 +135,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
 
     @Override
     public Claim getClaim(String subjectAddress, String claimId) {
-
+        log.info("get "+claimId+" for "+subjectAddress);
         try {
             Tuple3<BigInteger, String, String> result = this.contract.getClaim(subjectAddress, claimId).send();
 

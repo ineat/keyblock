@@ -2,7 +2,7 @@ package com.keyblock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+
 
 public class Application {
 
@@ -19,7 +19,7 @@ public class Application {
 
        // TransactionReceipt txR = bc.setClaimSync(subjectAddress, claimId, "true");
 
-        log.info("2. "+bc.getClaim(subjectAddress,claimId).getValue());
+       /* log.info("2. "+bc.getClaim(subjectAddress,claimId).getValue());
 
         String txH = bc.setClaimAsync(subjectAddress, claimId, "false");
 
@@ -27,8 +27,15 @@ public class Application {
         bc.subscribe(txH, new TxReceiver(bc));
 
         log.info("4. "+bc.getClaim(subjectAddress,claimId).getValue());
-
+*/
         log.info("Done");
+/*
+        // always admin user
+        bc.setClaimSync("0x8433e11fd3c2dc5f9e44558be8fccce8db0fcd1e", claimId, "true");
+
+        // never admin user
+        bc.setClaimSync("0xB9E9A10Ba80518A5a70893d14CCcB6b5A9343fEF", claimId, "false");*/
+
     }
 
 }
