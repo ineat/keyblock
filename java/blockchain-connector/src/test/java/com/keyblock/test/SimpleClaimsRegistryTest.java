@@ -112,4 +112,13 @@ public class SimpleClaimsRegistryTest {
         Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
         assertNull(claim);
     }
+
+    @Test
+    public void whenLookForUserNoAddress_thenError() {
+        UserMock user = iam.getUser(IAMMock.NO_ADDRESS_USER);
+        assertNotNull(user);
+
+        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNull(claim);
+    }
 }

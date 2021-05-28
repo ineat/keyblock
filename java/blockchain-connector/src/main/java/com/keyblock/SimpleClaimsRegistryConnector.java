@@ -137,16 +137,27 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
     @Override
     public Claim getClaim(String subjectAddress, String claimId) {
         log.info("get "+claimId+" for "+subjectAddress);
+        if(subjectAddress == null || subjectAddress.isEmpty() || claimId == null || claimId.isEmpty()){
+            log.error("No data, no claim !");
+            return null;
+        }
+
         try {
             Tuple3<BigInteger, String, String> result = this.contract.getClaim(subjectAddress, claimId).send();
-
-            return new Claim(subjectAddress
+            if(result != null) {
+                // Smart contract returns 0 = success
+                if (result.component1().toString().equals("0")) {
+                    return new Claim(subjectAddress
                             , result.component3()
                             , null
                             , null
                             , claimId
                             , result.component2());
-
+                }
+                else {
+                    log.error(result.component2());
+                }
+            }
         } catch (Exception e) {
             log.error("Claim not found for "+subjectAddress);
         }
