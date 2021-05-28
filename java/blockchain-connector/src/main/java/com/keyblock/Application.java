@@ -17,14 +17,18 @@ public class Application {
 
         log.info("1. "+subjectAddress+" "+claimId+": " +bc.getClaim(subjectAddress,claimId).getValue());
 
-        TransactionReceipt txR = bc.setClaimSync(subjectAddress, claimId, "true");
+       // TransactionReceipt txR = bc.setClaimSync(subjectAddress, claimId, "true");
 
         log.info("2. "+bc.getClaim(subjectAddress,claimId).getValue());
 
         String txH = bc.setClaimAsync(subjectAddress, claimId, "false");
 
-        log.info("3. "+bc.getClaim(subjectAddress,claimId).getValue());
+        log.info("3.");
+        bc.subscribe(txH, new TxReceiver(bc));
+
+        log.info("4. "+bc.getClaim(subjectAddress,claimId).getValue());
 
         log.info("Done");
     }
+
 }

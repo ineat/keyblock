@@ -1,6 +1,7 @@
 package com.keyblock;
 
 import com.keyblock.contract.SimpleClaimsRegistry;
+import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.web3j.abi.FunctionEncoder;
@@ -31,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Connection wrapper to use @SimpleClaimsRegistry
  */
-public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
+public class SimpleClaimsRegistryConnector extends TransactionNotifier implements ClaimsRegistryInterface {
 
     private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryConnector.class);
 
@@ -67,6 +68,9 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
         , context.getEthereumPrivateKey());
 
         this.context = context;
+
+        // for the notifier
+        this.setWeb3j(this.web3j);
     }
 
     /**
@@ -149,6 +153,13 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
         return null;
     }
 
+    /**
+     * Build a raw transaction from given data
+     * @param subjectAddress
+     * @param claimId
+     * @param claimValue
+     * @return the hash of transaction
+     */
     private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) {
         String claimSignature = "";
 
@@ -196,17 +207,7 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
     }
 
     @Override
-    public void setClaim(String subjectAddress, String claimId, String claimValue) {
-
-    }
-
-    @Override
-    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
-
-        // Send raw transaction
-        String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
-
-        // Wait for receipt
+    public TransactionReceipt waitForReceipt(String transactionHash) {
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
@@ -226,7 +227,17 @@ public class SimpleClaimsRegistryConnector implements ClaimsRegistryInterface {
 
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
+        // Send tx and return hash
         return sendClaimTransaction(subjectAddress,claimId, claimValue);
+    }
+
+    @Override
+    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
+
+        // Send tx and user hash to wait for receipt
+        String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
+        return waitForReceipt(transactionHash);
+
     }
 }
 

@@ -115,17 +115,17 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     }
 
     @Override
-    public void setClaim(String subjectAddress, String claimId, String claimValue) {
-        
-    }
-
-    @Override
     public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
         return null;
     }
 
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
+        return null;
+    }
+
+    @Override
+    public TransactionReceipt waitForReceipt(String transactionHash) {
         return null;
     }
 }
