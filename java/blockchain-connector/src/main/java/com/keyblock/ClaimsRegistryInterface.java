@@ -1,6 +1,6 @@
 package com.keyblock;
 
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import com.keyblock.api.Claim;
 
 public interface ClaimsRegistryInterface {
 
@@ -19,7 +19,7 @@ public interface ClaimsRegistryInterface {
      * @param claimValue value of @com.keyblock.Claim to set
      * @return the @com.keyblock.Claim created
      */
-    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue);
+    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue);
 
     /**
      * Asynchrinous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and only send transaction.
@@ -35,6 +35,6 @@ public interface ClaimsRegistryInterface {
      * @param transactionHash the hash of transaction to wait for
      * @return the org.web3j.protocol.core.methods.response.TransactionReceipt of given transaction hash
      */
-    public TransactionReceipt waitForReceipt(String transactionHash);
+    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash);
 
 }

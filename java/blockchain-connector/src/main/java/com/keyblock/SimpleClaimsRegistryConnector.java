@@ -1,5 +1,6 @@
 package com.keyblock;
 
+import com.keyblock.api.Claim;
 import com.keyblock.contract.SimpleClaimsRegistry;
 import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.Logger;
@@ -147,7 +148,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
                             , result.component2());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Claim not found for "+subjectAddress);
         }
 
         return null;
@@ -207,7 +208,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
     }
 
     @Override
-    public TransactionReceipt waitForReceipt(String transactionHash) {
+    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash) {
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
@@ -222,7 +223,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
             e.printStackTrace();
         }
 
-        return txReceipt;
+        return com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt);
     }
 
     @Override
@@ -232,12 +233,11 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
     }
 
     @Override
-    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
+    public com.keyblock.api. TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
 
         // Send tx and user hash to wait for receipt
         String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
         return waitForReceipt(transactionHash);
-
     }
 }
 

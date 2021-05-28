@@ -1,10 +1,10 @@
 package com.keyblock.test;
 
-import com.keyblock.Claim;
+import com.keyblock.api.Claim;
 import com.keyblock.ClaimsRegistryInterface;
 import com.keyblock.Context;
 import com.keyblock.SimpleClaimsRegistryConnector;
-import com.keyblock.observable.TransactionListener;
+import com.keyblock.api.TransactionReceipt;
 import com.keyblock.test.mock.IAMMock;
 import com.keyblock.test.mock.UserMock;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import static org.junit.jupiter.api.Assertions.*;
 

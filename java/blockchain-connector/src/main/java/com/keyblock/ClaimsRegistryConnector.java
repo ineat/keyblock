@@ -1,17 +1,15 @@
 package com.keyblock;
 
+import com.keyblock.api.Claim;
 import com.keyblock.contract.ClaimsRegistry;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -115,7 +113,7 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     }
 
     @Override
-    public TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
+    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
         return null;
     }
 
@@ -125,7 +123,7 @@ public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
     }
 
     @Override
-    public TransactionReceipt waitForReceipt(String transactionHash) {
+    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash) {
         return null;
     }
 }
