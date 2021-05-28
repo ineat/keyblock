@@ -22,7 +22,7 @@ public interface ClaimsRegistryInterface {
     public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue);
 
     /**
-     * Asynchrinous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and only send transaction.
+     * Asynchronous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and only send transaction.
      * @param subjectAddress user address the @Claim is related to
      * @param claimId key of @com.keyblock.Claim to set
      * @param claimValue value of @com.keyblock.Claim to set
