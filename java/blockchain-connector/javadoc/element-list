@@ -1,0 +1,8 @@
+com.keyblock
+com.keyblock.api
+com.keyblock.contract
+com.keyblock.converter
+com.keyblock.crypto
+com.keyblock.observable
+com.keyblock.test
+com.keyblock.test.mock
