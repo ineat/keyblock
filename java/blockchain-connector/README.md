@@ -25,3 +25,46 @@ Attention, comptes de test sur Ropsten uniquement :
 - Adresse : 0x5Db6617D5A8BB274379cD815D765722aF5088F8a
 - Clé privée : 6484e4896a53883b15451347df3bd63a8e9b935310e194cd162fa64159086b07
 - https://ropsten.etherscan.io/address/0x5Db6617D5A8BB274379cD815D765722aF5088F8a
+
+## Utilisation
+
+- importer le jar `blockchain-connector-1.0-SNAPSHOT.jar`
+
+#### Connexion
+
+```
+ClaimsRegistryConnector registry = new ClaimsRegistryConnector(new Context(Context.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
+```
+
+#### Contextes disponibles
+- `SIMPLECLAIMREGISTRY_INFURA_ROPSTEN` Contrat SimpleClaimRegistry sur Ropsten via Infura.
+- `SIMPLECLAIMREGISTRY_GANACHE` Contrat SimpleClaimRegistry en local avec Ganache.
+- `CLAIMREGISTRY_INFURA_ROPSTEN` Contrat ClaimRegistry sur Ropsten via Infura.
+- `SIMPLECLAIMREGISTRY_GANACHE` Contrat ClaimRegistry en local avec Ganache.
+
+
+#### Lecture
+```
+String subjectAddress = "0x...";
+String claimId = "isadmin";
+
+Claim claim = registry.getClaim(subjectAddress, claimId);
+```
+
+#### Ecriture synchrone
+
+```
+TransactionReceipt txReceipt  = registry.setClaimSync(subjectAddress, claimId, "true");
+```
+#### Ecriture asynchrone avec wait bloquant optionnel
+
+```
+String txHash = registry.setClaimAsync(subjectAddress, claimId, "true");
+TransactionReceipt txReceipt = registry.waitForReceipt(txHash);
+```
+
+#### Ecriture asynchrone avec listener
+
+```
+
+```
