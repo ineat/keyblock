@@ -1,4 +1,4 @@
-package converter;
+package com.keyblock.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;

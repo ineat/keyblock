@@ -57,12 +57,12 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
      */
     private TransactionManager clientTxManager;
 
-    private Context context;
+    private BlockchainContext context;
 
     /**
      * Create a BlockchainConnector with default parameters
      */
-    public SimpleClaimsRegistryConnector(Context context) {
+    public SimpleClaimsRegistryConnector(BlockchainContext context) {
         this(context.getEndpointUrl()
         , context.getContractAddress()
         , context.getEthereumAddress()

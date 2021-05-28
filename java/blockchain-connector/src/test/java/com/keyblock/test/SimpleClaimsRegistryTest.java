@@ -2,7 +2,7 @@ package com.keyblock.test;
 
 import com.keyblock.api.Claim;
 import com.keyblock.ClaimsRegistryInterface;
-import com.keyblock.Context;
+import com.keyblock.BlockchainContext;
 import com.keyblock.SimpleClaimsRegistryConnector;
 import com.keyblock.api.TransactionReceipt;
 import com.keyblock.test.mock.IAMMock;
@@ -32,7 +32,7 @@ public class SimpleClaimsRegistryTest {
     @BeforeAll
     public void initRegistry() {
         log.info("Init smart contract");
-        this.registry = new SimpleClaimsRegistryConnector(new Context(Context.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
+        this.registry = new SimpleClaimsRegistryConnector(new BlockchainContext(BlockchainContext.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
         assertNotNull(registry);
     }
 

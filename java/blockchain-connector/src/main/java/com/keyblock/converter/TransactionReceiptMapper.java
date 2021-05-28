@@ -1,4 +1,4 @@
-package converter;
+package com.keyblock.converter;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

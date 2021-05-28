@@ -1,0 +1,7 @@
+module blockchain.connector {
+    requires org.apache.logging.log4j;
+    requires org.mapstruct;
+    requires core;
+    exports com.keyblock;
+    exports com.keyblock.api;
+}

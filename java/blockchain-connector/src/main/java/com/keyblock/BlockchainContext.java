@@ -11,9 +11,9 @@ import java.util.Properties;
 /**
  * Manage blockchain context for the connector
  */
-public class Context {
+public class BlockchainContext {
 
-    private static final Logger log = LogManager.getLogger(Context.class);
+    private static final Logger log = LogManager.getLogger(BlockchainContext.class);
 
     /**
      * Available contexts
@@ -72,7 +72,7 @@ public class Context {
      * Create a context, with a set of properties, according to given flavor
      * @param flavor the @ContextFlavor
      */
-    public Context(ContextFlavor flavor) {
+    public BlockchainContext(ContextFlavor flavor) {
 
         assert(flavor != null);
 

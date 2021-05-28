@@ -1,6 +1,6 @@
 package com.keyblock.api;
 
-import converter.TransactionReceiptConverter;
+import com.keyblock.converter.TransactionReceiptConverter;
 import org.web3j.protocol.core.methods.response.Log;
 
 import java.util.List;
