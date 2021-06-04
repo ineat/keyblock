@@ -3,6 +3,7 @@ package com.keyblock;
 import com.keyblock.api.Claim;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.observable.TransactionListenerInterface;
+import com.keyblock.observable.TransactionNotifier;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
@@ -16,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Connection wrapper to use @ClaimsRegistry
  */
-public class ClaimsRegistryConnector implements ClaimsRegistryInterface {
+public class ClaimsRegistryConnector extends TransactionNotifier implements ClaimsRegistryInterface {
     /**
      * The @Web3j object that wraps blockchain RPC
      */

@@ -16,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +37,24 @@ public class SimpleClaimsRegistryTest  {
         log.info("Init smart contract");
         this.registry = new SimpleClaimsRegistryConnector(new BlockchainContext(BlockchainContext.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
         assertNotNull(registry);
+    }
+
+    @Test
+    public void whenLookForUnknownUser_thenError() {
+        UserMock user = iam.getUser(IAMMock.UNKNOWN_USER);
+        assertNotNull(user);
+
+        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNull(claim);
+    }
+
+    @Test
+    public void whenLookForUserNoAddress_thenError() {
+        UserMock user = iam.getUser(IAMMock.NO_ADDRESS_USER);
+        assertNotNull(user);
+
+        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNull(claim);
     }
 
     @Test
@@ -100,26 +121,23 @@ public class SimpleClaimsRegistryTest  {
     }
 
     @Test
-    public void whenUpdateASyncWithListener_thenAdminChanged() {
-
-    }
-
-    @Test
-    public void whenLookForUnknownUser_thenError() {
-        UserMock user = iam.getUser(IAMMock.UNKNOWN_USER);
+    public void whenUpdateASyncWithListener_thenAdminChanged() throws ExecutionException, InterruptedException {
+        UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 
-        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
-        assertNull(claim);
-    }
+        TestTxListener listener = new TestTxListener(registry);
 
-    @Test
-    public void whenLookForUserNoAddress_thenError() {
-        UserMock user = iam.getUser(IAMMock.NO_ADDRESS_USER);
-        assertNotNull(user);
+        String txHash = registry.setClaimAsync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, listener.getTestClaimValue());
+        registry.subscribe(txHash, listener);
+        assertEquals(registry.getListeners().size(),1);
+        log.info("Listener has subscribe, wait for notify");
 
-        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
-        assertNull(claim);
+        Future<TransactionReceipt> completableFuture = listener.getReceipt();
+        log.info("CompletableFuture received");
+        TransactionReceipt receipt = completableFuture.get();
+        log.info("Check for receipt");
+        assertNotNull(receipt);
+
     }
 
 }

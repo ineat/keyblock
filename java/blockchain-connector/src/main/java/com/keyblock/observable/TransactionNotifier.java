@@ -41,7 +41,7 @@ public class TransactionNotifier {
         Optional<TransactionReceipt> transactionReceipt = checkReceipt(transactionHash);
         if(! transactionReceipt.isEmpty()) {
             log.info("Receipt found, notify listener");
-           listener.notify(transactionReceipt.get());
+           listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
         }
         else {
             log.info("Receipt not found, start waiting ...");
@@ -82,12 +82,12 @@ public class TransactionNotifier {
      * @param transactionHash
      * @param transactionReceipt
      */
-    private void notify(String transactionHash, TransactionReceipt transactionReceipt) {
+  /*  private void notify(String transactionHash, TransactionReceipt transactionReceipt) {
         TransactionListenerInterface listener = this.listeners.get(transactionHash);
         if(listener != null){
-            listener.notify(transactionReceipt);
+            listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt));
         }
-    }
+    }*/
 
     /**
      * Start listening in background for a transaction to be validated
@@ -99,7 +99,15 @@ public class TransactionNotifier {
     }
 
     /**
-     * Creates a runner that wait for a transaction receipt to nitify a listener
+     * Get listeners list
+     * @return map of txHash -> listener
+     */
+    public HashMap<String, TransactionListenerInterface> getListeners() {
+        return listeners;
+    }
+
+    /**
+     * Creates a runner that wait for a transaction receipt to notify a listener
      */
     private class TxListeningRunner implements Runnable {
 
@@ -133,7 +141,7 @@ public class TransactionNotifier {
             try {
                 txReceipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
                 log.info("Block number: "+txReceipt.getBlockNumber());
-                this.listener.notify(txReceipt);
+                this.listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt));
 
             } catch (IOException e) {
                 e.printStackTrace();

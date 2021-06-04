@@ -1,6 +1,7 @@
 package com.keyblock.observable;
 
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+
+import com.keyblock.api.TransactionReceipt;
 
 /**
  * Interface to implement to be able to subscribe and be notified when a transaction is validated
