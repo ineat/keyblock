@@ -75,11 +75,22 @@ public class BlockchainContext {
     public BlockchainContext(ContextFlavor flavor) {
 
         assert(flavor != null);
+        loadProperties(flavor.getFile());
+    }
 
+    /**
+     * Create a context with a set of properties.
+     * @param propertiesFile properties file path
+     */
+    public BlockchainContext(String propertiesFile) {
+        loadProperties(propertiesFile);
+    }
+
+    private void loadProperties(String propertiesFile) {
         this.properties = new Properties();
         try {
-            log.debug("Read properties from: "+flavor.getFile());
-            InputStream propertiesStream = new FileInputStream(flavor.getFile());
+            log.debug("Read properties from: "+propertiesFile);
+            InputStream propertiesStream = new FileInputStream(propertiesFile);
             properties.load(propertiesStream);
         } catch (IOException e) {
             log.error("Fail to load properties: "+e.getMessage());

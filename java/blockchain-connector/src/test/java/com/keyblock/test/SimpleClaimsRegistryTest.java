@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -31,7 +32,6 @@ public class SimpleClaimsRegistryTest  {
 
     @InjectMocks
     IAMMock iam;
-
     @BeforeAll
     public void initRegistry() {
         log.info("Init smart contract");

@@ -32,12 +32,49 @@ Attention, comptes de test sur Ropsten uniquement :
 
 ## Utilisation
 
-- importer le jar `blockchain-connector-1.0-SNAPSHOT.jar`
+#### Import
+
+Importer le jar `blockchain-connector-1.0-SNAPSHOT.jar` dans le projet
+
+pom.xml:
+```
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.14.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.8.4</version>
+        </dependency>        
+        <dependency>
+            <groupId>com.keyblock</groupId>
+            <artifactId>blockchain-connector</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/blockchain-connector-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
+    </dependencies>
+```
+#### Configuration
+
+Créer un fichier `.properties` avec les éléments suivants :
+
+```properties
+endpoint.url=<URL du endpoint RPC>
+ethereum.address=<adresse Ethereum à utiliser pour les appels>
+ethereum.publicKey=<clé publique de l'adresse Ethereum, peut être laissé vide, sera calculé depuis la clé privée>
+ethereum.privateKey=<clé privée de l'adresse Ethereum>
+contract.address=<adresse du smart contract>
+```
 
 #### Connexion
 
 ```
-ClaimsRegistryConnector registry = new ClaimsRegistryConnector(new Context(Context.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
+BlockchainContext context = new BlockchainContext("src/main/resources/properties/blockchain-connector.properties");
+SimpleClaimsRegistryConnector bc = new SimpleClaimsRegistryConnector(context);
 ```
 
 #### Contextes disponibles

@@ -21,10 +21,10 @@ import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.ClientTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Numeric;
+
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -65,6 +65,11 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
     private BlockchainContext context;
 
     /**
+     * Gas provider, use to compute right gas amount and price for a call
+     */
+    private ContractGasProvider gasProvider;
+
+    /**
      * Create a BlockchainConnector with default parameters
      */
     public SimpleClaimsRegistryConnector(BlockchainContext context) {
@@ -76,7 +81,9 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
         this.context = context;
 
         // for the notifier
-        this.setWeb3j(this.web3j);
+        super.setWeb3j(this.web3j);
+
+        this.gasProvider = new CustomGasProvider();
     }
 
     /**
@@ -110,8 +117,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
         assert (this.web3j != null);
         assert (this.credentials != null);
 
-        ContractGasProvider cgp = new DefaultGasProvider();
-        this.contract = SimpleClaimsRegistry.load(contractAddress, this.web3j, this.clientTxManager, cgp);
+        this.contract = SimpleClaimsRegistry.load(contractAddress, this.web3j, this.clientTxManager, gasProvider);
         log.info("Contract loaded: "+contract.getContractAddress());
 
         try {
@@ -196,8 +202,6 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
             // encode function call to tx data
             String encodedFunction = FunctionEncoder.encode(function);
             log.debug("encodedFunction: "+encodedFunction);
-
-            ContractGasProvider gasProvider = new CustomGasProvider();
 
             RawTransaction rawTx = RawTransaction.createTransaction(
                     nonce
