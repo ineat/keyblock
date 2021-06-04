@@ -1,6 +1,8 @@
 package com.keyblock;
 
 import com.keyblock.api.Claim;
+import com.keyblock.blockchain.BlockchainContext;
+import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.contract.SimpleClaimsRegistry;
 import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.Logger;
@@ -195,10 +197,12 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
             String encodedFunction = FunctionEncoder.encode(function);
             log.debug("encodedFunction: "+encodedFunction);
 
+            ContractGasProvider gasProvider = new CustomGasProvider();
+
             RawTransaction rawTx = RawTransaction.createTransaction(
                     nonce
-                    ,DefaultGasProvider.GAS_PRICE
-                    ,BigInteger.valueOf(600000L) // TODO find a way to compute it more accurately
+                    ,gasProvider.getGasPrice(encodedFunction)
+                    ,gasProvider.getGasLimit(encodedFunction)
                     ,this.contract.getContractAddress()
                     ,BigInteger.ZERO
                     ,encodedFunction);
