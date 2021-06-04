@@ -61,17 +61,35 @@ Claim claim = registry.getClaim(subjectAddress, claimId);
 #### Ecriture synchrone
 
 ```
-TransactionReceipt txReceipt  = registry.setClaimSync(subjectAddress, claimId, "true");
+TransactionReceipt txReceipt  = registry.setClaimSync(subjectAddress, claimId, claimValue);
 ```
 #### Ecriture asynchrone avec wait bloquant optionnel
 
 ```
-String txHash = registry.setClaimAsync(subjectAddress, claimId, "true");
+String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
 TransactionReceipt txReceipt = registry.waitForReceipt(txHash);
 ```
 
 #### Ecriture asynchrone avec listener
 
+Create the listener: 
 ```
+public class MyTransactionListener implements TransactionListenerInterface {
+    
+    @Override
+    public void notify(TransactionReceipt transactionReceipt) {
+        // do some stuff with tx receipt
+    }
+
+}
+
+```
+
+Subscribe: 
+```
+MyTransactionListener listener = new MyTransactionListener(registry);
+
+String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
+registry.subscribe(txHash, listener);
 
 ```
