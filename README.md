@@ -98,7 +98,7 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 - [ ] Gérer les secrets dans un secret manager 
 - [X] Initialiser un connecteur blockchain pour l'IAM
 - [X] Mapper le connecteur sur chaque fonction du smart contract 
-- [ ] Création des claims par l'IAM
+- [X] Création des claims par l'IAM
 - [ ] Révocation des claims par l'IAM  
 - [ ] Vérification de la signature de la claim par l'appli web
 
