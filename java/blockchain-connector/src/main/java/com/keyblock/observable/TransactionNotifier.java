@@ -56,10 +56,10 @@ public class TransactionNotifier {
      * @param transactionHash the listening transaction
      * @param listener the listener to remove
      */
-    public void unsubscribe(String transactionHash, TransactionListenerInterface listener) {
+/*    public void unsubscribe(String transactionHash, TransactionListenerInterface listener) {
         if(this.listeners.get(transactionHash).equals(listener))
             this.listeners.remove(transactionHash);
-    }
+    }*/
 
     /**
      * Check if transaction has already been validated

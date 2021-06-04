@@ -57,6 +57,9 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
      */
     private TransactionManager clientTxManager;
 
+    /**
+     * Connection context for blockchain endpoint, smart contract ...
+     */
     private BlockchainContext context;
 
     /**

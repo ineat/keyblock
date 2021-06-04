@@ -93,3 +93,9 @@ String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
 registry.subscribe(txHash, listener);
 
 ```
+
+## Classes
+
+https://app.diagrams.net/#G18hVQeigNhCrb1AxOr9Zugvekhz-dv02j
+
+![Diagramme de classes](com.keyblock.png)
