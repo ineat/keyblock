@@ -4,9 +4,14 @@ import com.keyblock.api.Claim;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.observable.TransactionListenerInterface;
 import com.keyblock.observable.TransactionNotifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.EthSign;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
@@ -18,6 +23,9 @@ import java.util.concurrent.ExecutionException;
  * Connection wrapper to use @ClaimsRegistry
  */
 public class ClaimsRegistryConnector extends TransactionNotifier implements ClaimsRegistryInterface {
+
+    private static final Logger log = LogManager.getLogger(ClaimsRegistryConnector.class);
+
     /**
      * The @Web3j object that wraps blockchain RPC
      */
@@ -132,5 +140,19 @@ public class ClaimsRegistryConnector extends TransactionNotifier implements Clai
     @Override
     public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash) {
         return null;
+    }
+
+    public void signClaim(Claim claim) throws IOException {
+
+        String plainData = new StringBuffer(claim.getIssuerAddress())
+                .append(claim.getSubjectAddress())
+                .append(claim.getKey())
+                .append(claim.getValue()).toString();
+        byte[] data = plainData.getBytes();
+
+        Request<?, EthSign> signRequest = web3j.ethSign(credentials.getAddress(), Hash.sha3(plainData));
+        EthSign sign = signRequest.send();
+
+        log.info("Signature: "+sign.getSignature());
     }
 }

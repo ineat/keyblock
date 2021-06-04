@@ -84,6 +84,7 @@ public class SimpleClaimsRegistryConnector extends TransactionNotifier implement
         super.setWeb3j(this.web3j);
 
         this.gasProvider = new CustomGasProvider();
+
     }
 
     /**
