@@ -34,7 +34,9 @@ Attention, comptes de test sur Ropsten uniquement :
 
 #### Import
 
-Importer le jar `blockchain-connector-1.0-SNAPSHOT.jar` dans le projet
+`mvn install` et récupérer le jar `blockchain-connector-1.0-SNAPSHOT.jar` dans `target`, et l'importer dans le projet.
+
+Il a besoin de 2 dépendances : `log4j-core` et `org.web3j`.
 
 pom.xml:
 ```
@@ -60,7 +62,7 @@ pom.xml:
 ```
 #### Configuration
 
-Créer un fichier `.properties` avec les éléments suivants :
+La connexion à la blockchain se fait via un fichier `.properties`.
 
 ```properties
 endpoint.url=<URL du endpoint RPC>
@@ -72,6 +74,8 @@ contract.address=<adresse du smart contract>
 
 #### Connexion
 
+Le fichier de paramétrage est utilisé de cette façon pour initialiser le client :
+
 ```
 BlockchainContext context = new BlockchainContext("src/main/resources/properties/blockchain-connector.properties");
 SimpleClaimsRegistryConnector registry = new SimpleClaimsRegistryConnector(context);
@@ -79,7 +83,9 @@ SimpleClaimsRegistryConnector registry = new SimpleClaimsRegistryConnector(conte
 
 #### Contextes disponibles
 
-(Définis dans les fichiers properties, exploités par `Context.ContextFlavor`)
+Des contextes prédéfinis sont utilisables (fichier `.properties` correspondants embarqués dans le jar).
+
+Ils sont définis dans par l'enum `Context.ContextFlavor`.
 
 - `SIMPLECLAIMREGISTRY_INFURA_ROPSTEN` Contrat SimpleClaimRegistry sur Ropsten via Infura.
 - `SIMPLECLAIMREGISTRY_GANACHE` Contrat SimpleClaimRegistry en local avec Ganache.
