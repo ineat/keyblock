@@ -74,7 +74,7 @@ contract.address=<adresse du smart contract>
 
 ```
 BlockchainContext context = new BlockchainContext("src/main/resources/properties/blockchain-connector.properties");
-SimpleClaimsRegistryConnector bc = new SimpleClaimsRegistryConnector(context);
+SimpleClaimsRegistryConnector registry = new SimpleClaimsRegistryConnector(context);
 ```
 
 #### Contextes disponibles
@@ -86,6 +86,7 @@ SimpleClaimsRegistryConnector bc = new SimpleClaimsRegistryConnector(context);
 - `CLAIMREGISTRY_INFURA_ROPSTEN` Contrat ClaimRegistry sur Ropsten via Infura.
 - `SIMPLECLAIMREGISTRY_GANACHE` Contrat ClaimRegistry en local avec Ganache.
 
+On peut soit utiliser un de ces contextes prédéfinis en créant un `new BlockchainContext(BlockchainContext.ContextFlavor.<context prédéfini>))`, soit utiliser un fichier properties personnalisé avec un `new BlockchainContext('properties/file/path')`
 
 #### Lecture
 ```
@@ -97,10 +98,16 @@ Claim claim = registry.getClaim(subjectAddress, claimId);
 
 #### Ecriture synchrone
 
+Exécution bloquante tant que la transaction n'a pas été validée.
+
 ```
 TransactionReceipt txReceipt  = registry.setClaimSync(subjectAddress, claimId, claimValue);
 ```
 #### Ecriture asynchrone avec wait bloquant optionnel
+
+2 étapes :
+- 1. La transaction est créée et envoyée sur le réseau, sa validation est en attente, non bloquante. On récupère le hash de la transaction
+- 2. Avec le hash, on attent le receipt (le "compte-rendu" de validation de la tx, qui indique qu'elle a été validée). L'appel au wait est alors bloquant en attendant le receipt.
 
 ```
 String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
@@ -109,7 +116,12 @@ TransactionReceipt txReceipt = registry.waitForReceipt(txHash);
 
 #### Ecriture asynchrone avec listener
 
-Create the listener: 
+On va d'abord créer la claim de façon asynchrone : 
+```
+String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
+```
+
+Puis on va pouvoir créer un objet listener qui va s'abonner à la notification de validation. Il sera notifié lorsque le receipt sera obtenu, il va alors le récupérer et pourra effectuer ce qu'il y a à faire dans ce cas.
 ```
 public class MyTransactionListener implements TransactionListenerInterface {
     
