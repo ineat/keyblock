@@ -1,4 +1,3 @@
-/*
 
 var simpleClaimsRegistry = {
     address: "0xad9388311e96031d9cF2D1370826D8940d057362"
@@ -12,11 +11,11 @@ var claimsRegistry = {
 
 var contractData = simpleClaimsRegistry;
 
-*/
+
 /**
 * Create a Web3 object to connect to blockchain
 */
-/*
+
 async function initWeb3() {
     // Modern dapp browsers...
     if (window.ethereum) {
@@ -39,11 +38,10 @@ async function initWeb3() {
 
     console.log("web3 : "+web3.version);
 }
-*/
+
 /**
 * Init the contract objects
 */
-/*
 async function loadContract() {
     if(contractData.address) {
         console.log("Load contract : "+JSON.stringify(contractData));
@@ -55,17 +53,6 @@ async function loadContract() {
         }
     }
 }
-*/
-/*
-function identification() {
-    ethereum.request({ method: 'eth_requestAccounts' })
-    .then( (account) => {
-        console.log("Ethereum enabled with account : "+account);
-        $('#userIdentity').text(account);
-     })
-    .catch( (error) => {console.error(error);} )
-}
-*/
 
 function authentication(id) {
 
@@ -104,76 +91,32 @@ function authentication(id) {
              }
      };
 
-    return new Promise ( (resolve, reject) => {
+    return new Promise ( async (resolve, reject) => {
 
-        ethereum.request({ method: 'eth_requestAccounts' })
-            .then( async (accounts) => {
-                let account = accounts[0];
-                switch(id) {
-                    case 0:
-                        authentPromise = askForSignatureEthPersonal(account, shortMessage);
-                        break;
-                    case 1:
-                        EIP712Data.message.forUser.account = account;
-                        authentPromise = askForSignatureEIP712(account, EIP712Data);
-                        break;
-                    case 2:
-                        authentPromise = askForSignatureEthSign(account, shortMessage);
-                        break;
-                }
-                console.log("resolve: "+authentPromise);
-                resolve(authentPromise);
-            })
-            .catch( (error) => {
-                console.error("Error getting accounts : "+error);
-                reject();
-            });
+        var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        var account = accounts[0];
+
+        switch(id) {
+            case 0:
+                authentPromise = askForSignatureEthPersonal(account, shortMessage);
+                break;
+            case 1:
+                EIP712Data.message.forUser.account = account;
+                authentPromise = askForSignatureEIP712(account, EIP712Data);
+                break;
+            case 2:
+                authentPromise = askForSignatureEthSign(account, shortMessage);
+                break;
+        }
+        console.log("resolve: "+authentPromise);
+        resolve(authentPromise);
+
     })
 }
 
 /**
-* Add a prefix to message to sign, as used by some Ethereum client, like Geth
-* @param message the original message
-* @return prefixed message : '\x19Ethereum Signed Message:\n' + msg.length + msg;
+* Sign using eth_personal
 */
-function prefixedMsg(message) {
-    return '\x19Ethereum Signed Message:\n' + message.length + message;
-}
-
-/**
-* Hash a message to sign using sha3 (keccak)
-* @param message the message to hash
-* @return the sha3 hashed message
-*/
-function messageHash(message) {
-	return web3.utils.sha3(prefixedMsg(message));
-}
-
-/**
-* Check signature using smart contract call
-* @param signature the signature
-* @account the account that is assumed to be the signer
-* @message the signed message
-*/
-
-function checkSignature(signature, account, message) {
-
-    var r = signature.slice(0, 66);
-    var s = '0x' + signature.slice(66, 130);
-    var v = '0x' + signature.slice(130, 132);
-
-    console.log('r: '+r);
-    console.log('s: '+ s);
-    console.log('v: '+ v);
-    console.log("msg: "+message);
-
-    var result = contract.methods.checkSignature(web3.utils.sha3(message), web3.utils.hexToNumber(v), r, s).call({from:account})
-    .then( (resultAddress) => {
-         $('#recover').text( resultAddress);
-         $('#signatureCheck').text( (resultAddress==account) );
-    });
-}
-
 function askForSignatureEthPersonal(account, message) {
 
     return new Promise( (resolve, reject) => {
@@ -196,8 +139,8 @@ function askForSignatureEthPersonal(account, message) {
         })
         .then(
             (result) => {
-                authentResult.recover=result;
-                authentResult.signatureCheck= (result.toLowerCase() === account.toLowerCase())? "ok" : "ko"
+                authentResult.recover = result;
+                authentResult.signatureCheck = (result.toLowerCase() === account.toLowerCase())? "ok" : "ko";
 
                 console.log(JSON.stringify(authentResult));
                 resolve(authentResult);
@@ -212,6 +155,10 @@ function askForSignatureEthPersonal(account, message) {
     });
 }
 
+/**
+* Sign using eth_signTypedData_v4
+* EIP-712 compliant
+*/
 function askForSignatureEIP712(account, data) {
 
     return new Promise( (resolve, reject) => {
@@ -239,9 +186,9 @@ function askForSignatureEIP712(account, data) {
             });
 
             authentResult.userAuthent="Yes";
-            authentResult.signature=sig;
+            authentResult.signature = sig;
             authentResult.recover = recovered;
-            authentResult.signatureCheck=(account.toLowerCase() === recovered.toLowerCase());
+            authentResult.signatureCheck = (recovered.toLowerCase() === account.toLowerCase())? "ok" : "ko";
 
             resolve(authentResult);
         })
@@ -279,7 +226,7 @@ function askForSignatureEthSign(account, message) {
             authentResult.userAuthent = "Yes";
             authentResult.signature = sig;
 
-            web3.eth.personal.ecRecover(message, sig);
+            return web3.eth.personal.ecRecover(message, sig);
         })
         .then(
           (result) => {
@@ -457,5 +404,48 @@ async function sign(message) {
 
         reject();
 
+    });
+}
+
+/**
+* Add a prefix to message to sign, as used by some Ethereum client, like Geth
+* @param message the original message
+* @return prefixed message : '\x19Ethereum Signed Message:\n' + msg.length + msg;
+*/
+function prefixedMsg(message) {
+    return '\x19Ethereum Signed Message:\n' + message.length + message;
+}
+
+/**
+* Hash a message to sign using sha3 (keccak)
+* @param message the message to hash
+* @return the sha3 hashed message
+*/
+function messageHash(message) {
+	return web3.utils.sha3(prefixedMsg(message));
+}
+
+/**
+* Check signature using smart contract call
+* @param signature the signature
+* @account the account that is assumed to be the signer
+* @message the signed message
+*/
+
+function checkSignature(signature, account, message) {
+
+    var r = signature.slice(0, 66);
+    var s = '0x' + signature.slice(66, 130);
+    var v = '0x' + signature.slice(130, 132);
+
+    console.log('r: '+r);
+    console.log('s: '+ s);
+    console.log('v: '+ v);
+    console.log("msg: "+message);
+
+    var result = contract.methods.checkSignature(web3.utils.sha3(message), web3.utils.hexToNumber(v), r, s).call({from:account})
+    .then( (resultAddress) => {
+         $('#recover').text( resultAddress);
+         $('#signatureCheck').text( (resultAddress==account) );
     });
 }
