@@ -17,9 +17,9 @@ const app = Vue.createApp({
   },
   async mounted() {
         initWeb3();
-        this.web3Version=web3.version;
-        this.nodeInfo=await web3.eth.getNodeInfo();
-        this.blockNumber=await web3.eth.getBlockNumber();
+        this.web3Version = web3.version;
+        this.nodeInfo = await web3.eth.getNodeInfo();
+        this.blockNumber = await web3.eth.getBlockNumber();
 
         loadContract();
   },

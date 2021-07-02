@@ -44,7 +44,7 @@ async function initWeb3() {
 */
 async function loadContract() {
     if(contractData.address) {
-        console.log("Load contract : "+JSON.stringify(contractData));
+        //console.log("Load contract : "+JSON.stringify(contractData));
         try {
             contract =  new web3.eth.Contract(contractData.abi, contractData.address);
         }
@@ -325,88 +325,72 @@ async function createClaim(claimName, claimValue, subject) {
     claim.value = claimValue;
     claim.issuedAt = Date.now();
 
-    // request current account from browser wallet
-    ethereum.request({ method: 'eth_requestAccounts' })
-    .then( async (accounts) => {
-        let account = accounts[0];
-        console.log("issuer: "+account);
+    var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    var account = accounts[0];
+    console.log("issuer: "+account);
 
-        claim.issuer = account;
+    claim.issuer = account;
 
-        /*
-        * Claim signature :
-        * 1) Concatenate issuer + subject + key + value
-        * 2) Hash to sha3 (keccak256)
-        * 3) compute signature
-        */
+    /*
+    * Claim signature :
+    * 1) Concatenate issuer + subject + key + value
+    * 2) Hash to sha3 (keccak256)
+    * 3) compute signature
+    */
 
-        // hash and prefix serialized claim object
-        const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
+    // hash and prefix serialized claim object
+    const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
 
-        console.log("hashedClaim: "+hashedClaim);
+    console.log("hashedClaim: "+hashedClaim);
 
-        // sign hashed and prefixed claim
+    // sign hashed and prefixed claim
 
-       web3.eth.sign(hashedClaim, account)
-        .then(
-          (signature) => {
-            console.log("Claim signed: "+signature);
+   web3.eth.personal.sign(hashedClaim, account)
+    .then(
+      (signature) => {
+        console.log("Claim signed: "+signature);
 
-                contract.methods.setClaim(subject, claimName, claimValue, signature).estimateGas({from: account})
-                .then(function(gasAmount){
-                    console.log("gas: "+gasAmount);
+            contract.methods.setClaim(subject, claimName, claimValue, signature).estimateGas({from: account})
+            .then(function(gasAmount){
+                console.log("gas: "+gasAmount);
 
-                    // call contract to create
-                    contract.methods.setClaim(subject, claimName, claimValue, signature).send({from:account, gas:gasAmount})
-                    .then((result) => {
-                        console.log(result);
-                    })
-                   .catch( (error) => {
-                          console.log(error);
-                    });
+                // call contract to create
+                return contract.methods.setClaim(subject, claimName, claimValue, signature).send({from:account, gas:gasAmount})
 
-                })
-                .catch(function(error){
-                    console.log(error);
-                });
-        });
-
-    })
-    .catch( (error) => {
-        console.error("createClaim : Error getting accounts : "+error);
-    });
-
-}
-
-async function sign(message) {
-    return new Promise ( (resolve, reject) => {
-
-         console.log("Sign: "+message);
-
-        ethereum.request({ method: 'eth_requestAccounts' })
-        .then( async (accounts) => {
-            let account = accounts[0];
-
-            web3.eth.sign(message, account)
-            .then(
-              (signature) => {
-                console.log("Claim signed: "+signature);
-                resolve(signature);
             })
-            .catch((error) => {
-                console.log("Claim signature fail: "+error.message);
+            .then((result) => {
+                console.log(result);
+            })
+            .catch(function(error){
+                console.log(error);
             });
-
-        })
-        .catch( (error) => {
-            console.error("Sign : Error getting accounts : "+error);
-        });
-
-        reject();
-
     });
-}
 
+}
+/*
+async function sign(message) {
+    return new Promise ( async (resolve, reject) => {
+
+        console.log("Sign: "+message);
+
+        var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        var account = accounts[0];
+        console.log("signer: "+account);
+
+        web3.eth.personal.sign(message, account)
+        .then(
+            (signature) => {
+            console.log("Claim signed: "+signature);
+            resolve(signature);
+        })
+        .catch((error) => {
+            console.log("Claim signature fail: "+error.message);
+        });
+    })
+
+    reject();
+}
+*/
 /**
 * Add a prefix to message to sign, as used by some Ethereum client, like Geth
 * @param message the original message
