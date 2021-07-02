@@ -6,88 +6,103 @@
     <title>Keyblock</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/babel-polyfill/dist/polyfill.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-polyfill/dist/polyfill.min.js"></script>
 
-	<!-- web3.js framework -->
-	<script type="text/javascript" src="./lib/web3.min.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
 
-	<!-- browserified eth-sig-util -->
-	<script type="text/javascript" src="./lib/bundles/ethSigUtil.js"></script>
+    <!-- web3.js framework -->
+    <script type="text/javascript" src="./lib/web3.min.js"></script>
 
-	<!-- blockchain functions -->
-	<script type="text/javascript" src="./lib/db.js"></script>
-	<script type="text/javascript" src="./lib/blockchain.js"></script>
+    <!-- browserified eth-sig-util -->
+    <script type="text/javascript" src="./lib/bundles/ethSigUtil.js"></script>
 
-	<script type="text/javascript">
+    <!-- blockchain functions -->
+    <script type="text/javascript" src="./lib/db.js"></script>
+    <script type="text/javascript" src="./lib/blockchain.js"></script>
 
-	</script>
+    <script type="text/javascript">
+
+    </script>
 
 </head>
 
 <body>
-	<div class="container-fluid">
-		<br/>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="card">
-					<h5 class="card-header">Blockchain info</h5>
-					<div class="card-body">
-						Web3 version : <span id="web3Version"></span>
-						<br/>					
-						Node info : <span id="nodeInfo"></span>
-						<br/>
-						Block number : <span id="blockNumber"></span>
-						<br/>
-					</div>
-				</div>
-			</div>
-		</div>
-	<br/>
-		<div class="row">
-			<div class="col-md-4">
-				<div class="card">
-					<h5 class="card-header">Identification</h5>
-					<div class="card-body">
-						<p><button type="button" class="btn btn-primary" onclick="javascript: identification();">Identification</button></p>
-						<p>Identified as: <span id="userIdentity">not identified</span></p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-4">
-				<div class="card">
-					<h5 class="card-header">Authentication</h5>
-					<div class="card-body">
-						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(0);">Authentication eth.personal</button></p>
-						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(1);">Authentication EIP 712</button></p>
-						<p><button type="button" class="btn btn-primary" onclick="javascript: authentication(2);">Authentication eth.sign</button></p>
-						<p>Authenticated: <span id="userAuthent"> not authenticated</span></p>
-						<p>Signature: <span id="signature"></span></p>
-						<p>Recover: <span id="recover"></span></p>
-						<p>Check signature: <span id="signatureCheck"></span></p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-4">
-				<div class="card">
-					<h5 class="card-header">Claims</h5>
-					<div class="card-body">
-						<p>Smart contract address: <span id="contractAddress"></span></p>
-						<p><button type="button" class="btn btn-primary" onclick="javascript: checkClaims();">Check claims</button></p>
-						<p>Is admin: <span id="isadmin">unknown</span></p>
-					</div>
-				</div>
-				<div class="card">
-					<h5 class="card-header">Create claim</h5>
-					<div class="card-body">
-						<p><button type="button" class="btn btn-primary" onclick="javascript: callCreateClaim();">Create claim</button></p>
-					</div>
-				</div>
-			</div>
-		</div>
+    <div id="app" class="container-fluid">
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <h5 class="card-header">Blockchain info</h5>
+                    <div class="card-body">
+                        Web3 version: {{web3Version}}
+                        <br/>
+                        Node info: {{nodeInfo}}
+                        <br/>
+                        Block number: {{blockNumber}}
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	</div>
+        <br/>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">Identification</h5>
+                    <div class="card-body">
+                        <p><button type="button" class="btn btn-primary" @click="identification">Identification</button></p>
+                        <p>Identified as: {{userIdentity}}</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">Authentication</h5>
+                    <div class="card-body">
+                        <p><button type="button" class="btn btn-primary" @click="authent(0)">Authentication eth.personal</button></p>
+                        <p><button type="button" class="btn btn-primary" @click="authent(1)">Authentication EIP 712</button></p>
+                        <p><button type="button" class="btn btn-primary" @click="authent(2)">Authentication eth.sign</button></p>
+                        <p>Authenticated: {{userAuthent}}</p>
+                        <p>Signature: {{signature}}</p>
+                        <p>Recover: {{recover}}</p>
+                        <p>Check signature: {{signatureCheck}}</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">Claims</h5>
+                    <div class="card-body">
+                        <p>Smart contract address: {{contractAddress}}</p>
+                        <p><button type="button" class="btn btn-primary" @click="displayClaims()">Check claims</button></p>
+
+                        <claim v-for="claim in claims" v-bind:name="claim.name" v-bind:value="claim.value"></claim>
+
+                    </div>
+                </div>
+                <div class="card">
+                    <h5 class="card-header">Create claim</h5>
+                    <div class="card-body">
+                        <p><button type="button" class="btn btn-primary" @click="callCreateClaim();">Create claim</button></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="./vue.js"></script>
+
 </body>
 
 </html>

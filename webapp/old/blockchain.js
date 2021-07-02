@@ -1,5 +1,3 @@
-/*
-
 var simpleClaimsRegistry = {
     address: "0xad9388311e96031d9cF2D1370826D8940d057362"
     ,abi: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"uint256","name":"removedAt","type":"uint256"}],"name":"ClaimRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"ClaimSet","type":"event"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"getClaim","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"name":"registry","outputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"address","name":"issuer","type":"address"},{"internalType":"uint256","name":"issuedAt","type":"uint256"},{"internalType":"bytes","name":"issuerSignature","type":"bytes"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"issuer","type":"address"},{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"removeClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setSelfClaim","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -12,11 +10,25 @@ var claimsRegistry = {
 
 var contractData = simpleClaimsRegistry;
 
+/**
+* Init connections and display data when page is loaded.
 */
+window.addEventListener('load', async() => {
+    /* Create connection to blockchain */
+    initWeb3();
+
+    /* Load the contract */
+    loadContract();
+
+    /* Display data read from blockchain */
+    displayBlockchainInfo();
+
+    // testSignatures();
+});
+
 /**
 * Create a Web3 object to connect to blockchain
 */
-/*
 async function initWeb3() {
     // Modern dapp browsers...
     if (window.ethereum) {
@@ -39,11 +51,10 @@ async function initWeb3() {
 
     console.log("web3 : "+web3.version);
 }
-*/
+
 /**
 * Init the contract objects
 */
-/*
 async function loadContract() {
     if(contractData.address) {
         console.log("Load contract : "+JSON.stringify(contractData));
@@ -55,8 +66,17 @@ async function loadContract() {
         }
     }
 }
+
+/**
+* Retrieve and basic info from blockchain node
 */
-/*
+async function displayBlockchainInfo() {
+    $('#web3Version').text(web3.version);
+    $('#nodeInfo').text(await web3.eth.getNodeInfo());
+    $('#blockNumber').text(await web3.eth.getBlockNumber());
+    $('#contractAddress').text(contractData.address);
+}
+
 function identification() {
     ethereum.request({ method: 'eth_requestAccounts' })
     .then( (account) => {
@@ -65,11 +85,15 @@ function identification() {
      })
     .catch( (error) => {console.error(error);} )
 }
-*/
+
+function clearAuthent() {
+    $('#recover').text("");
+    $('#signatureCheck').text("");
+    $('#userAuthent').text("");
+    $('#signature').text("");
+}
 
 function authentication(id) {
-
-    var authentPromise;
 
     var shortMessage = "You are going to use your private key to sign this data and be authenticated for claim holder contract.";
 
@@ -104,31 +128,27 @@ function authentication(id) {
              }
      };
 
-    return new Promise ( (resolve, reject) => {
+    clearAuthent();
 
-        ethereum.request({ method: 'eth_requestAccounts' })
-            .then( async (accounts) => {
-                let account = accounts[0];
-                switch(id) {
-                    case 0:
-                        authentPromise = askForSignatureEthPersonal(account, shortMessage);
-                        break;
-                    case 1:
-                        EIP712Data.message.forUser.account = account;
-                        authentPromise = askForSignatureEIP712(account, EIP712Data);
-                        break;
-                    case 2:
-                        authentPromise = askForSignatureEthSign(account, shortMessage);
-                        break;
-                }
-                console.log("resolve: "+authentPromise);
-                resolve(authentPromise);
-            })
-            .catch( (error) => {
-                console.error("Error getting accounts : "+error);
-                reject();
-            });
+    ethereum.request({ method: 'eth_requestAccounts' })
+    .then( async (accounts) => {
+        let account = accounts[0];
+        switch(id) {
+            case 0:
+                askForSignatureEthPersonal(account, shortMessage);
+                break;
+            case 1:
+                EIP712Data.message.forUser.account = account;
+                askForSignatureEIP712(account, EIP712Data);
+                break;
+            case 2:
+                askForSignatureEthSign(account, shortMessage);
+                break;
+        }
     })
+    .catch( (error) => {
+        console.error("Error getting accounts : "+error);
+    });
 }
 
 /**
@@ -147,6 +167,38 @@ function prefixedMsg(message) {
 */
 function messageHash(message) {
 	return web3.utils.sha3(prefixedMsg(message));
+}
+
+async function askForSignatureEIP712(account, data) {
+
+    ethereum.request({
+        method: 'eth_signTypedData_v4',
+        params: [
+            account,
+            JSON.stringify(data)
+        ]
+    })
+    .then((signature) => {
+        console.log("Signature: "+signature);
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+
+        const recovered = sigUtil.recoverTypedSignature_v4({
+            data: data
+            , sig: signature
+        });
+
+        console.log("Rec: "+recovered);
+
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+        $('#recover').text( recovered);
+        $('#signatureCheck').text( (account.toLowerCase() === recovered.toLowerCase()) );
+    })
+    .catch((error) => {
+        console.log("Sign fail: "+error.message);
+        $('#userAuthent').text(error.message);
+    });
 }
 
 /**
@@ -174,165 +226,95 @@ function checkSignature(signature, account, message) {
     });
 }
 
-function askForSignatureEthPersonal(account, message) {
-
-    return new Promise( (resolve, reject) => {
-
-        var authentResult = {
-            userAuthent: undefined,
-            signature: undefined,
-            signatureCheck: undefined,
-            recover: undefined
-        }
-
-        web3.eth.personal.sign(message, account)
-        .then(
-            (sig) => {
-                console.log("Signature: "+sig);
-                authentResult.userAuthent="Yes";
-                authentResult.signature=sig;
-
-                return web3.eth.personal.ecRecover(message, sig);
-        })
-        .then(
-            (result) => {
-                authentResult.recover=result;
-                authentResult.signatureCheck= (result.toLowerCase() === account.toLowerCase())? "ok" : "ko"
-
-                console.log(JSON.stringify(authentResult));
-                resolve(authentResult);
-        })
-        .catch((error) => {
-            console.log("Sign fail: "+error.message);
-            authentResult.userAuthent=error.message;
-            console.log(JSON.stringify(authentResult));
-            reject(authentResult);
-        });
-
-    });
-}
-
-function askForSignatureEIP712(account, data) {
-
-    return new Promise( (resolve, reject) => {
-
-        var authentResult = {
-            userAuthent: undefined,
-            signature: undefined,
-            signatureCheck: undefined,
-            recover: undefined
-        }
-
-        ethereum.request({
-            method: 'eth_signTypedData_v4',
-            params: [
-                account,
-                JSON.stringify(data)
-            ]
-        })
-        .then( (sig) => {
-              console.log("Signature: "+sig);
-
-            const recovered = sigUtil.recoverTypedSignature_v4({
-                data: data
-                , sig: sig
-            });
-
-            authentResult.userAuthent="Yes";
-            authentResult.signature=sig;
-            authentResult.recover = recovered;
-            authentResult.signatureCheck=(account.toLowerCase() === recovered.toLowerCase());
-
-            resolve(authentResult);
-        })
-        .catch((error) => {
-            console.log("Sign fail: "+error.message);
-            authentResult.userAuthent=error.message;
-
-            reject(authentResult);
-        });
-
-    });
-}
-
 /**
 * Sign using eth_sign
 * Not recommended because message is displayed in hex to user
 */
-function askForSignatureEthSign(account, message) {
-
+async function askForSignatureEthSign(account, message) {
     console.log("eth.sign");
 
-    return new Promise( (resolve, reject) => {
+    web3.eth.sign(message, account)
+    .then(
+      (signature) => {
+        console.log("Signature: "+signature);
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
 
-        var authentResult = {
-            userAuthent: undefined,
-            signature: undefined,
-            signatureCheck: undefined,
-            recover: undefined
-        }
-
-        web3.eth.sign(message, account)
+        web3.eth.personal.ecRecover(message, signature)
         .then(
-          (sig) => {
-            console.log("signature: "+sig);
-            authentResult.userAuthent = "Yes";
-            authentResult.signature = sig;
+            (result) => {
+                 $('#recover').text( result);
+                 $('#signatureCheck').text( (result.toLowerCase() === account.toLowerCase())? "ok" : "ko" );
+          });
 
-            web3.eth.personal.ecRecover(message, sig);
-        })
+    })
+    .catch((error) => {
+        console.log("Sign fail: "+error.message);
+        $('#userAuthent').text(error.message);
+    });
+}
+
+async function askForSignatureEthPersonal(account, message) {
+
+    web3.eth.personal.sign(message, account)
+    .then(
+      (signature) => {
+        console.log("Signature: "+signature);
+        $('#userAuthent').text("Yes");
+        $('#signature').text(signature);
+
+        web3.eth.personal.ecRecover(message, signature)
         .then(
-          (result) => {
-            console.log("recover: "+result);
-            authentResult.recover = result;
-            authentResult.signatureCheck = (result.toLowerCase() === account.toLowerCase())? "ok" : "ko";
+            (result) => {
+                 $('#recover').text( result);
+                 $('#signatureCheck').text( (result.toLowerCase() === account.toLowerCase())? "ok" : "ko" );
+          });
 
-            console.log(JSON.stringify(authentResult));
-            resolve(authentResult);
-        })
-        .catch((error) => {
-            console.log("Sign fail: "+error.message);
-            authentResult.userAuthent=error.message;
-
-            console.log(JSON.stringify(authentResult));
-            reject(authentResult);
-        });
+    })
+    .catch((error) => {
+        console.log("Sign fail: "+error.message);
+        $('#userAuthent').text(error.message);
     });
 }
 
 /**
 * Check all claims referenced in db.claims
 */
-async function checkClaims() {
-
-    var claims = [];
+function checkClaims() {
 
     // must have db and claims list
     if(!db) throw 'No DB found';
     if(!db.claims) throw 'No claim found';
 
-    var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    var account = accounts[0];
-    console.log("acc: "+ account);
+    // request current account from browser wallet
+    ethereum.request({ method: 'eth_requestAccounts' })
+    .then( async (accounts) => {
+        let account = accounts[0];
 
-    await Promise.all(db.claims.map(
-       async (claimName) => {
+        // check each claim
+        db.claims.forEach( (claimName) => {
+            console.log("get claim: "+claimName+" for "+account);
+
             // contract call
-            var result = await contract.methods.getClaim(account, claimName).call({from:account})
-            console.log(result);
-
-            // result[0] -> 0 = ok, 1 = ko
-            // result[1] -> value or error message
-            // TODO check result[2] that contains issuer address
-
-            claims.push({name:claimName, value:result[1]});
-           // console.log(claims);
-        }
-    ))
-
-    console.log(claims);
-    return claims;
-
+            var result = contract.methods.getClaim(account, claimName).call({from:account})
+            .then((result) => {
+                console.log(result);
+                // result[0] -> 0 = ok, 1 = ko
+                // result[1] -> value or error message
+                // TODO check result[2] that contains issuer address
+                $('#'+claimName).text(result[1]);
+            })
+            .catch( (error) => {
+                   console.error("call error");
+                  var errorMessage = extractError(error);
+                  $('#'+claimName).text(errorMessage);
+                  console.log(errorObject.message);
+            });
+        })
+    })
+    .catch( (error) => {
+        console.error("Error getting accounts : "+error);
+    });
 }
 
 /**
@@ -364,6 +346,9 @@ function extractError(errorMessage) {
     }
 }
 
+function callCreateClaim() {
+    createClaim(db.claims[0], "true", "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14")
+}
 
 async function createClaim(claimName, claimValue, subject) {
 
@@ -388,7 +373,7 @@ async function createClaim(claimName, claimValue, subject) {
 
         /*
         * Claim signature :
-        * 1) Concatenate issuer + subject + key + value
+        * 1) Contatenate issuer + subject + key + value
         * 2) Hash to sha3 (keccak256)
         * 3) compute signature
         */

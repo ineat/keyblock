@@ -7,5 +7,6 @@ const db = {
     ],
     claims:[
         "isadmin"
+        , "issomethingelse"
     ]
 };
