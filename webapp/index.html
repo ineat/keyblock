@@ -89,10 +89,13 @@
 
                     </div>
                 </div>
+                <br/>
                 <div class="card">
                     <h5 class="card-header">Create claim</h5>
                     <div class="card-body">
-                        <p><button type="button" class="btn btn-primary" @click="callCreateClaim();">Create claim</button></p>
+                        <p>Create claim for: {{targetUser}}</p>
+                        <claim-form v-for="claim in claims" :name="claim.name" @submit-claim-event="submitClaim"></claim-form>
+
                     </div>
                 </div>
             </div>
