@@ -7,6 +7,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/babel-polyfill/dist/polyfill.min.js"></script>
 
@@ -63,9 +64,9 @@
                 <div class="card">
                     <h5 class="card-header">Authentication</h5>
                     <div class="card-body">
+                        <p><button type="button" class="btn btn-primary" @click="authent(2)">Authentication eth.sign</button></p>
                         <p><button type="button" class="btn btn-primary" @click="authent(0)">Authentication eth.personal</button></p>
                         <p><button type="button" class="btn btn-primary" @click="authent(1)">Authentication EIP 712</button></p>
-                        <p><button type="button" class="btn btn-primary" @click="authent(2)">Authentication eth.sign</button></p>
                         <p>Authenticated: {{userAuthent}}</p>
                         <p>Signature: {{signature}}</p>
                         <p>Recover: {{recover}}</p>
@@ -79,20 +80,27 @@
                 <div class="card">
                     <h5 class="card-header">Claims</h5>
                     <div class="card-body">
-                        <p>Smart contract address: {{contractAddress}}</p>
+                        <div class="alert alert-secondary" role="alert">
+                            Smart contract address: {{contractAddress}}
+                        </div>
                         <p><button type="button" class="btn btn-primary" @click="displayClaims()">Check claims</button></p>
 
-                        <claim v-for="claim in claims" v-bind:name="claim.name" v-bind:value="claim.value"></claim>
+                        <claim v-for="claim in claims" v-bind:name="claim.name" v-bind:value="claim.value" v-bind:checked="claim.checked"></claim>
 
                     </div>
                 </div>
                 <br/>
                 <div class="card">
-                    <h5 class="card-header">Create claim</h5>
+                    <h5 class="card-header">Set claim</h5>
                     <div class="card-body">
-                        <p>Create claim for: {{targetUser}}</p>
+                        <div class="alert alert-secondary" role="alert">
+                            Create claim for: {{targetUser}}
+                        </div>
+                        <div class="alert alert-primary" role="alert" v-if=" spinner != '' || setClaimMessage != '' ">
+                            <span v-html="spinner"></span>
+                            {{setClaimMessage}}
+                        </div>
                         <claim-form v-for="claim in claims" :name="claim.name" @submit-claim-event="submitClaim"></claim-form>
-
                     </div>
                 </div>
             </div>

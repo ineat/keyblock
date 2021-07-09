@@ -5,11 +5,11 @@ var simpleClaimsRegistry = {
 };
 
 var claimsRegistry = {
-    address: "0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b"
-    , abi: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"uint256","name":"removedAt","type":"uint256"}],"name":"ClaimRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"ClaimSet","type":"event"},{"inputs":[{"internalType":"bytes32","name":"msgHash","type":"bytes32"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"checkSignature","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"getClaim","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"name":"registry","outputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"address","name":"issuer","type":"address"},{"internalType":"uint256","name":"issuedAt","type":"uint256"},{"internalType":"bytes","name":"issuerSignature","type":"bytes"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"issuer","type":"address"},{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"removeClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setSelfClaim","outputs":[],"stateMutability":"nonpayable","type":"function"}]
-}
+    address: "0x3827c01e72db65712bbc405cba29e3d21147a66b"
+    , abi: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"uint256","name":"removedAt","type":"uint256"}],"name":"ClaimRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"issuer","type":"address"},{"indexed":true,"internalType":"address","name":"subject","type":"address"},{"indexed":true,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"ClaimSet","type":"event"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"getClaim","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"},{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"string","name":"","type":"string"}],"name":"registry","outputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"address","name":"issuer","type":"address"},{"internalType":"uint256","name":"issuedAt","type":"uint256"},{"internalType":"bytes","name":"issuerSignature","type":"bytes"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"issuer","type":"address"},{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"}],"name":"removeClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"subject","type":"address"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"setSelfClaim","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+ }
 
-var contractData = simpleClaimsRegistry;
+var contractData = claimsRegistry;
 
 
 /**
@@ -260,19 +260,40 @@ async function checkClaims() {
 
     var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
     var account = accounts[0];
-    console.log("acc: "+ account);
+    //console.log("acc: "+ account);
 
     await Promise.all(db.claims.map(
        async (claimName) => {
             // contract call
             var result = await contract.methods.getClaim(account, claimName).call({from:account})
-            console.log(result);
+           // console.log(result);
 
             // result[0] -> 0 = ok, 1 = ko
-            // result[1] -> value or error message
-            // TODO check result[2] that contains issuer address
+            // result[1] -> error message if ko
+            // result[2] -> subject
+            // result[3] -> issuer
+            // result[4] -> issuedAt
+            // result[5] -> signature
+            // result[6] -> key
+            // result[7] -> value
 
-            claims.push({name:claimName, value:result[1]});
+
+            if(result[0]==0) {
+                const hashedClaim = web3.utils.soliditySha3(result[3], result[2], result[6], result[7]);
+                var recovered;
+                try{
+                   recovered = await web3.eth.personal.ecRecover(hashedClaim, result[5]);
+                }
+                catch(error) {
+
+                }
+                console.log("recovered: "+recovered);
+                claims.push({name:claimName, value:result[7], checked: (recovered && recovered.toLowerCase() === result[3].toLowerCase()) });
+            }
+            else {
+                 claims.push({name:claimName, value:result[1], checked: false });
+            }
+
            // console.log(claims);
         }
     ))
@@ -312,61 +333,67 @@ function extractError(errorMessage) {
 }
 
 
-async function createClaim(claimName, claimValue, subject) {
+function createClaim(claimName, claimValue, subject) {
 
-    console.log("claimName: "+claimName);
-    console.log("claimValue: "+claimValue);
-    console.log("subject: "+subject);
+    return new Promise ( async (resolve, reject) => {
+        /*console.log("claimName: "+claimName);
+        console.log("claimValue: "+claimValue);
+        console.log("subject: "+subject);*/
 
-    // create claim with value
-    var claim = new Object();
-    claim.subject = subject;
-    claim.key = claimName;
-    claim.value = claimValue;
-    claim.issuedAt = Date.now();
+        // create claim with value
+        var claim = new Object();
+        claim.subject = subject;
+        claim.key = claimName;
+        claim.value = claimValue;
+        claim.issuedAt = Math.trunc(Date.now() / 1000);
 
-    var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    var account = accounts[0];
-    console.log("issuer: "+account);
+        var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        var account = accounts[0];
+        //console.log("issuer: "+account);
 
-    claim.issuer = account;
+        claim.issuer = account;
 
-    /*
-    * Claim signature :
-    * 1) Concatenate issuer + subject + key + value
-    * 2) Hash to sha3 (keccak256)
-    * 3) compute signature
-    */
+        /*
+        * Claim signature :
+        * 1) Concatenate issuer + subject + key + value
+        * 2) Hash to sha3 (keccak256)
+        * 3) compute signature
+        */
 
-    // hash and prefix serialized claim object
-    const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
+        // hash and prefix serialized claim object
+        const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
+        //console.log("hashedClaim: "+hashedClaim);
 
-    console.log("hashedClaim: "+hashedClaim);
 
-    // sign hashed and prefixed claim
+        try {
 
-   web3.eth.personal.sign(hashedClaim, account)
-    .then(
-      (signature) => {
-        console.log("Claim signed: "+signature);
+            // sign hashed claim
+            var signature = await web3.eth.personal.sign(hashedClaim, account);
+            //console.log(signature);
 
-            contract.methods.setClaim(subject, claimName, claimValue, signature).estimateGas({from: account})
-            .then(function(gasAmount){
-                console.log("gas: "+gasAmount);
+            var gasAmount = await contract.methods.setClaim(subject, claimName, claimValue, signature).estimateGas({from: account});
+            //console.log(gasAmount);
 
-                // call contract to create
-                return contract.methods.setClaim(subject, claimName, claimValue, signature).send({from:account, gas:gasAmount})
+            var sendResult = contract.methods.setClaim(subject, claimName, claimValue, signature).send({from:account, gas:gasAmount});
+            resolve(sendResult);
 
+            sendResult.once("transactionHash", (hash) => {
+                console.log("Hash: "+hash);
             })
-            .then((result) => {
-                console.log(result);
+            .once("receipt", (receipt) => {
+                console.log(receipt);
             })
-            .catch(function(error){
-                console.log(error);
+            .on("error", (error) => {
+                console.error(error);
             });
-    });
+        }
+        catch(error) {
+            reject(extractError(error));
+        }
 
+    });
 }
+
 /*
 async function sign(message) {
     return new Promise ( async (resolve, reject) => {

@@ -2,17 +2,20 @@
 const app = Vue.createApp({
   data() {
         return {
-            web3Version: "v",
-            nodeInfo: "n",
-            blockNumber: "b",
-            userIdentity: "not identified",
+            web3Version: '',
+            nodeInfo: '',
+            blockNumber: '',
+            userIdentity: undefined,
             userAuthent:'',
             signature:'',
             recover:'',
             signatureCheck:'',
             contractAddress:contractData.address,
             claims: [],
-            targetUser: "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14"
+            targetUser: "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14",
+            setClaimMessage:'',
+            spinner:''
+
         }
   },
   async mounted() {
@@ -52,21 +55,41 @@ const app = Vue.createApp({
     },
     displayClaims() {
         checkClaims().then( (result) => {
-            console.log("get claims: "+result);
+         //   console.log("get claims: "+result);
             this.claims = result;
         });
     },
     submitClaim(claimName, claimValue) {
-        console.log("submitClaim: "+claimName+" = "+claimValue);
-        createClaim(claimName, claimValue, "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14")
+       // console.log("submitClaim: "+claimName+" = "+claimValue);
+        this.spinner = '<div class="spinner-border" role="status"></div>';
+        var createClaimPromise = createClaim(claimName, claimValue, "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14");
+
+        console.log("createClaimPromise");
+        console.log(createClaimPromise);
+
+        createClaimPromise.then( (receipt) => {
+            this.spinner = '';
+            this.setClaimMessage = "Tx created in bloc "+receipt.blockNumber;
+        })
+        .catch( (error) => {
+            this.spinner = '';
+            this.setClaimMessage = error;
+        });
+
+
     }
   }
 });
 
 app.component("claim", {
-    props:["name", "value"],
+    props:["name", "value", "checked"],
     template:`
-        <p><b>{{name}}: </b>{{value}}</p>
+        <p>
+            <b>{{name}}: </b>{{value}}
+            <i class="bi bi-check-circle" v-if="checked" style="color:green" title="Issuer signature checked"></i>
+            <i class="bi bi-x-circle" v-if="! checked && value!='Subject or key not found'" style="color:red" title="Signature check failed"></i>
+            <i class="bi bi-question-circle" v-if="! checked && value=='Subject or key not found' " style="color:blue" title="Issuer signature NOT checked"></i>
+        </p>
     `
 });
 
