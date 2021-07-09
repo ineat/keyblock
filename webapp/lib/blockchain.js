@@ -360,10 +360,9 @@ function createClaim(claimName, claimValue, subject) {
         * 3) compute signature
         */
 
-        // hash and prefix serialized claim object
+        // hash serialized claim object
         const hashedClaim = web3.utils.soliditySha3(claim.issuer, claim.subject, claim.key, claim.value);
         //console.log("hashedClaim: "+hashedClaim);
-
 
         try {
 
@@ -390,7 +389,6 @@ function createClaim(claimName, claimValue, subject) {
         catch(error) {
             reject(extractError(error));
         }
-
     });
 }
 
@@ -418,6 +416,7 @@ async function sign(message) {
     reject();
 }
 */
+
 /**
 * Add a prefix to message to sign, as used by some Ethereum client, like Geth
 * @param message the original message

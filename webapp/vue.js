@@ -15,7 +15,6 @@ const app = Vue.createApp({
             targetUser: "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14",
             setClaimMessage:'',
             spinner:''
-
         }
   },
   async mounted() {
@@ -69,14 +68,12 @@ const app = Vue.createApp({
 
         createClaimPromise.then( (receipt) => {
             this.spinner = '';
-            this.setClaimMessage = "Tx created in bloc "+receipt.blockNumber;
+            this.setClaimMessage = "Claim created in tx "+receipt.transactionHash+" in block "+receipt.blockNumber;
         })
         .catch( (error) => {
             this.spinner = '';
             this.setClaimMessage = error;
         });
-
-
     }
   }
 });
