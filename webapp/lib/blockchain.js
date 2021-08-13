@@ -263,10 +263,9 @@ async function checkClaims() {
     //console.log("acc: "+ account);
 
     await Promise.all(db.claims.map(
-       async (claimName) => {
-            // contract call
-            var result = await contract.methods.getClaim(account, claimName).call({from:account})
-           // console.log(result);
+       async (claim) => {
+            // contract call to get claim value and metadata
+            var result = await contract.methods.getClaim(account, claim.name).call({from:account})
 
             // result[0] -> 0 = ok, 1 = ko
             // result[1] -> error message if ko
@@ -277,21 +276,40 @@ async function checkClaims() {
             // result[6] -> key
             // result[7] -> value
 
+            // look for claim issuer in local db
+            var trustedIssuer = db.issuers.find(issuer => issuer.id == claim.issuer);
 
-            if(result[0]==0) {
+            // if issuer is found, is trusted and is the same as claimed, then check signature
+            if(result[0]==0 && trustedIssuer && result[3]==trustedIssuer.address && trustedIssuer.trusted) {
+                // hash claim data
                 const hashedClaim = web3.utils.soliditySha3(result[3], result[2], result[6], result[7]);
-                var recovered;
                 try{
-                   recovered = await web3.eth.personal.ecRecover(hashedClaim, result[5]);
+                    // compute signer address from signature
+                    var recovered = await web3.eth.personal.ecRecover(hashedClaim, result[5]);
+
+                    // set data and check status for claim
+                    var checked=(recovered && recovered.toLowerCase() === result[3].toLowerCase());
+                    claims.push({name:claim.name, value:result[7], checked:checked, msg:((!checked)?"Wrong signature":"")  });
                 }
                 catch(error) {
-
+                    claims.push({name:claim.name, value:result[7], checked:false, msg:"Error while checking signature" });
                 }
-                console.log("recovered: "+recovered);
-                claims.push({name:claimName, value:result[7], checked: (recovered && recovered.toLowerCase() === result[3].toLowerCase()) });
             }
             else {
-                 claims.push({name:claimName, value:result[1], checked: false });
+                 if(result[0]==1) {
+                    // no data or smart contract error
+                    claims.push({name:claim.name, value:result[1], checked: false, msg:result[1] });
+                 } else {
+                    // issuer problem
+                    var msg="";
+                    if(!trustedIssuer) msg="Unknown issuer";
+                    else if(!trustedIssuer.trusted) msg="Untrusted issuer";
+                    else if(result[3]!=trustedIssuer.address) msg="Not issued by claimed issuer";
+                    else msg="Unknown error"
+
+                     // untrusted or unchecked
+                     claims.push({name:claim.name, value:result[7], checked: false, msg:msg });
+                 }
             }
 
            // console.log(claims);

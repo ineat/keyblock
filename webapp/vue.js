@@ -61,6 +61,8 @@ const app = Vue.createApp({
     submitClaim(claimName, claimValue) {
        // console.log("submitClaim: "+claimName+" = "+claimValue);
         this.spinner = '<div class="spinner-border" role="status"></div>';
+        this.setClaimMessage = 'Transaction in progress ...';
+
         var createClaimPromise = createClaim(claimName, claimValue, "0x60bDD80B595890E75AA6Bae497dd5d8deaEEFd14");
 
         console.log("createClaimPromise");
@@ -79,13 +81,13 @@ const app = Vue.createApp({
 });
 
 app.component("claim", {
-    props:["name", "value", "checked"],
+    props:["name", "value", "checked", "msg"],
     template:`
         <p>
             <b>{{name}}: </b>{{value}}
             <i class="bi bi-check-circle" v-if="checked" style="color:green" title="Issuer signature checked"></i>
-            <i class="bi bi-x-circle" v-if="! checked && value!='Subject or key not found'" style="color:red" title="Signature check failed"></i>
-            <i class="bi bi-question-circle" v-if="! checked && value=='Subject or key not found' " style="color:blue" title="Issuer signature NOT checked"></i>
+            <i class="bi bi-x-circle" v-if="! checked && value!='Subject or key not found'" style="color:red" v-bind:title="msg"></i>
+            <i class="bi bi-question-circle" v-if="! checked && value=='Subject or key not found' " style="color:blue" v-bind:title="msg"></i>
         </p>
     `
 });

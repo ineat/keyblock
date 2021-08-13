@@ -85,7 +85,7 @@
                         </div>
                         <p><button type="button" class="btn btn-primary" @click="displayClaims()">Check claims</button></p>
 
-                        <claim v-for="claim in claims" v-bind:name="claim.name" v-bind:value="claim.value" v-bind:checked="claim.checked"></claim>
+                        <claim v-for="claim in claims" v-bind:name="claim.name" v-bind:value="claim.value" v-bind:checked="claim.checked" v-bind:msg="claim.msg"></claim>
 
                     </div>
                 </div>
