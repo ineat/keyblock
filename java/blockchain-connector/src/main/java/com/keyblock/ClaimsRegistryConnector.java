@@ -1,46 +1,47 @@
 package com.keyblock;
 
 import com.keyblock.api.Claim;
+import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.observable.TransactionListenerInterface;
-import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.Hash;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.Request;
-import org.web3j.protocol.core.methods.response.EthBlockNumber;
-import org.web3j.protocol.core.methods.response.EthSign;
-import org.web3j.protocol.http.HttpService;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.DynamicBytes;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.tuples.generated.Tuple8;
+import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.response.TransactionReceiptProcessor;
+import org.web3j.utils.Numeric;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Connection wrapper to use @ClaimsRegistry
  */
-public class ClaimsRegistryConnector extends TransactionNotifier implements ClaimsRegistryInterface {
+public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegistryInterface {
 
     private static final Logger log = LogManager.getLogger(ClaimsRegistryConnector.class);
-
-
-    /**
-     * The @Web3j object that wraps blockchain RPC
-     */
-    private Web3j web3j;
 
     /**
      * @ClaimsRegistry smart contract object
      */
     private ClaimsRegistry contract;
-
-    /**
-     * @Credential that represents the Ethereum account used to create transactions
-     */
-    private Credentials credentials;
 
     @Override
     public void subscribe(String transactionHash, TransactionListenerInterface listener) {
@@ -74,29 +75,17 @@ public class ClaimsRegistryConnector extends TransactionNotifier implements Clai
      * @param privateKey private key of account used to sign transactions
      */
     public ClaimsRegistryConnector(String endpointUrl, String contractAddress, String address, String privateKey) {
-        connection(endpointUrl);
-        this.credentials =  Credentials.create(privateKey, address);
-        loadContract(contractAddress);
-    }
-
-    /**
-     * Create a connection to given endpoint
-     * @param endpointUrl RPC endpoint of Ethereum node to connect to
-     */
-    private void connection(String endpointUrl) {
-        this.web3j = Web3j.build(new HttpService(endpointUrl));
-        System.out.println("Connected, get current head: "+getBlockNumber().getBlockNumber());
+        super(endpointUrl, contractAddress, address, privateKey);
+        loadContract();
     }
 
     /**
      * Load @ClaimsRegistry contract at given address for given account
-     * @param contractAddress @ClaimsRegistry smart contract address to use
      */
-    private void loadContract(String contractAddress) {
+    private void loadContract() {
         assert (web3j != null);
         assert (credentials != null);
-        ContractGasProvider cgp = new DefaultGasProvider();
-        this.contract = ClaimsRegistry.load(contractAddress, this.web3j, this.credentials, cgp);
+        this.contract = ClaimsRegistry.load(connection.getContractAddress(), this.web3j, this.credentials, gasProvider);
         System.out.println("Contract loaded: "+contract.getContractAddress());
         try {
             System.out.println("Contract check: "+contract.isValid());
@@ -105,55 +94,124 @@ public class ClaimsRegistryConnector extends TransactionNotifier implements Clai
         }
     }
 
-    /**
-     * Get current head block number, a blockchain way to ping
-     * @return the blockchain head of node we are connected to
-     */
-    public EthBlockNumber getBlockNumber() {
-        EthBlockNumber result = new EthBlockNumber();
-        try {
-            result = this.web3j.ethBlockNumber()
-                    .sendAsync()
-                    .get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
     @Override
     public Claim getClaim(String subjectAddress, String claimId) {
+        log.info("get "+claimId+" for "+subjectAddress);
+        if(subjectAddress == null || subjectAddress.isEmpty() || claimId == null || claimId.isEmpty()){
+            log.error("No data, no claim !");
+            return null;
+        }
+
+        try {
+            Tuple8<BigInteger, String, String, String, BigInteger, byte[], String, String> result = this.contract.getClaim(subjectAddress, claimId).send();
+            // 1: return code
+            // 2: return message
+            // 3: subject address
+            // 4: issuer address
+            // 5: issuedAt
+            // 6: signature
+            // 7: claim key
+            // 8: claim value
+
+            if(result != null) {
+                // Smart contract returns 0 = success
+                if (result.component1().toString().equals("0")) {
+                    return new Claim(subjectAddress
+                            , result.component3() // issuer address
+                            , Instant.ofEpochSecond(result.component5().longValue()) // issued at
+                            , result.component6().toString() // signature
+                            , claimId
+                            , result.component8());
+                }
+                else {
+                    log.error(result.component2());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Claim not found for "+subjectAddress);
+        }
+
         return null;
+    }
+
+    /**
+     * Build a raw transaction from given data
+     * @param subjectAddress
+     * @param claimId
+     * @param claimValue
+     * @return the hash of transaction
+     */
+     private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+
+         // build function call
+         Function function = new Function(
+                 "setClaim",
+                 Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
+                 Collections.emptyList());
+
+         return callContractFunction(function);
+     }
+
+
+   /* private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) {
+        String claimSignature = "";
+
+        try {
+            // compute nonce
+            EthGetTransactionCount ethGetTransactionCount = this.web3j.ethGetTransactionCount(
+                    connection.getEthereumAddress(), DefaultBlockParameterName.LATEST).sendAsync().get();
+            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+            log.debug("nonce: "+nonce.toString());
+
+            // build function call
+            Function function = new Function(
+                    "setClaim",
+                    Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(claimSignature.getBytes())),
+                    Collections.emptyList());
+
+            // encode function call to tx data
+            String encodedFunction = FunctionEncoder.encode(function);
+            log.debug("encodedFunction: "+encodedFunction);
+
+            RawTransaction rawTx = RawTransaction.createTransaction(
+                    nonce
+                    ,gasProvider.getGasPrice(encodedFunction)
+                    ,gasProvider.getGasLimit(encodedFunction)
+                    ,this.contract.getContractAddress()
+                    ,BigInteger.ZERO
+                    ,encodedFunction);
+
+            byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
+            String hexValue = Numeric.toHexString(signedMessage);
+
+            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();
+            if(ethSendTransaction.getError() != null)
+                log.error(ethSendTransaction.getError().getMessage());
+
+            String transactionHash = ethSendTransaction.getTransactionHash();
+            log.info("Tx hash: "+transactionHash);
+
+            return transactionHash;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+
+    @Override
+    public String setClaimAsync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+        // Send tx and return hash
+        return sendClaimTransaction(subjectAddress,claimId, claimValue);
     }
 
     @Override
-    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) {
-        return null;
-    }
+    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
 
-    @Override
-    public String setClaimAsync(String subjectAddress, String claimId, String claimValue) {
-        return null;
-    }
-
-    @Override
-    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash) {
-        return null;
-    }
-
-    public void signClaim(Claim claim) throws IOException {
-
-        String plainData = new StringBuffer(claim.getIssuerAddress())
-                .append(claim.getSubjectAddress())
-                .append(claim.getKey())
-                .append(claim.getValue()).toString();
-        byte[] data = plainData.getBytes();
-
-        Request<?, EthSign> signRequest = web3j.ethSign(credentials.getAddress(), Hash.sha3(plainData));
-        EthSign sign = signRequest.send();
-
-        log.info("Signature: "+sign.getSignature());
+        // Send tx and uses hash to wait for receipt
+        String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
+        return waitForReceipt(transactionHash);
     }
 }

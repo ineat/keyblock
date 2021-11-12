@@ -3,12 +3,12 @@ package com.keyblock.api;
 import java.time.Instant;
 
 public class Claim {
-        private String subjectAddress;
-        private String issuerAddress;
-        private Instant issuedAt;
-        private String signature;
-        private String key;
-        private String value;
+    private String subjectAddress;
+    private String issuerAddress;
+    private Instant issuedAt;
+    private String signature;
+    private String key;
+    private String value;
 
     public Claim() {
     }

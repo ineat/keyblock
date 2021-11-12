@@ -1,9 +1,8 @@
 package com.keyblock.test;
 
-import com.keyblock.api.Claim;
+import com.keyblock.ClaimsRegistryConnector;
 import com.keyblock.ClaimsRegistryInterface;
-import com.keyblock.blockchain.BlockchainContext;
-import com.keyblock.SimpleClaimsRegistryConnector;
+import com.keyblock.api.Claim;
 import com.keyblock.api.TransactionReceipt;
 import com.keyblock.test.mock.IAMMock;
 import com.keyblock.test.mock.UserMock;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -25,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SimpleClaimsRegistryTest  {
+public class ClaimsRegistryTest {
 
-    private static final Logger log = LogManager.getLogger(SimpleClaimsRegistryTest.class);
+    private static final Logger log = LogManager.getLogger(ClaimsRegistryTest.class);
 
     ClaimsRegistryInterface registry;
 
@@ -36,7 +34,12 @@ public class SimpleClaimsRegistryTest  {
     @BeforeAll
     public void initRegistry() {
         log.info("Init smart contract");
-        this.registry = new SimpleClaimsRegistryConnector(new BlockchainContext(BlockchainContext.ContextFlavor.SIMPLECLAIMREGISTRY_INFURA_ROPSTEN));
+        this.registry = new ClaimsRegistryConnector(
+                "HTTP://127.0.0.1:7545"
+                ,"0xe7a938315a29938E22A4EE1e57381c9b201B029E"
+                ,"0x309B2Df61A8Fd7B3550D9ca6e78A0462960D476F"
+                ,"5a83ebabd5b142d93151ea5cacf1f9407ed569428b30471df57904c6c12f85c2"
+        );
         assertNotNull(registry);
     }
 
