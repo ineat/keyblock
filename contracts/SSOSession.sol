@@ -45,7 +45,11 @@ contract SSOSession {
         Session storage session = sessions[subject];
 
         // Session must not exist yet, or be created by the same issuer, or be expired
-        require( (session.subject == address(0x0)) || (session.issuer == msg.sender && session.issuer != address(0x0) && session.endValidityDate > block.timestamp), "Cannot override an existing valid session created by another provider");
+        require( ( session.subject == address(0x0) )
+        || ( session.subject != address(0x0) && session.issuer == msg.sender )
+            || ( session.subject != address(0x0) && session.issuer != msg.sender && session.endValidityDate < block.timestamp )
+        ,"Cannot override an existing valid session created by another provider");
+
 
         session.sessionId = sessionId;
         session.subject = subject;
