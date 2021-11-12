@@ -8,7 +8,7 @@
 # sudo apt-get install solc
 
 
-echo "Compile SimpleClaimsRegistry..."
+echo "1) Compile SimpleClaimsRegistry..."
 solc SimpleClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
 
 # copy abi and binary to java connector
@@ -24,7 +24,7 @@ echo "Done"
 
 
 # compile contract
-echo "Compile ClaimsRegistry..."
+echo "2) Compile ClaimsRegistry..."
 solc ClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
 
 # copy abi and binary to java connector
@@ -35,5 +35,35 @@ cp ./build/ClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/Cl
 # generate web3j classe for contract
 echo "Generate java wrapper..."
 web3j generate solidity -a=./build/ClaimsRegistry.abi -b=./build/ClaimsRegistry.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
+
+echo "Done"
+
+# compile contract
+echo "3) Compile SSOSession..."
+solc SSOSession.sol --bin --abi -o ./build/ --overwrite
+
+# copy abi and binary to java connector
+echo "Copy file to java connector..."
+cp ./build/SSOSession.abi ../java/blockchain-connector/src/main/resources/SSOSession.abi
+cp ./build/SSOSession.bin ../java/blockchain-connector/src/main/resources/SSOSession.bin
+
+# generate web3j classe for contract
+echo "Generate java wrapper..."
+web3j generate solidity -a=./build/SSOSession.abi -b=./build/SSOSession.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
+
+echo "Done"
+
+# compile contract
+echo "Compile SignatureHelper..."
+solc SignatureHelper.sol --bin --abi -o ./build/ --overwrite
+
+# copy abi and binary to java connector
+echo "Copy file to java connector..."
+cp ./build/SignatureHelper.abi ../java/blockchain-connector/src/main/resources/SignatureHelper.abi
+cp ./build/SignatureHelper.bin ../java/blockchain-connector/src/main/resources/SignatureHelper.bin
+
+# generate web3j classe for contract
+echo "Generate java wrapper..."
+web3j generate solidity -a=./build/SignatureHelper.abi -b=./build/SignatureHelper.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
 
 echo "Done"
