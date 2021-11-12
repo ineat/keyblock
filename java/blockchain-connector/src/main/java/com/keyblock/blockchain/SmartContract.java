@@ -1,6 +1,7 @@
 package com.keyblock.blockchain;
 
 
+import com.keyblock.crypto.CryptoUtils;
 import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,6 @@ import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Numeric;
@@ -60,7 +60,7 @@ public abstract class SmartContract extends TransactionNotifier  {
 
     protected SmartContract(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
         connection = new BlockchainConnection(endpointUrl, contractAddress, ethereumAddress, ethereumPrivateKey);
-        connection.setEthereumPublicKey(getPublicKeyInHex(ethereumPrivateKey));
+        connection.setEthereumPublicKey(CryptoUtils.getPublicKeyInHex(ethereumPrivateKey));
         gasProvider = new CustomGasProvider();
         this.connection();
     }
@@ -90,14 +90,6 @@ public abstract class SmartContract extends TransactionNotifier  {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public static String getPublicKeyInHex(String privateKeyInHex) {
-        BigInteger privateKeyInBT = new BigInteger(privateKeyInHex, 16);
-        ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
-        BigInteger publicKeyInBT = aPair.getPublicKey();
-        String sPublickeyInHex = publicKeyInBT.toString(16);
-        return sPublickeyInHex;
     }
 
     public String callContractFunction(Function function) throws IOException, ExecutionException, InterruptedException {

@@ -153,54 +153,6 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
          return callContractFunction(function);
      }
 
-
-   /* private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) {
-        String claimSignature = "";
-
-        try {
-            // compute nonce
-            EthGetTransactionCount ethGetTransactionCount = this.web3j.ethGetTransactionCount(
-                    connection.getEthereumAddress(), DefaultBlockParameterName.LATEST).sendAsync().get();
-            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-            log.debug("nonce: "+nonce.toString());
-
-            // build function call
-            Function function = new Function(
-                    "setClaim",
-                    Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(claimSignature.getBytes())),
-                    Collections.emptyList());
-
-            // encode function call to tx data
-            String encodedFunction = FunctionEncoder.encode(function);
-            log.debug("encodedFunction: "+encodedFunction);
-
-            RawTransaction rawTx = RawTransaction.createTransaction(
-                    nonce
-                    ,gasProvider.getGasPrice(encodedFunction)
-                    ,gasProvider.getGasLimit(encodedFunction)
-                    ,this.contract.getContractAddress()
-                    ,BigInteger.ZERO
-                    ,encodedFunction);
-
-            byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
-            String hexValue = Numeric.toHexString(signedMessage);
-
-            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();
-            if(ethSendTransaction.getError() != null)
-                log.error(ethSendTransaction.getError().getMessage());
-
-            String transactionHash = ethSendTransaction.getTransactionHash();
-            log.info("Tx hash: "+transactionHash);
-
-            return transactionHash;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
-
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
         // Send tx and return hash

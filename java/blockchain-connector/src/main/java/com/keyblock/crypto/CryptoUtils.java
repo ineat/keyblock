@@ -35,6 +35,22 @@ public class CryptoUtils {
         return publicKeyInBT.toString();
     }
 
+    public static byte[] hexStringToBytesArray(String hexString) {
+
+        if(hexString.startsWith("0x")) {
+            hexString = hexString.substring(2);
+        }
+
+        if ((hexString.length() % 2) != 0) {
+            throw new IllegalArgumentException("Invalid hex string (length % 2 != 0)");
+        }
+        byte[] array = new byte[hexString.length() / 2];
+        for (int i = 0, arrayIndex = 0; i < hexString.length(); i += 2, arrayIndex++) {
+            array[arrayIndex] = Integer.valueOf(hexString.substring(i, i + 2), 16).byteValue();
+        }
+        return array;
+    }
+
     public static Signature signClaim(Claim claim, String privateKey) {
 
         // 1. concatenate issuerAddress + subjectAddress + key + value

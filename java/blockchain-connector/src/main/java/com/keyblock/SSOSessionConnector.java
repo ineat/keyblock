@@ -3,13 +3,14 @@ package com.keyblock;
 import com.keyblock.blockchain.SmartContract;
 
 import com.keyblock.api.SSOSession;
+import com.keyblock.crypto.CryptoUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.abi.datatypes.*;
-import org.web3j.abi.datatypes.primitive.Long;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -42,7 +43,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         // build function call
         Function function = new Function(
                 "createSession",
-                Arrays.asList(new Utf8String(sessionId), new Address(subjectAddress), new Uint(BigInteger.valueOf(endValidityDateTimestamp)), new DynamicBytes(signature.getBytes())), // TODO compute signature
+                Arrays.asList(new Utf8String(sessionId), new Address(subjectAddress), new Uint(BigInteger.valueOf(endValidityDateTimestamp)), new DynamicBytes(CryptoUtils.hexStringToBytesArray(signature))),
                 Collections.emptyList());
 
         return callContractFunction(function);
@@ -68,7 +69,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         ssoSession.setEndValidityDateTimestamp(session.endValidityDate.longValue());
         ssoSession.setIssuanceDateTimestamp(session.issuanceDate.longValue());
         ssoSession.setIssuerAddress(session.issuer);
-        ssoSession.setSignature(session.signature.toString()); // TODO check cast
+        ssoSession.setSignature(new String(session.signature, StandardCharsets.UTF_8));// TODO check cast
         ssoSession.setSubjectAddress(session.subject);
 
         return ssoSession;
