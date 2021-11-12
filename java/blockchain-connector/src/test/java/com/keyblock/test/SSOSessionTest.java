@@ -2,7 +2,6 @@ package com.keyblock.test;
 
 import com.keyblock.SSOSessionConnector;
 import com.keyblock.api.SSOSession;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
