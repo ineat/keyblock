@@ -26,6 +26,7 @@ public class ClaimsRegistryConnector extends TransactionNotifier implements Clai
 
     private static final Logger log = LogManager.getLogger(ClaimsRegistryConnector.class);
 
+
     /**
      * The @Web3j object that wraps blockchain RPC
      */

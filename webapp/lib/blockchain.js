@@ -131,9 +131,11 @@ function askForSignatureEthPersonal(account, message) {
         web3.eth.personal.sign(message, account)
         .then(
             (sig) => {
-                console.log("Signature: "+sig);
+                console.log("Signature personal: "+sig);
                 authentResult.userAuthent="Yes";
                 authentResult.signature=sig;
+
+                console.log(web3.eth.accounts.recover(message, sig));
 
                 return web3.eth.personal.ecRecover(message, sig);
         })
@@ -178,7 +180,13 @@ function askForSignatureEIP712(account, data) {
             ]
         })
         .then( (sig) => {
-              console.log("Signature: "+sig);
+              console.log("Signature eip712: "+sig);
+
+                const Http = new XMLHttpRequest();
+                const url='http://localhost:3001/checkSig?data='+JSON.stringify(data)+'&address='+account+'&signature='+sig;
+                Http.open("GET", url);
+                Http.setRequestHeader('Access-Control-Allow-Origin','*');
+                Http.send();
 
             const recovered = sigUtil.recoverTypedSignature_v4({
                 data: data
@@ -222,7 +230,7 @@ function askForSignatureEthSign(account, message) {
         web3.eth.sign(message, account)
         .then(
           (sig) => {
-            console.log("signature: "+sig);
+            console.log("signature sign: "+sig);
             authentResult.userAuthent = "Yes";
             authentResult.signature = sig;
 
@@ -473,7 +481,7 @@ function checkSignature(signature, account, message) {
 
     var result = contract.methods.checkSignature(web3.utils.sha3(message), web3.utils.hexToNumber(v), r, s).call({from:account})
     .then( (resultAddress) => {
-         $('#recover').text( resultAddress);
+         $('#recover').text(resultAddress);
          $('#signatureCheck').text( (resultAddress==account) );
     });
 }

@@ -33,12 +33,12 @@ var manualPersonalSignature;
     console.log("----- SIGN");
 
     // ----- ----- plainData & web3.eth.accounts.sign
-    var sigObject = web3.eth.accounts.sign(data, privKey);
+    var sigObject =  web3.eth.accounts.sign(data, privKey);
     plainAccountsSignature = sigObject.signature;
     console.log("plainData, web3.eth.accounts.sign: "+plainAccountsSignature);
 
     // ----- ----- plainData & web3.eth.personam.sign
-    plainPersonalSignature = await web3.eth.personal.sign(data, address);
+    plainPersonalSignature =  await web3.eth.personal.sign(data, address);
     console.log("plainData, web3.eth.personal.sign: "+plainPersonalSignature);
 
     // ----- ----- web3HashedMessage & web3.eth.accounts.sign
