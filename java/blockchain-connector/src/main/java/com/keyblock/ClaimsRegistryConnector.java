@@ -1,10 +1,9 @@
 package com.keyblock;
 
-import com.keyblock.api.Claim;
+import com.keyblock.model.Claim;
 import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
-import com.keyblock.observable.TransactionListenerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -131,7 +130,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     }
 
     @Override
-    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+    public com.keyblock.model.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
 
         // Send tx and uses hash to wait for receipt
         String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);

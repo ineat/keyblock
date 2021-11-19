@@ -1,4 +1,4 @@
-package com.keyblock.api;
+package com.keyblock.model;
 
 import com.keyblock.converter.TransactionReceiptConverter;
 import org.web3j.protocol.core.methods.response.Log;

@@ -1,7 +1,7 @@
 package com.keyblock.observable;
 
 
-import com.keyblock.api.TransactionReceipt;
+import com.keyblock.model.TransactionReceipt;
 
 /**
  * Interface to implement to be able to subscribe and be notified when a transaction is validated

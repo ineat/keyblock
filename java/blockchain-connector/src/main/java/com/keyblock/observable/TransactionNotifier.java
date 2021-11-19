@@ -41,7 +41,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
         Optional<TransactionReceipt> transactionReceipt = checkReceipt(transactionHash);
         if(! transactionReceipt.isEmpty()) {
             log.info("Receipt found, notify listener");
-            listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
+            listener.notify(com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
         }
         else {
             log.info("Receipt not found, start waiting ...");
@@ -85,7 +85,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
   /*  private void notify(String transactionHash, TransactionReceipt transactionReceipt) {
         TransactionListenerInterface listener = this.listeners.get(transactionHash);
         if(listener != null){
-            listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt));
+            listener.notify(com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt));
         }
     }*/
 
@@ -141,7 +141,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
             try {
                 txReceipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
                 log.info("Block number: "+txReceipt.getBlockNumber());
-                this.listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt));
+                this.listener.notify(com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt));
 
             } catch (IOException e) {
                 e.printStackTrace();

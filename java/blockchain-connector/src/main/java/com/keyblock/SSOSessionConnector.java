@@ -2,8 +2,8 @@ package com.keyblock;
 
 import com.keyblock.blockchain.SmartContract;
 
-import com.keyblock.api.SSOSession;
-import com.keyblock.crypto.CryptoUtils;
+import com.keyblock.model.SSOSession;
+import com.keyblock.util.CryptoUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.abi.datatypes.*;

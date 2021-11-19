@@ -1,4 +1,4 @@
-package com.keyblock.api;
+package com.keyblock.model;
 
 public class SSOSession {
 

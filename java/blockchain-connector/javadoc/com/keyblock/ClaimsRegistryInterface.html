@@ -154,7 +154,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="api/Claim.html" title="class in com.keyblock.api">Claim</a></code></td>
+<td class="colFirst"><code><a href="api/Claim.html" title="class in com.keyblock.model">Claim</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getClaim(java.lang.String,java.lang.String)">getClaim</a></span>&#8203;(java.lang.String&nbsp;subjectAddress,
         java.lang.String&nbsp;claimId)</code></th>
 <td class="colLast">
@@ -171,7 +171,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="api/TransactionReceipt.html" title="class in com.keyblock.api">TransactionReceipt</a></code></td>
+<td class="colFirst"><code><a href="api/TransactionReceipt.html" title="class in com.keyblock.model">TransactionReceipt</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setClaimSync(java.lang.String,java.lang.String,java.lang.String)">setClaimSync</a></span>&#8203;(java.lang.String&nbsp;subjectAddress,
             java.lang.String&nbsp;claimId,
             java.lang.String&nbsp;claimValue)</code></th>
@@ -180,7 +180,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="api/TransactionReceipt.html" title="class in com.keyblock.api">TransactionReceipt</a></code></td>
+<td class="colFirst"><code><a href="api/TransactionReceipt.html" title="class in com.keyblock.model">TransactionReceipt</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#waitForReceipt(java.lang.String)">waitForReceipt</a></span>&#8203;(java.lang.String&nbsp;transactionHash)</code></th>
 <td class="colLast">
 <div class="block">Wait for a transaction to be validated.</div>
@@ -216,7 +216,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 <ul class="blockList">
 <li class="blockList">
 <h4>getClaim</h4>
-<pre class="methodSignature"><a href="api/Claim.html" title="class in com.keyblock.api">Claim</a>&nbsp;getClaim&#8203;(java.lang.String&nbsp;subjectAddress,
+<pre class="methodSignature"><a href="api/Claim.html" title="class in com.keyblock.model">Claim</a>&nbsp;getClaim&#8203;(java.lang.String&nbsp;subjectAddress,
                java.lang.String&nbsp;claimId)</pre>
 <div class="block">Read a @com.keyblock.Claim from smart contract</div>
 <dl>
@@ -234,7 +234,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 <ul class="blockList">
 <li class="blockList">
 <h4>setClaimSync</h4>
-<pre class="methodSignature"><a href="api/TransactionReceipt.html" title="class in com.keyblock.api">TransactionReceipt</a>&nbsp;setClaimSync&#8203;(java.lang.String&nbsp;subjectAddress,
+<pre class="methodSignature"><a href="api/TransactionReceipt.html" title="class in com.keyblock.model">TransactionReceipt</a>&nbsp;setClaimSync&#8203;(java.lang.String&nbsp;subjectAddress,
                                 java.lang.String&nbsp;claimId,
                                 java.lang.String&nbsp;claimValue)</pre>
 <div class="block">Synchronous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and wait for result.</div>
@@ -274,7 +274,7 @@ extends <a href="observable/TransactionNotifierInterface.html" title="interface 
 <ul class="blockListLast">
 <li class="blockList">
 <h4>waitForReceipt</h4>
-<pre class="methodSignature"><a href="api/TransactionReceipt.html" title="class in com.keyblock.api">TransactionReceipt</a>&nbsp;waitForReceipt&#8203;(java.lang.String&nbsp;transactionHash)</pre>
+<pre class="methodSignature"><a href="api/TransactionReceipt.html" title="class in com.keyblock.model">TransactionReceipt</a>&nbsp;waitForReceipt&#8203;(java.lang.String&nbsp;transactionHash)</pre>
 <div class="block">Wait for a transaction to be validated. The call is blocking until receipt is created.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

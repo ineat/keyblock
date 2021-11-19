@@ -1,5 +1,5 @@
 com.keyblock
-com.keyblock.api
+com.keyblock.model
 com.keyblock.contract
 com.keyblock.converter
 com.keyblock.crypto

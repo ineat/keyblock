@@ -1,9 +1,8 @@
 package com.keyblock.test;
 
-import com.keyblock.api.Claim;
-import com.keyblock.api.Signature;
-import com.keyblock.blockchain.BlockchainContext;
-import com.keyblock.crypto.CryptoUtils;
+import com.keyblock.model.Claim;
+import com.keyblock.model.Signature;
+import com.keyblock.util.CryptoUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

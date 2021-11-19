@@ -1,11 +1,8 @@
-package com.keyblock.crypto;
+package com.keyblock.util;
 
-import com.keyblock.api.Claim;
-import com.keyblock.api.Signature;
-import com.keyblock.blockchain.BlockchainContext;
-import jnr.posix.Crypt;
+import com.keyblock.model.Claim;
+import com.keyblock.model.Signature;
 import org.web3j.crypto.*;
-import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 

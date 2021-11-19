@@ -2,8 +2,8 @@ package com.keyblock.test;
 
 import com.keyblock.ClaimsRegistryConnector;
 import com.keyblock.ClaimsRegistryInterface;
-import com.keyblock.api.Claim;
-import com.keyblock.api.TransactionReceipt;
+import com.keyblock.model.Claim;
+import com.keyblock.model.TransactionReceipt;
 import com.keyblock.test.mock.IAMMock;
 import com.keyblock.test.mock.UserMock;
 import org.apache.logging.log4j.LogManager;

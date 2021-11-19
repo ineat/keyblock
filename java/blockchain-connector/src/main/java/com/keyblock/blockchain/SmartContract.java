@@ -1,14 +1,13 @@
 package com.keyblock.blockchain;
 
 
-import com.keyblock.crypto.CryptoUtils;
+import com.keyblock.util.CryptoUtils;
 import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
@@ -136,7 +135,7 @@ public abstract class SmartContract extends TransactionNotifier  {
         }
     }
 
-    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash) {
+    public com.keyblock.model.TransactionReceipt waitForReceipt(String transactionHash) {
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
@@ -151,6 +150,6 @@ public abstract class SmartContract extends TransactionNotifier  {
             e.printStackTrace();
         }
 
-        return com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt);
+        return com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt);
     }
 }

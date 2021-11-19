@@ -9,5 +9,5 @@ public interface TransactionReceiptMapper {
 
     TransactionReceiptMapper INSTANCE = Mappers.getMapper( TransactionReceiptMapper.class );
 
-    com.keyblock.api.TransactionReceipt fromWeb3jTransactionReceipt(TransactionReceipt from);
+    com.keyblock.model.TransactionReceipt fromWeb3jTransactionReceipt(TransactionReceipt from);
 }

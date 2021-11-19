@@ -1,6 +1,6 @@
 package com.keyblock;
 
-import com.keyblock.api.Claim;
+import com.keyblock.model.Claim;
 import com.keyblock.observable.TransactionNotifierInterface;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public interface ClaimsRegistryInterface extends TransactionNotifierInterface {
      * @param claimValue value of @com.keyblock.Claim to set
      * @return the @com.keyblock.Claim created
      */
-    public com.keyblock.api.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException;
+    public com.keyblock.model.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException;
 
     /**
      * Asynchronous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and only send transaction.
@@ -39,6 +39,6 @@ public interface ClaimsRegistryInterface extends TransactionNotifierInterface {
      * @param transactionHash the hash of transaction to wait for
      * @return the org.web3j.protocol.core.methods.response.TransactionReceipt of given transaction hash
      */
-    public com.keyblock.api.TransactionReceipt waitForReceipt(String transactionHash);
+    public com.keyblock.model.TransactionReceipt waitForReceipt(String transactionHash);
 
 }

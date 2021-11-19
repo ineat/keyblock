@@ -1,6 +1,6 @@
 package com.keyblock;
 
-import com.keyblock.api.SSOSession;
+import com.keyblock.model.SSOSession;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

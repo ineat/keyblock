@@ -1,6 +1,4 @@
-package com.keyblock.api;
-
-import java.nio.charset.StandardCharsets;
+package com.keyblock.model;
 
 public class Signature {
     private String signerAddress;

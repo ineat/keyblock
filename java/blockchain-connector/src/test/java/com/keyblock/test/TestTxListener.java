@@ -1,7 +1,7 @@
 package com.keyblock.test;
 
 import com.keyblock.ClaimsRegistryInterface;
-import com.keyblock.api.TransactionReceipt;
+import com.keyblock.model.TransactionReceipt;
 import com.keyblock.observable.TransactionListenerInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +21,7 @@ public class TestTxListener implements TransactionListenerInterface {
 
     private String testClaimValue = "";
 
-    private com.keyblock.api.TransactionReceipt receipt;
+    private com.keyblock.model.TransactionReceipt receipt;
 
     public TestTxListener(ClaimsRegistryInterface registry) {
         this.registry=registry;
@@ -44,8 +44,8 @@ public class TestTxListener implements TransactionListenerInterface {
         this.testClaimValue = testClaimValue;
     }
 
-    public Future<com.keyblock.api.TransactionReceipt> getReceipt() {
-        CompletableFuture<com.keyblock.api.TransactionReceipt> completableFuture = new CompletableFuture<>();
+    public Future<com.keyblock.model.TransactionReceipt> getReceipt() {
+        CompletableFuture<com.keyblock.model.TransactionReceipt> completableFuture = new CompletableFuture<>();
         log.info("waiting ...");
         while(this.receipt == null){
             log.info("not yet ...");

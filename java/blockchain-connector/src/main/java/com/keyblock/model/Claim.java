@@ -1,4 +1,4 @@
-package com.keyblock.api;
+package com.keyblock.model;
 
 import java.time.Instant;
 

@@ -1,4 +1,4 @@
-package com.keyblock;
+package com.keyblock.util;
 
 import org.web3j.crypto.*;
 

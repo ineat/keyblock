@@ -3,5 +3,5 @@ module blockchain.connector {
     requires org.mapstruct;
     requires core;
     exports com.keyblock;
-    exports com.keyblock.api;
+    exports com.keyblock.model;
 }
