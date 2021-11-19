@@ -1,5 +1,6 @@
 package com.keyblock.observable;
 
+import com.keyblock.model.TxReceipt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.protocol.Web3j;
@@ -41,7 +42,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
         Optional<TransactionReceipt> transactionReceipt = checkReceipt(transactionHash);
         if(! transactionReceipt.isEmpty()) {
             log.info("Receipt found, notify listener");
-            listener.notify(com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
+            listener.notify(TxReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
         }
         else {
             log.info("Receipt not found, start waiting ...");
@@ -141,7 +142,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
             try {
                 txReceipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
                 log.info("Block number: "+txReceipt.getBlockNumber());
-                this.listener.notify(com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt));
+                this.listener.notify(TxReceipt.fromWeb3TransactionReceipt(txReceipt));
 
             } catch (IOException e) {
                 e.printStackTrace();

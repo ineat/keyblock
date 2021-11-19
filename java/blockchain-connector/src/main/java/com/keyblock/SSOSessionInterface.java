@@ -1,6 +1,7 @@
 package com.keyblock;
 
 import com.keyblock.model.SSOSession;
+import com.keyblock.model.TxReceipt;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -10,6 +11,10 @@ public interface SSOSessionInterface {
     public String createSession(String sessionId, String subjectAddress, long endValidityDateTimestamp, String signature) throws IOException, ExecutionException, InterruptedException;
 
     public String revokeSession(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
+
+    public TxReceipt createSessionSync(String sessionId, String subjectAddress, long endValidityDateTimestamp, String signature) throws IOException, ExecutionException, InterruptedException;
+
+    public TxReceipt revokeSessionSync(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
 
     public SSOSession getSession(String subjectAddress) throws Exception;
 

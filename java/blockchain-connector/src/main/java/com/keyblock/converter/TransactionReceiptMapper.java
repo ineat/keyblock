@@ -1,5 +1,6 @@
 package com.keyblock.converter;
 
+import com.keyblock.model.TxReceipt;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -9,5 +10,5 @@ public interface TransactionReceiptMapper {
 
     TransactionReceiptMapper INSTANCE = Mappers.getMapper( TransactionReceiptMapper.class );
 
-    com.keyblock.model.TransactionReceipt fromWeb3jTransactionReceipt(TransactionReceipt from);
+    TxReceipt fromWeb3jTransactionReceipt(TransactionReceipt from);
 }

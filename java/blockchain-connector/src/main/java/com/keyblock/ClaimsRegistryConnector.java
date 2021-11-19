@@ -4,6 +4,7 @@ import com.keyblock.model.Claim;
 import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
+import com.keyblock.model.TxReceipt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -125,15 +126,25 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
 
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
-        // Send tx and return hash
-        return sendClaimTransaction(subjectAddress,claimId, claimValue);
+
+        // build function call
+        Function function = new Function(
+                "setClaim",
+                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
+                Collections.emptyList());
+
+        return callContractFunction(function);
     }
 
     @Override
-    public com.keyblock.model.TransactionReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
 
-        // Send tx and uses hash to wait for receipt
-        String transactionHash = sendClaimTransaction(subjectAddress,claimId, claimValue);
-        return waitForReceipt(transactionHash);
+        // build function call
+        Function function = new Function(
+                "setClaim",
+                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
+                Collections.emptyList());
+
+        return callContractfunctionSync(function);
     }
 }

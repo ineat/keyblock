@@ -3,7 +3,7 @@ package com.keyblock.test;
 import com.keyblock.ClaimsRegistryConnector;
 import com.keyblock.ClaimsRegistryInterface;
 import com.keyblock.model.Claim;
-import com.keyblock.model.TransactionReceipt;
+import com.keyblock.model.TxReceipt;
 import com.keyblock.test.mock.IAMMock;
 import com.keyblock.test.mock.UserMock;
 import org.apache.logging.log4j.LogManager;
@@ -95,7 +95,7 @@ public class ClaimsRegistryTest {
         Boolean value = Boolean.valueOf(claim.getValue());
         Boolean newValue = Boolean.valueOf(!value);
 
-        TransactionReceipt txReceipt = registry.setClaimSync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, newValue.toString());
+        TxReceipt txReceipt = registry.setClaimSync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, newValue.toString());
         assertNotNull(txReceipt);
 
         Claim newClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
@@ -116,7 +116,7 @@ public class ClaimsRegistryTest {
         String txHash = registry.setClaimAsync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, newValue.toString());
         assertNotNull(txHash);
 
-        TransactionReceipt txReceipt = registry.waitForReceipt(txHash);
+        TxReceipt txReceipt = registry.waitForReceipt(txHash);
         assertNotNull(txReceipt);
 
         Claim newClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
@@ -136,9 +136,9 @@ public class ClaimsRegistryTest {
         assertEquals(registry.getListeners().size(),1);
         log.info("Listener has subscribe, wait for notify");
 
-        Future<TransactionReceipt> completableFuture = listener.getReceipt();
+        Future<TxReceipt> completableFuture = listener.getReceipt();
         log.info("CompletableFuture received");
-        TransactionReceipt receipt = completableFuture.get();
+        TxReceipt receipt = completableFuture.get();
         log.info("Check for receipt");
         assertNotNull(receipt);
 

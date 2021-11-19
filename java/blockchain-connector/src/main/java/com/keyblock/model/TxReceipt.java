@@ -5,7 +5,7 @@ import org.web3j.protocol.core.methods.response.Log;
 
 import java.util.List;
 
-public class TransactionReceipt {
+public class TxReceipt {
 
     private String transactionHash;
     private String transactionIndex;
@@ -22,10 +22,10 @@ public class TransactionReceipt {
     private String logsBloom;
     private String revertReason;
 
-    public TransactionReceipt() {
+    public TxReceipt() {
     }
 
-    public TransactionReceipt(String transactionHash, String transactionIndex, String blockHash, String blockNumber, String cumulativeGasUsed, String gasUsed, String contractAddress, String root, String status, String from, String to, List<Log> logs, String logsBloom, String revertReason) {
+    public TxReceipt(String transactionHash, String transactionIndex, String blockHash, String blockNumber, String cumulativeGasUsed, String gasUsed, String contractAddress, String root, String status, String from, String to, List<Log> logs, String logsBloom, String revertReason) {
         this.transactionHash = transactionHash;
         this.transactionIndex = transactionIndex;
         this.blockHash = blockHash;
@@ -154,7 +154,7 @@ public class TransactionReceipt {
         this.revertReason = revertReason;
     }
 
-    public static TransactionReceipt fromWeb3TransactionReceipt(org.web3j.protocol.core.methods.response.TransactionReceipt txReceipt) {
+    public static TxReceipt fromWeb3TransactionReceipt(org.web3j.protocol.core.methods.response.TransactionReceipt txReceipt) {
         return new TransactionReceiptConverter().convert(txReceipt);
     }
 

@@ -3,6 +3,7 @@ package com.keyblock;
 import com.keyblock.blockchain.SmartContract;
 
 import com.keyblock.model.SSOSession;
+import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +59,28 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
                 Collections.emptyList());
 
         return callContractFunction(function);
+    }
+
+    @Override
+    public TxReceipt createSessionSync(String sessionId, String subjectAddress, long endValidityDateTimestamp, String signature) throws IOException, ExecutionException, InterruptedException {
+        // build function call
+        Function function = new Function(
+                "createSession",
+                Arrays.asList(new Utf8String(sessionId), new Address(subjectAddress), new Uint(BigInteger.valueOf(endValidityDateTimestamp)), new DynamicBytes(CryptoUtils.hexStringToBytesArray(signature))),
+                Collections.emptyList());
+
+        return callContractfunctionSync(function);
+    }
+
+    @Override
+    public TxReceipt revokeSessionSync(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
+        // build function call
+        Function function = new Function(
+                "revokeSession",
+                Arrays.asList(new Address(subjectAddress)),
+                Collections.emptyList());
+
+        return callContractfunctionSync(function);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.keyblock.blockchain;
 
 
+import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
 import com.keyblock.observable.TransactionNotifier;
 import org.apache.logging.log4j.LogManager;
@@ -91,6 +92,14 @@ public abstract class SmartContract extends TransactionNotifier  {
         return result;
     }
 
+    /**
+     * Send tx to a smartcontract with function call
+     * @param function
+     * @return the transaction hash
+     * @throws IOException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     public String callContractFunction(Function function) throws IOException, ExecutionException, InterruptedException {
 
         log.info("callContractFunction");
@@ -135,7 +144,7 @@ public abstract class SmartContract extends TransactionNotifier  {
         }
     }
 
-    public com.keyblock.model.TransactionReceipt waitForReceipt(String transactionHash) {
+    public TxReceipt waitForReceipt(String transactionHash) {
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
@@ -150,6 +159,11 @@ public abstract class SmartContract extends TransactionNotifier  {
             e.printStackTrace();
         }
 
-        return com.keyblock.model.TransactionReceipt.fromWeb3TransactionReceipt(txReceipt);
+        return TxReceipt.fromWeb3TransactionReceipt(txReceipt);
+    }
+
+    public TxReceipt callContractfunctionSync(Function function) throws IOException, ExecutionException, InterruptedException {
+        String txHash = callContractFunction(function);
+        return waitForReceipt(txHash);
     }
 }
