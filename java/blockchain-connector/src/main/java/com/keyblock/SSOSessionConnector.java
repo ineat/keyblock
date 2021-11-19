@@ -50,14 +50,14 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public void revokeSession(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
+    public String revokeSession(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
         // build function call
         Function function = new Function(
                 "revokeSession",
                 Arrays.asList(new Address(subjectAddress)),
                 Collections.emptyList());
 
-        callContractFunction(function);
+        return callContractFunction(function);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.keyblock;
 
 import com.keyblock.api.Claim;
+import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.observable.TransactionListenerInterface;
@@ -34,30 +35,6 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
      */
     private ClaimsRegistry contract;
 
-    @Override
-    public void subscribe(String transactionHash, TransactionListenerInterface listener) {
-
-    }
-
-    private static class DefaultParams {
-
-        // TODO move to secret manager
-        private static String endpointUrl = "https://f89ad600453b458d8dd44554ab59500a@ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98";
-        private static String ethereumPublicKey = "0x41f6B225846863E3C037e92F229cD40f5d575258";
-        private static String ethereumPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
-        private static String contractAddress = "0xad9388311e96031d9cF2D1370826D8940d057362";
-    }
-
-    /**
-     * Create a BlockchainConnector with default parameters
-     */
-    public ClaimsRegistryConnector() {
-        this(DefaultParams.endpointUrl
-            ,DefaultParams.contractAddress
-            ,DefaultParams.ethereumPublicKey
-            ,DefaultParams.ethereumPrivateKey);
-    }
-
     /**
      * Create a BlockchainCoonector with provided parameters
      * @param endpointUrl RPC endpoint of Ethereum node to connect to
@@ -68,6 +45,9 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     public ClaimsRegistryConnector(String endpointUrl, String contractAddress, String address, String privateKey) {
         super(endpointUrl, contractAddress, address, privateKey);
         loadContract();
+
+        super.setWeb3j(this.web3j);
+        this.gasProvider = new CustomGasProvider();
     }
 
     /**
@@ -79,7 +59,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
         this.contract = ClaimsRegistry.load(connection.getContractAddress(), this.web3j, this.credentials, gasProvider);
         System.out.println("Contract loaded: "+contract.getContractAddress());
         try {
-            System.out.println("Contract check: "+contract.isValid());
+            System.out.println("Contract check: "+contract.isValid()); // TODO find out how it works
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -36,9 +36,9 @@ public class ClaimsRegistryTest {
         log.info("Init smart contract");
         this.registry = new ClaimsRegistryConnector(
                 "HTTP://127.0.0.1:7545"
-                ,"0xe7a938315a29938E22A4EE1e57381c9b201B029E"
-                ,"0x309B2Df61A8Fd7B3550D9ca6e78A0462960D476F"
-                ,"5a83ebabd5b142d93151ea5cacf1f9407ed569428b30471df57904c6c12f85c2"
+                ,"0x1aB579CFc1FBD64D2e12bB05B98ee59E2bFfb556"
+                ,"0xbF440eB37F81BC3AD7fBe61DdA4C64EF0aF9A589"
+                ,"9bfaae91a5c57277948c7e13a8829422e83d5f0a86a85a7855e2825d9ad92921"
         );
         assertNotNull(registry);
     }

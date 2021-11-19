@@ -27,6 +27,7 @@ public class TestTxListener implements TransactionListenerInterface {
         this.registry=registry;
         this.testClaimValue = UUID.randomUUID().toString();
         this.receipt = null;
+
     }
 
     @Override

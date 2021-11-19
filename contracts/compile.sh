@@ -8,19 +8,19 @@
 # sudo apt-get install solc
 
 
-echo "1) Compile SimpleClaimsRegistry..."
-solc SimpleClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
+#echo "1) Compile SimpleClaimsRegistry..."
+#solc SimpleClaimsRegistry.sol --bin --abi -o ./build/ --overwrite
 
 # copy abi and binary to java connector
-echo "Copy file to java connector..."
-cp ./build/SimpleClaimsRegistry.abi ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.abi
-cp ./build/SimpleClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.bin
+#echo "Copy file to java connector..."
+#cp ./build/SimpleClaimsRegistry.abi ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.abi
+#cp ./build/SimpleClaimsRegistry.bin ../java/blockchain-connector/src/main/resources/SimpleClaimsRegistry.bin
 
 # generate web3j classe for contract
-echo "Generate java wrapper..."
-web3j generate solidity -a=./build/SimpleClaimsRegistry.abi -b=./build/SimpleClaimsRegistry.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
+#echo "Generate java wrapper..."
+#web3j generate solidity -a=./build/SimpleClaimsRegistry.abi -b=./build/SimpleClaimsRegistry.bin -o=../java/blockchain-connector/src/main/java/ --package=com.keyblock.contract
 
-echo "Done"
+#echo "Done"
 
 
 # compile contract

@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Obervable pattern to be notified for transaction validation
  */
-public class TransactionNotifier {
+public class TransactionNotifier implements TransactionNotifierInterface{
 
     private static final Logger log = LogManager.getLogger(TransactionNotifier.class);
 
@@ -41,7 +41,7 @@ public class TransactionNotifier {
         Optional<TransactionReceipt> transactionReceipt = checkReceipt(transactionHash);
         if(! transactionReceipt.isEmpty()) {
             log.info("Receipt found, notify listener");
-           listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
+            listener.notify(com.keyblock.api.TransactionReceipt.fromWeb3TransactionReceipt(transactionReceipt.get()));
         }
         else {
             log.info("Receipt not found, start waiting ...");
