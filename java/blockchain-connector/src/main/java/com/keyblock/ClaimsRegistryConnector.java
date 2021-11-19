@@ -5,6 +5,7 @@ import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.model.TxReceipt;
+import com.keyblock.util.SignUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,6 +15,7 @@ import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
 
 import org.web3j.tuples.generated.Tuple8;
+import org.web3j.utils.Numeric;
 
 
 import java.io.IOException;
@@ -88,11 +90,11 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
             if(result != null) {
                 // Smart contract returns 0 = success
                 if (result.component1().toString().equals("0")) {
-                    return new Claim(subjectAddress
-                            , result.component3() // issuer address
+                    return new Claim(result.component3()
+                            , result.component4() // issuer address
                             , Instant.ofEpochSecond(result.component5().longValue()) // issued at
-                            , result.component6().toString() // signature
-                            , claimId
+                            , Numeric.toHexString(result.component6()) // signature
+                            , result.component7()
                             , result.component8());
                 }
                 else {
@@ -127,10 +129,15 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     @Override
     public String setClaimAsync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
 
+         Claim claim = new Claim(subjectAddress, connection.getEthereumAddress(), null, null, claimId, claimValue);
+         signClaim(claim);
+
+        byte[] signature = Numeric.hexStringToByteArray(claim.getSignature());
+
         // build function call
         Function function = new Function(
                 "setClaim",
-                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
+                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(signature)),
                 Collections.emptyList());
 
         return callContractFunction(function);
@@ -139,12 +146,23 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     @Override
     public TxReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
 
+        Claim claim = new Claim(subjectAddress, connection.getEthereumAddress(), null, null, claimId, claimValue);
+        signClaim(claim);
+        log.info("signature: "+claim.getSignature());
+        byte[] signature = Numeric.hexStringToByteArray(claim.getSignature());
+
         // build function call
         Function function = new Function(
                 "setClaim",
-                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
+                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(signature)),
                 Collections.emptyList());
 
         return callContractfunctionSync(function);
+    }
+
+    private void signClaim(Claim claim) {
+        String dataToSign = claim.getSignatureDataString();
+        String signature = SignUtil.sign(dataToSign, connection.getEthereumPrivateKey());
+        claim.setSignature(signature);
     }
 }

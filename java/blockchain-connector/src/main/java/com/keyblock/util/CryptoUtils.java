@@ -1,8 +1,8 @@
 package com.keyblock.util;
 
-import com.keyblock.model.Claim;
-import com.keyblock.model.Signature;
+
 import org.web3j.crypto.*;
+
 
 import java.math.BigInteger;
 
@@ -32,6 +32,37 @@ public class CryptoUtils {
         return publicKeyInBT.toString();
     }
 
+    public static String asciiToHex(String asciiString, boolean prefix) {
+        char[] ch = asciiString.toCharArray();
+        StringBuilder builder = new StringBuilder();
+
+        if(prefix)
+            builder.append("0x");
+
+        for (char c : ch) {
+            int i = (int) c;
+            builder.append(Integer.toHexString(i).toUpperCase());
+        }
+
+        return builder.toString();
+    }
+
+    public static String hexToAscii(String hexString) {
+
+        if(hexString.startsWith("0x")) {
+            hexString = hexString.substring(2);
+        }
+
+        StringBuilder output = new StringBuilder("");
+
+        for (int i = 0; i < hexString.length(); i += 2) {
+            String str = hexString.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+
+        return output.toString();
+    }
+
     public static byte[] hexStringToBytesArray(String hexString) {
 
         if(hexString.startsWith("0x")) {
@@ -48,37 +79,25 @@ public class CryptoUtils {
         return array;
     }
 
-    public static Signature signClaim(Claim claim, String privateKey) {
-
-        // 1. concatenate issuerAddress + subjectAddress + key + value
-        StringBuffer plainData = new StringBuffer(claim.getIssuerAddress())
-                .append(claim.getSubjectAddress())
-                .append(claim.getKey())
-                .append(claim.getValue());
-        byte[] data = plainData.toString().getBytes();
-
-        Signature signatureResult = new Signature();
-        signatureResult.setSignerPublicKey(CryptoUtils.getPublicKeyInHex(privateKey));
-
-        Credentials credentials = Credentials.create(privateKey);
-        signatureResult.setSignerAddress(credentials.getAddress());
-
-        // 2. data will be sha3 hashed
-        // 3. then signed
-        Sign.SignatureData signature = Sign.signMessage(data, credentials.getEcKeyPair());
-
-        signatureResult.setR(signature.getR());
-        signatureResult.setS(signature.getS());
-        signatureResult.setV(signature.getV());
-
-        /*
-        System.out.println("Sha3: " + Numeric.toHexString(Hash.sha3(data)));
-        System.out.println("Data: " + Numeric.toHexString(data));
-        System.out.println("Address: " + credentials.getAddress());
-        System.out.println("R: " + Numeric.toHexString(signature.getR()));
-        System.out.println("S: " + Numeric.toHexString(signature.getS()));
-        System.out.println("V: " + Numeric.toHexString(signature.getV()));*/
-
-        return signatureResult;
+    private static String byteToHex(byte num) {
+        char[] hexDigits = new char[2];
+        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+        hexDigits[1] = Character.forDigit((num & 0xF), 16);
+        return new String(hexDigits);
     }
+
+
+    /**
+     * See also Numeric.toHexString
+     * @param byteArray
+     * @return
+     */
+    public static String bytesArrayToHexString(byte[] byteArray) {
+        StringBuffer hexStringBuffer = new StringBuffer();
+        for (int i = 0; i < byteArray.length; i++) {
+            hexStringBuffer.append(byteToHex(byteArray[i]));
+        }
+        return hexStringBuffer.toString();
+    }
+
 }

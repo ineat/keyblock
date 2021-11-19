@@ -6,6 +6,7 @@ import com.keyblock.model.Claim;
 import com.keyblock.model.TxReceipt;
 import com.keyblock.test.mock.IAMMock;
 import com.keyblock.test.mock.UserMock;
+import com.keyblock.util.SignUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -36,9 +38,9 @@ public class ClaimsRegistryTest {
         log.info("Init smart contract");
         this.registry = new ClaimsRegistryConnector(
                 "HTTP://127.0.0.1:7545"
-                ,"0x1aB579CFc1FBD64D2e12bB05B98ee59E2bFfb556"
-                ,"0xbF440eB37F81BC3AD7fBe61DdA4C64EF0aF9A589"
-                ,"9bfaae91a5c57277948c7e13a8829422e83d5f0a86a85a7855e2825d9ad92921"
+                ,"0xbBf538bdDDda8371c1c3d5BDf2143e8AeC2caA20"
+                ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
+                ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
         );
         assertNotNull(registry);
     }
@@ -82,7 +84,7 @@ public class ClaimsRegistryTest {
         assertNotNull(claim);
 
         assertEquals(claim.getValue(), "false");
-        assertEquals(claim.getSubjectAddress(), user.getUserAddress());
+        assertEquals(claim.getSubjectAddress().toLowerCase(), user.getUserAddress().toLowerCase());
     }
 
     @Test
@@ -144,4 +146,27 @@ public class ClaimsRegistryTest {
 
     }
 
+    @Test
+    public void whenCreateClaim_theSignatureRecovered() throws ExecutionException, InterruptedException, IOException, SignatureException {
+        UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
+        assertNotNull(user);
+
+        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNotNull(claim);
+
+        boolean recover = SignUtil.checkSignature(claim.getSignatureDataString(), claim.getSignature(), claim.getIssuerAddress());
+        assertTrue(recover);
+    }
+
+    @Test
+    public void whenCreateClaimWrongSig_theSignatureNotRecovered() throws ExecutionException, InterruptedException, IOException, SignatureException {
+        UserMock user = iam.getUser(IAMMock.USER_ALWAYS_ADMIN);
+        assertNotNull(user);
+
+        Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNotNull(claim);
+
+        boolean recover = SignUtil.checkSignature(claim.getSignatureDataString(), claim.getSignature(), claim.getIssuerAddress());
+        assertFalse(recover);
+    }
 }

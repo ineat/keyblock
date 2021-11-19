@@ -56,4 +56,14 @@ public class SSOSession {
     public void setSignature(String signature) {
         this.signature = signature;
     }
+
+    public String getSignatureDataString() {
+        StringBuffer dataString = new StringBuffer();
+        dataString.append(sessionId.toLowerCase());
+        dataString.append(subjectAddress.toLowerCase());
+        dataString.append(issuerAddress.toLowerCase());
+        dataString.append(issuanceDateTimestamp);
+        dataString.append(endValidityDateTimestamp);
+        return dataString.toString();
+    }
 }

@@ -26,9 +26,9 @@ public class SSOSessionTest {
     public void init() {
         contract = new SSOSessionConnector(
                 "HTTP://127.0.0.1:7545"
-                ,"0x88eD8952B5BBB07B2bf5C21e107897D514465316"
-                ,"0xbF440eB37F81BC3AD7fBe61DdA4C64EF0aF9A589"
-                ,"9bfaae91a5c57277948c7e13a8829422e83d5f0a86a85a7855e2825d9ad92921"
+                ,"0x371Ce83F6D7C6f9cb6365cf6C71d0453F49353B4"
+                ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
+                ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
         );
     }
 

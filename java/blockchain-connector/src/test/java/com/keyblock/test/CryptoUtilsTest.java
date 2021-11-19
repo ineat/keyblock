@@ -1,13 +1,14 @@
 package com.keyblock.test;
 
-import com.keyblock.model.Claim;
-import com.keyblock.model.Signature;
 import com.keyblock.util.CryptoUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CryptoUtilsTest {
+
+    private final String asciiString = "This is a test string !";
+    private final String hexString = "546869732069732061207465737420737472696e672021";
 
     @Test
     public void whenComputePublicKey_thenOK() {
@@ -25,19 +26,19 @@ public class CryptoUtilsTest {
         assertEquals(publicKeyHex, computedPublicKey);
     }
 
+
     @Test
-    public void whenSignClaim_thenAddressCanBeRecovered() {
-        Claim claim = new Claim();
-        claim.setIssuerAddress("0x41f6B225846863E3C037e92F229cD40f5d575258");
-        claim.setSubjectAddress("0x5Db6617D5A8BB274379cD815D765722aF5088F8a");
-        claim.setKey("isadmin");
-        claim.setValue("true");
+    public void testStringToHex() {
+        String hex = CryptoUtils.asciiToHex(asciiString, true);
+        assertEquals(hex.toLowerCase(), "0x"+hexString.toLowerCase());
 
-        String issuerPrivateKey = "85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723";
+        hex = CryptoUtils.asciiToHex(asciiString, false);
+        assertEquals(hex.toLowerCase(), hexString.toLowerCase());
+    }
 
-        Signature signature = CryptoUtils.signClaim(claim, issuerPrivateKey);
-        System.out.println(signature);
-
-        assertNotNull(signature);
+    @Test
+    public void testHexToString() {
+        String ascii = CryptoUtils.hexToAscii(hexString);
+        assertEquals(ascii, asciiString);
     }
 }

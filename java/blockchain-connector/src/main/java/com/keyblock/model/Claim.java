@@ -69,4 +69,13 @@ public class Claim {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public String getSignatureDataString() {
+        StringBuffer dataString = new StringBuffer();
+        dataString.append(subjectAddress.toLowerCase());
+        dataString.append(issuerAddress.toLowerCase());
+        dataString.append(key.toLowerCase());
+        dataString.append(value.toLowerCase());
+        return dataString.toString();
+    }
 }
