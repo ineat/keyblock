@@ -162,7 +162,7 @@ public abstract class SmartContract extends TransactionNotifier  {
         return TxReceipt.fromWeb3TransactionReceipt(txReceipt);
     }
 
-    public TxReceipt callContractfunctionSync(Function function) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt callContractFunctionSync(Function function) throws IOException, ExecutionException, InterruptedException {
         String txHash = callContractFunction(function);
         return waitForReceipt(txHash);
     }

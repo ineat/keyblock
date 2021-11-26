@@ -1,16 +1,15 @@
 # Blockchain connector
 
-Client Java pour accéder au smart contract ClaimsRegistry sur Ethereum
+Client Java pour accéder au smart contract ClaimsRegistry et SSOSession sur Ethereum
 
 ## Smart contracts
 
 - `ClaimsRegistry` : smart contract de gestion des claims.
-- `SimpleClaimsRegistry` : version simplifiée de `ClaimsRegistry` sans gestion des signatures.
+- `SSOSession` : smart contract de gestion des sessions SSO.
 
 ## Fichiers
 
 - `resources/` : ABI et code compilé des smart contract, générés avec web3j depuis les fichiers .sol du projet racine
-- `resources/properties` : différents jeux de properties définissant des contextes de connexions différents (ethereum provider, adresse du smart contract ...)
 
 ## Compte Ethereum pour l'IAM
 
@@ -29,6 +28,28 @@ Attention, comptes de test sur Ropsten uniquement :
 - Adresse : 0x5Db6617D5A8BB274379cD815D765722aF5088F8a
 - Clé privée : 6484e4896a53883b15451347df3bd63a8e9b935310e194cd162fa64159086b07
 - https://ropsten.etherscan.io/address/0x5Db6617D5A8BB274379cD815D765722aF5088F8a
+
+## Fonctionnement général
+
+#### Description
+
+Les smart contracts sont déployés sur la blockchain. Des objets `SSOSessionConnector` et `ClaimRegistryConnector` ont été créés pour interagir avec eux.
+
+Ils doivent être initialisés avec :
+- l'URL du endpoint RPC de la blockchain à laquelle se connecter
+- L'adresse du smart contract
+- L'adresse utilisée par l'entité qui va les appeler
+- La clé privée associée à cette adresse
+
+Pour créer un objet de type `SSOSession` ou `Claim`, il suffit de créer un objet contenant les données désirées et de le passer en paramètre au service concerné.
+
+L'`issuer` et la `signature` seront automatiquement mis à jour ou calculés avant l'envoi.
+
+#### Paramètres
+
+- URL de la blockchain avec Infura : https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98
+- Adresse de SSOSession sur Ropsten : 0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A
+- Adresse de ClaimsRegistry sur Ropsten : 0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6 
 
 ## Utilisation
 
@@ -60,69 +81,48 @@ pom.xml:
         </dependency>
     </dependencies>
 ```
-#### Configuration
 
-La connexion à la blockchain se fait via un fichier `.properties`.
+### ClaimRegistry
 
-```properties
-endpoint.url=<URL du endpoint RPC>
-ethereum.address=<adresse Ethereum à utiliser pour les appels>
-ethereum.publicKey=<clé publique de l'adresse Ethereum, peut être laissé vide, sera calculé depuis la clé privée>
-ethereum.privateKey=<clé privée de l'adresse Ethereum>
-contract.address=<adresse du smart contract>
+#### Initialisation
+
+```java
+ClaimsRegistryConnector claimsRegistry = new ClaimsRegistryConnector(
+        blockchainRpcEndpoint
+        ,smartContractAddress
+        ,serverEthereumAddress
+        ,serverEthereumPrivateKey
+);
 ```
 
-#### Connexion
+#### Lecture d'une claim
 
-Le fichier de paramétrage est utilisé de cette façon pour initialiser le client :
-
-```
-BlockchainContext context = new BlockchainContext("src/main/resources/properties/blockchain-connector.properties");
-SimpleClaimsRegistryConnector registry = new SimpleClaimsRegistryConnector(context);
+```java
+Claim claim = claimsRegistry.getClaim(subjectEthereumAddress, claimId);
 ```
 
-#### Contextes disponibles
+#### Écriture d'une claim (synchrone)
 
-Des contextes prédéfinis sont utilisables (fichier `.properties` correspondants embarqués dans le jar).
+```java
 
-Ils sont définis dans par l'enum `Context.ContextFlavor`.
-
-- `SIMPLECLAIMREGISTRY_INFURA_ROPSTEN` Contrat SimpleClaimRegistry sur Ropsten via Infura.
-- `SIMPLECLAIMREGISTRY_GANACHE` Contrat SimpleClaimRegistry en local avec Ganache.
-- `CLAIMREGISTRY_INFURA_ROPSTEN` Contrat ClaimRegistry sur Ropsten via Infura.
-- `SIMPLECLAIMREGISTRY_GANACHE` Contrat ClaimRegistry en local avec Ganache.
-
-On peut soit utiliser un de ces contextes prédéfinis en créant un `new BlockchainContext(BlockchainContext.ContextFlavor.<context prédéfini>))`, soit utiliser un fichier properties personnalisé avec un `new BlockchainContext('properties/file/path')`
-
-#### Lecture
-```
-String subjectAddress = "0x...";
-String claimId = "isadmin";
-
-Claim claim = registry.getClaim(subjectAddress, claimId);
+// Send transaction and wait for receipt. Blocking until transaction is validated
+TxReceipt txReceipt = claimsRegistry.setClaimSync(subjectEthereumAddress, claimId, claimValue);
 ```
 
-#### Ecriture synchrone
+#### Écriture d'une claim (asynchrone)
 
-Exécution bloquante tant que la transaction n'a pas été validée.
+```java
 
-```
-TransactionReceipt txReceipt  = registry.setClaimSync(subjectAddress, claimId, claimValue);
-```
-#### Ecriture asynchrone avec wait bloquant optionnel
+// Send transaction and get transaction hash, non-blocking.
+String txHash = claimsRegistry.setClaimAsync(subjectEthereumAddress, claimId, claimValue);
 
-2 étapes :
-- 1. La transaction est créée et envoyée sur le réseau, sa validation est en attente, non bloquante. On récupère le hash de la transaction
-- 2. Avec le hash, on attent le receipt (le "compte-rendu" de validation de la tx, qui indique qu'elle a été validée). L'appel au wait est alors bloquant en attendant le receipt.
-
-```
-String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
-TransactionReceipt txReceipt = registry.waitForReceipt(txHash);
+// Then wait for transaction validation and receipt return, blocking but not mandatory
+TxReceipt txReceipt = claimsRegistry.waitForReceipt(txHash);
 ```
 
-#### Ecriture asynchrone avec listener
+#### Écriture asynchrone avec listener
 
-On va d'abord créer la claim de façon asynchrone : 
+On va d'abord créer la claim de façon asynchrone :
 ```
 String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
 ```
@@ -140,14 +140,69 @@ public class MyTransactionListener implements TransactionListenerInterface {
 
 ```
 
-Subscribe: 
+Subscribe:
 ```
 MyTransactionListener listener = new MyTransactionListener(registry);
 
 String txHash = registry.setClaimAsync(subjectAddress, claimId, claimValue);
 registry.subscribe(txHash, listener);
-
 ```
+
+### SSOSession
+
+#### Initialisation
+
+```java
+SSOSessionConnector ssoSessionConnector = new SSOSessionConnector(
+        blockchainRpcEndpoint
+        ,smartContractAddress
+        ,serverEthereumAddress
+        ,serverEthereumPrivateKey
+);
+```
+
+#### Lecture d'une session
+
+```java
+SSOSession ssoSessionConnector = contract.getSession(subjectEthereumAddress);
+```
+
+#### Écriture d'une session (synchrone)
+
+Création d'une session
+
+```java
+// Create session object
+SSOSession session = new SSOSession();
+session.setSessionId(sessionId);
+session.setSubjectAddress(subjectAddress);
+session.setEndValidityDateTimestamp(endValidityTimestamp);
+
+// Session will be sign, then sent
+String txHash = contract.createSession(session);
+```
+
+Révocation d'une session
+```java
+String txHash = ssoSessionConnector.revokeSession(subjectEthereumAddress);
+```
+
+#### Écriture d'une session (asynchrone)
+Création d'une session
+```java
+String txHash = ssoSessionConnector.createSessionAsync(sessionId, subjectEthereumAddress, endValidityTimestamp, signature);
+
+TxReceipt txReceipt = ssoSessionConnector.waitForReceipt(txHash);
+```
+
+Révocation d'une session
+```java
+String txHash = ssoSessionConnector.revokeSessionAsync(subjectEthereumAddress);
+
+TxReceipt txReceipt = ssoSessionConnector.waitForReceipt(txHash);
+```
+
+
 
 ## Classes
 

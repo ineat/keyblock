@@ -25,8 +25,8 @@ public class SSOSessionTest {
     @BeforeAll
     public void init() {
         contract = new SSOSessionConnector(
-                "HTTP://127.0.0.1:7545"
-                ,"0x371Ce83F6D7C6f9cb6365cf6C71d0453F49353B4"
+                "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
+                ,"0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A"
                 ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
                 ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
         );
@@ -34,7 +34,13 @@ public class SSOSessionTest {
 
     @Test
     public void createSessionTest() throws IOException, ExecutionException, InterruptedException {
-        String txHash = contract.createSession(sessionId, subjectAddress, endValidityTimestamp, "0x");
+
+        SSOSession session = new SSOSession();
+        session.setSessionId(sessionId);
+        session.setSubjectAddress(subjectAddress);
+        session.setEndValidityDateTimestamp(endValidityTimestamp);
+
+        String txHash = contract.createSession(session);
         assertNotNull(txHash);
     }
 

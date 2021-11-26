@@ -40,11 +40,17 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public String createSession(String sessionId, String subjectAddress, long endValidityDateTimestamp, String signature) throws IOException, ExecutionException, InterruptedException {
+    public String createSession(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
+
+        ssoSession.setIssuerAddress(this.connection.getEthereumAddress());
+
+        // sign session
+        ssoSession.sign(this.connection.getEthereumPrivateKey());
+
         // build function call
         Function function = new Function(
                 "createSession",
-                Arrays.asList(new Utf8String(sessionId), new Address(subjectAddress), new Uint(BigInteger.valueOf(endValidityDateTimestamp)), new DynamicBytes(CryptoUtils.hexStringToBytesArray(signature))),
+                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getEndValidityDateTimestamp())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
                 Collections.emptyList());
 
         return callContractFunction(function);
@@ -62,14 +68,20 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public TxReceipt createSessionSync(String sessionId, String subjectAddress, long endValidityDateTimestamp, String signature) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt createSessionSync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
+
+        ssoSession.setIssuerAddress(this.connection.getEthereumAddress());
+
+        // sign session
+        ssoSession.sign(this.connection.getEthereumPrivateKey());
+
         // build function call
         Function function = new Function(
                 "createSession",
-                Arrays.asList(new Utf8String(sessionId), new Address(subjectAddress), new Uint(BigInteger.valueOf(endValidityDateTimestamp)), new DynamicBytes(CryptoUtils.hexStringToBytesArray(signature))),
+                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getEndValidityDateTimestamp())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
                 Collections.emptyList());
 
-        return callContractfunctionSync(function);
+        return callContractFunctionSync(function);
     }
 
     @Override
@@ -80,7 +92,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
                 Arrays.asList(new Address(subjectAddress)),
                 Collections.emptyList());
 
-        return callContractfunctionSync(function);
+        return callContractFunctionSync(function);
     }
 
     @Override
@@ -96,10 +108,5 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         ssoSession.setSubjectAddress(session.subject);
 
         return ssoSession;
-    }
-
-    @Override
-    public String getSessionHashData(String sessionId) {
-        return null;
     }
 }

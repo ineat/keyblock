@@ -5,6 +5,7 @@ import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.model.TxReceipt;
+import com.keyblock.util.CryptoUtils;
 import com.keyblock.util.SignUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,42 +128,38 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
      }
 
     @Override
-    public String setClaimAsync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+    public String setClaimAsync(Claim claim) throws IOException, ExecutionException, InterruptedException {
 
-         Claim claim = new Claim(subjectAddress, connection.getEthereumAddress(), null, null, claimId, claimValue);
-         signClaim(claim);
+        claim.setIssuerAddress(this.connection.getEthereumAddress());
 
-        byte[] signature = Numeric.hexStringToByteArray(claim.getSignature());
+        claim.sign(connection.getEthereumPrivateKey());
+
+        log.info("signature: "+claim.getSignature());
 
         // build function call
         Function function = new Function(
                 "setClaim",
-                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(signature)),
+                Arrays.asList(new Address(claim.getSubjectAddress()), new Utf8String(claim.getKey()), new Utf8String(claim.getValue()), new DynamicBytes(CryptoUtils.hexStringToBytesArray(claim.getSignature()))),
                 Collections.emptyList());
 
         return callContractFunction(function);
     }
 
     @Override
-    public TxReceipt setClaimSync(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt setClaimSync(Claim claim) throws IOException, ExecutionException, InterruptedException {
 
-        Claim claim = new Claim(subjectAddress, connection.getEthereumAddress(), null, null, claimId, claimValue);
-        signClaim(claim);
+        claim.setIssuerAddress(this.connection.getEthereumAddress());
+
+        claim.sign(connection.getEthereumPrivateKey());
+
         log.info("signature: "+claim.getSignature());
-        byte[] signature = Numeric.hexStringToByteArray(claim.getSignature());
 
         // build function call
         Function function = new Function(
                 "setClaim",
-                Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes(signature)),
+                Arrays.asList(new Address(claim.getSubjectAddress()), new Utf8String(claim.getKey()), new Utf8String(claim.getValue()), new DynamicBytes(CryptoUtils.hexStringToBytesArray(claim.getSignature()))),
                 Collections.emptyList());
 
-        return callContractfunctionSync(function);
-    }
-
-    private void signClaim(Claim claim) {
-        String dataToSign = claim.getSignatureDataString();
-        String signature = SignUtil.sign(dataToSign, connection.getEthereumPrivateKey());
-        claim.setSignature(signature);
+        return callContractFunctionSync(function);
     }
 }

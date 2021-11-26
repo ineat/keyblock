@@ -37,8 +37,8 @@ public class ClaimsRegistryTest {
     public void initRegistry() {
         log.info("Init smart contract");
         this.registry = new ClaimsRegistryConnector(
-                "HTTP://127.0.0.1:7545"
-                ,"0xbBf538bdDDda8371c1c3d5BDf2143e8AeC2caA20"
+                "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
+                ,"0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6"
                 ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
                 ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
         );
@@ -97,12 +97,16 @@ public class ClaimsRegistryTest {
         Boolean value = Boolean.valueOf(claim.getValue());
         Boolean newValue = Boolean.valueOf(!value);
 
-        TxReceipt txReceipt = registry.setClaimSync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, newValue.toString());
+        Claim newClaim = new Claim();
+        newClaim.setSubjectAddress(user.getUserAddress());
+        newClaim.setKey(IAMMock.ADMIN_CLAIM);
+        newClaim.setValue(newValue.toString());
+        TxReceipt txReceipt = registry.setClaimSync(newClaim);
         assertNotNull(txReceipt);
 
-        Claim newClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
-        assertNotNull(newClaim);
-        assertEquals(newClaim.getValue(), newValue.toString());
+        Claim newReadClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNotNull(newReadClaim);
+        assertEquals(newReadClaim.getValue(), newValue.toString());
     }
 
     @Test
@@ -115,15 +119,19 @@ public class ClaimsRegistryTest {
         Boolean value = Boolean.valueOf(claim.getValue());
         Boolean newValue = Boolean.valueOf(!value);
 
-        String txHash = registry.setClaimAsync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, newValue.toString());
+        Claim newClaim = new Claim();
+        newClaim.setSubjectAddress(user.getUserAddress());
+        newClaim.setKey(IAMMock.ADMIN_CLAIM);
+        newClaim.setValue(newValue.toString());
+        String txHash = registry.setClaimAsync(newClaim);
         assertNotNull(txHash);
 
         TxReceipt txReceipt = registry.waitForReceipt(txHash);
         assertNotNull(txReceipt);
 
-        Claim newClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
-        assertNotNull(newClaim);
-        assertEquals(newClaim.getValue(), newValue.toString());
+        Claim newReadClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
+        assertNotNull(newReadClaim);
+        assertEquals(newReadClaim.getValue(), newValue.toString());
     }
 
     @Test
@@ -133,7 +141,11 @@ public class ClaimsRegistryTest {
 
         TestTxListener listener = new TestTxListener(registry);
 
-        String txHash = registry.setClaimAsync(user.getUserAddress(), IAMMock.ADMIN_CLAIM, listener.getTestClaimValue());
+        Claim newClaim = new Claim();
+        newClaim.setSubjectAddress(user.getUserAddress());
+        newClaim.setKey(IAMMock.ADMIN_CLAIM);
+        newClaim.setValue(listener.getTestClaimValue());
+        String txHash = registry.setClaimAsync(newClaim);
         registry.subscribe(txHash, listener);
         assertEquals(registry.getListeners().size(),1);
         log.info("Listener has subscribe, wait for notify");

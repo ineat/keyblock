@@ -1,13 +1,24 @@
 package com.keyblock.model;
 
-public class SSOSession {
+import com.keyblock.util.Signable;
+
+public class SSOSession extends Signable {
 
     private String sessionId;
     private String subjectAddress;
     private String issuerAddress;
     private long issuanceDateTimestamp;
     private long endValidityDateTimestamp;
-    private String signature;
+
+    public SSOSession(){}
+
+    public SSOSession(String sessionId, String subjectAddress, String issuerAddress, long issuanceDateTimestamp, long endValidityDateTimestamp) {
+        this.sessionId = sessionId;
+        this.subjectAddress = subjectAddress;
+        this.issuerAddress = issuerAddress;
+        this.issuanceDateTimestamp = issuanceDateTimestamp;
+        this.endValidityDateTimestamp = endValidityDateTimestamp;
+    }
 
     public String getSessionId() {
         return sessionId;
@@ -47,14 +58,6 @@ public class SSOSession {
 
     public void setEndValidityDateTimestamp(long endValidityDateTimestamp) {
         this.endValidityDateTimestamp = endValidityDateTimestamp;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
     }
 
     public String getSignatureDataString() {
