@@ -131,6 +131,8 @@ public class TransactionNotifier implements TransactionNotifierInterface{
         @Override
         public void run() {
 
+            assert(this.transactionHash != null);
+
             log.info("Notifier thread started for "+this.transactionHash);
 
             // Wait for receipt
@@ -144,7 +146,7 @@ public class TransactionNotifier implements TransactionNotifierInterface{
                 log.info("Block number: "+txReceipt.getBlockNumber());
                 this.listener.notify(TxReceipt.fromWeb3TransactionReceipt(txReceipt));
 
-            } catch (IOException e) {
+           } catch (IOException e) {
                 e.printStackTrace();
             } catch (TransactionException e) {
                 e.printStackTrace();

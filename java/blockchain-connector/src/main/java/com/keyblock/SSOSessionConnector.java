@@ -5,6 +5,7 @@ import com.keyblock.blockchain.SmartContract;
 import com.keyblock.model.SSOSession;
 import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
+import jnr.ffi.annotations.In;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.abi.datatypes.*;
@@ -12,6 +13,7 @@ import org.web3j.abi.datatypes.*;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -40,7 +42,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public String createSession(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
+    public String createSessionAsync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
 
         ssoSession.setIssuerAddress(this.connection.getEthereumAddress());
 
@@ -53,18 +55,18 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
                 Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getEndValidityDateTimestamp())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
                 Collections.emptyList());
 
-        return callContractFunction(function);
+        return callContractFunctionAsync(function);
     }
 
     @Override
-    public String revokeSession(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
+    public String revokeSessionAsync(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
         // build function call
         Function function = new Function(
                 "revokeSession",
                 Arrays.asList(new Address(subjectAddress)),
                 Collections.emptyList());
 
-        return callContractFunction(function);
+        return callContractFunctionAsync(function);
     }
 
     @Override
@@ -108,5 +110,15 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         ssoSession.setSubjectAddress(session.subject);
 
         return ssoSession;
+    }
+
+    @Override
+    public boolean isSessionActive(String subjectAddress) throws Exception {
+        SSOSession session = getSession(subjectAddress);
+
+        long endValidity = session.getEndValidityDateTimestamp();
+
+        Instant instant = Instant.now();
+        return endValidity > instant.getEpochSecond();
     }
 }

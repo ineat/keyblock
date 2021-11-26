@@ -19,7 +19,7 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public String createSession(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException;
+    public String createSessionAsync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException;
 
     /**
      * Revoke a session. Set end validity date to zero for the user current session. Non blocking
@@ -29,7 +29,7 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public String revokeSession(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
+    public String revokeSessionAsync(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
 
     /**
      * Create a session for a user. Blocking until transaction is validated
@@ -59,4 +59,11 @@ public interface SSOSessionInterface {
      */
     public SSOSession getSession(String subjectAddress) throws Exception;
 
+    /**
+     * Return true if a given user has a current active session
+     * @param subjectAddress the ethereum address of user to check session
+     * @return true if given user has an active session, false otherwise
+     * @throws Exception
+     */
+    public boolean isSessionActive(String subjectAddress) throws Exception;
 }

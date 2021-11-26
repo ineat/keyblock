@@ -6,7 +6,6 @@ import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
 import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
-import com.keyblock.util.SignUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -124,7 +123,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
                  Arrays.asList(new Address(subjectAddress), new Utf8String(claimId), new Utf8String(claimValue), new DynamicBytes("".getBytes())), // TODO compute signature
                  Collections.emptyList());
 
-         return callContractFunction(function);
+         return callContractFunctionAsync(function);
      }
 
     @Override
@@ -142,7 +141,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
                 Arrays.asList(new Address(claim.getSubjectAddress()), new Utf8String(claim.getKey()), new Utf8String(claim.getValue()), new DynamicBytes(CryptoUtils.hexStringToBytesArray(claim.getSignature()))),
                 Collections.emptyList());
 
-        return callContractFunction(function);
+        return callContractFunctionAsync(function);
     }
 
     @Override

@@ -33,14 +33,15 @@ public class ClaimsRegistryTest {
 
     @InjectMocks
     IAMMock iam;
+
     @BeforeAll
     public void initRegistry() {
         log.info("Init smart contract");
         this.registry = new ClaimsRegistryConnector(
                 "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
                 ,"0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6"
-                ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
-                ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
+                ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
+                ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723"
         );
         assertNotNull(registry);
     }
@@ -92,11 +93,13 @@ public class ClaimsRegistryTest {
         UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 
+        // read current value and create new value = !value
         Claim claim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
         assertNotNull(claim);
         Boolean value = Boolean.valueOf(claim.getValue());
         Boolean newValue = Boolean.valueOf(!value);
 
+        // send tx for new value
         Claim newClaim = new Claim();
         newClaim.setSubjectAddress(user.getUserAddress());
         newClaim.setKey(IAMMock.ADMIN_CLAIM);
@@ -104,6 +107,7 @@ public class ClaimsRegistryTest {
         TxReceipt txReceipt = registry.setClaimSync(newClaim);
         assertNotNull(txReceipt);
 
+        // read, it must be new value
         Claim newReadClaim = registry.getClaim(user.getUserAddress(),IAMMock.ADMIN_CLAIM);
         assertNotNull(newReadClaim);
         assertEquals(newReadClaim.getValue(), newValue.toString());
@@ -134,8 +138,8 @@ public class ClaimsRegistryTest {
         assertEquals(newReadClaim.getValue(), newValue.toString());
     }
 
-    @Test
-    public void whenUpdateASyncWithListener_thenAdminChanged() throws ExecutionException, InterruptedException, IOException {
+  @Test
+  public void whenUpdateASyncWithListener_thenAdminChanged() throws ExecutionException, InterruptedException, IOException {
         UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 

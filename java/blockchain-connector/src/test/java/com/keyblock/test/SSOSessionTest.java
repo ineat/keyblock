@@ -2,20 +2,21 @@ package com.keyblock.test;
 
 import com.keyblock.SSOSessionConnector;
 import com.keyblock.model.SSOSession;
+import com.keyblock.model.TxReceipt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SSOSessionTest {
 
-    SSOSessionConnector contract;
+    SSOSessionConnector ssoSessionConnector;
 
     private String subjectAddress = "0x4769F9301c7DDA7c8BbE7324C9A6D9A09699B6AE";
     private String wrongSubjectAddress = "0xabababababababababababababababababababab";
@@ -24,41 +25,71 @@ public class SSOSessionTest {
 
     @BeforeAll
     public void init() {
-        contract = new SSOSessionConnector(
+        ssoSessionConnector = new SSOSessionConnector(
                 "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
                 ,"0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A"
-                ,"0x2da92f7beaB763a7E975aecCe8F85B6F54be231e"
-                ,"9fe18402c676e7aca98ac2ceb3a3c13fcab84cffa6814a8d996b73608edb6ad6"
+                ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
+                ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723"
         );
     }
 
     @Test
-    public void createSessionTest() throws IOException, ExecutionException, InterruptedException {
+    public void whenCreateSession_ThenOK() throws IOException, ExecutionException, InterruptedException {
 
         SSOSession session = new SSOSession();
         session.setSessionId(sessionId);
         session.setSubjectAddress(subjectAddress);
         session.setEndValidityDateTimestamp(endValidityTimestamp);
 
-        String txHash = contract.createSession(session);
-        assertNotNull(txHash);
+        TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
+        assertNotNull(receipt);
     }
 
     @Test
-    public void revokeSessionTest() throws IOException, ExecutionException, InterruptedException {
-        String txHash = contract.revokeSession(subjectAddress);
-        assertNotNull(txHash);
+    public void whenRevokeSession_ThenOK() throws IOException, ExecutionException, InterruptedException {
+        TxReceipt receipt = ssoSessionConnector.revokeSessionSync(subjectAddress);
+        assertNotNull(receipt);
     }
 
     @Test
-    public void getSessionTest() throws Exception {
-        SSOSession session = contract.getSession(subjectAddress);
+    public void whenGetSessionForUser_ThenGetSession() throws Exception {
+        SSOSession session = ssoSessionConnector.getSession(subjectAddress);
         assertEquals(session.getSubjectAddress().toUpperCase(), subjectAddress.toUpperCase());
     }
 
     @Test
-    public void getNoSessionTest() throws Exception {
-        SSOSession session = contract.getSession(wrongSubjectAddress);
+    public void whenGetSessionForUnknownUser_ThenNoSession() throws Exception {
+        SSOSession session = ssoSessionConnector.getSession(wrongSubjectAddress);
         assertEquals(session.getSubjectAddress().toUpperCase(), "0X0000000000000000000000000000000000000000");
+    }
+
+    @Test
+    public void whenCheckActiveSession_ThenActive() throws Exception {
+
+        // create an active session
+        SSOSession session = new SSOSession();
+        session.setSessionId(sessionId);
+        session.setSubjectAddress(subjectAddress);
+        session.setEndValidityDateTimestamp(Instant.MAX.getEpochSecond());
+
+        TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
+        assertNotNull(receipt); // valid session has been set
+
+        assertTrue(ssoSessionConnector.isSessionActive(subjectAddress));
+    }
+
+    @Test
+    public void whenCheckInactiveSession_ThenInactive() throws Exception {
+
+        // create an inactive session
+        SSOSession session = new SSOSession();
+        session.setSessionId(sessionId);
+        session.setSubjectAddress(subjectAddress);
+        session.setEndValidityDateTimestamp(Instant.now().getEpochSecond()-1000);
+
+        TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
+        assertNotNull(receipt); // valid session has been set
+
+        assertFalse(ssoSessionConnector.isSessionActive(subjectAddress));
     }
 }

@@ -93,14 +93,14 @@ public abstract class SmartContract extends TransactionNotifier  {
     }
 
     /**
-     * Send tx to a smartcontract with function call
+     * Send tx to a smart contract with function call
      * @param function
      * @return the transaction hash
      * @throws IOException
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public String callContractFunction(Function function) throws IOException, ExecutionException, InterruptedException {
+    public String callContractFunctionAsync(Function function) throws IOException, ExecutionException, InterruptedException {
 
         log.info("callContractFunction");
 
@@ -163,7 +163,7 @@ public abstract class SmartContract extends TransactionNotifier  {
     }
 
     public TxReceipt callContractFunctionSync(Function function) throws IOException, ExecutionException, InterruptedException {
-        String txHash = callContractFunction(function);
+        String txHash = callContractFunctionAsync(function);
         return waitForReceipt(txHash);
     }
 }

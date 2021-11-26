@@ -35,6 +35,8 @@ Attention, comptes de test sur Ropsten uniquement :
 
 Les smart contracts sont déployés sur la blockchain. Des objets `SSOSessionConnector` et `ClaimRegistryConnector` ont été créés pour interagir avec eux.
 
+Les interfaces `SSOSessionInterface` et `ClaimRegistryInterface` documentent les méthodes disponibles sur ces objets.
+
 Ils doivent être initialisés avec :
 - l'URL du endpoint RPC de la blockchain à laquelle se connecter
 - L'adresse du smart contract
@@ -174,24 +176,26 @@ Création d'une session
 ```java
 // Create session object
 SSOSession session = new SSOSession();
-session.setSessionId(sessionId);
+session.setSessionId(sessionId); // session id to generate (UUID ...)
 session.setSubjectAddress(subjectAddress);
 session.setEndValidityDateTimestamp(endValidityTimestamp);
 
 // Session will be sign, then sent
-String txHash = contract.createSession(session);
+TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
 ```
 
 Révocation d'une session
 ```java
-String txHash = ssoSessionConnector.revokeSession(subjectEthereumAddress);
+TxReceipt receipt = ssoSessionConnector.revokeSessionSync(subjectAddress);
 ```
 
 #### Écriture d'une session (asynchrone)
 Création d'une session
 ```java
+// non blocking
 String txHash = ssoSessionConnector.createSessionAsync(sessionId, subjectEthereumAddress, endValidityTimestamp, signature);
 
+// optional, blocking
 TxReceipt txReceipt = ssoSessionConnector.waitForReceipt(txHash);
 ```
 
@@ -201,7 +205,6 @@ String txHash = ssoSessionConnector.revokeSessionAsync(subjectEthereumAddress);
 
 TxReceipt txReceipt = ssoSessionConnector.waitForReceipt(txHash);
 ```
-
 
 
 ## Classes

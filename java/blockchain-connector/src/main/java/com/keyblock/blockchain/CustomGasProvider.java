@@ -28,7 +28,7 @@ public class CustomGasProvider implements ContractGasProvider {
     @Override
     public BigInteger getGasLimit(String contractFunc) {
         // TODO find a way to compute it more accurately
-        return BigInteger.valueOf(600000L);
+        return BigInteger.valueOf(800000L);
     }
 
     @Override
