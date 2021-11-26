@@ -5,7 +5,33 @@ Client Java pour accéder au smart contract ClaimsRegistry et SSOSession sur Eth
 ## Smart contracts
 
 - `ClaimsRegistry` : smart contract de gestion des claims.
+Il permet de gérer une liste de claims (clé -> valeur) pour un utilisateur.
+
+```solidity
+    struct Claim {
+        address subject;
+        address issuer;
+        uint issuedAt;
+        bytes issuerSignature;
+        string key;
+        string value;
+    }
+```
+
+
 - `SSOSession` : smart contract de gestion des sessions SSO.
+Il permet de gérer des sessions partagées pour un utilisateur entre plusieurs systèmes.
+
+```solidity
+    struct Session {
+        string sessionId;
+        address subject;
+        address issuer;
+        uint issuanceDate;
+        uint endValidityDate;
+        bytes signature;
+    }
+```
 
 ## Fichiers
 
@@ -192,8 +218,14 @@ TxReceipt receipt = ssoSessionConnector.revokeSessionSync(subjectAddress);
 #### Écriture d'une session (asynchrone)
 Création d'une session
 ```java
+
+SSOSession session = new SSOSession();
+session.setSessionId(sessionId);
+session.setSubjectAddress(subjectAddress);
+session.setEndValidityDateTimestamp(endValidityTimestamp);
+
 // non blocking
-String txHash = ssoSessionConnector.createSessionAsync(sessionId, subjectEthereumAddress, endValidityTimestamp, signature);
+String txHash = ssoSessionConnector.createSessionAsync(session);
 
 // optional, blocking
 TxReceipt txReceipt = ssoSessionConnector.waitForReceipt(txHash);
