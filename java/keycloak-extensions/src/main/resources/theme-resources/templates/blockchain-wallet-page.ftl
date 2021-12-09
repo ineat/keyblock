@@ -9,8 +9,12 @@
 
 
         <form id="kc-wallet-form" class="${properties.kcFormClass!}" action="${url.loginAction}" method="post">
-            <input type="hidden" id="blockchain-data" name="blockchain-data"/>
-            <input type="hidden" id="blockchain-sig" name="blockchain-sig"/>
+            <#if isAuthentication??>
+                <input type="hidden" id="blockchain-data" name="blockchain-data"/>
+                <input type="hidden" id="blockchain-sig" name="blockchain-sig"/>
+            <#else>
+                <input type="hidden" id="is-sso" name="is-sso" value="true"/>
+            </#if>
             <input type="hidden" id="blockchain-address" name="blockchain-address"/>
             <div id="pluginKoDivs">
                 <div class="alert-error pf-m-danger">
@@ -50,11 +54,11 @@
                     <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
                         <input class="${properties.kcButtonClass!} ${properties.kcButtonDefaultClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
                                name="cancel" id="kc-cancel" type="submit" value="${msg("doCancel")}"/>
-
+                        <#if isAuthentication??>
                         <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
                                name="login" id="kc-login" type="button" value="Authenticate with MetaMask"
                                onclick="javascript:authentication()"/>
-
+                        </#if>
                     </div>
                 </div>
             </div>

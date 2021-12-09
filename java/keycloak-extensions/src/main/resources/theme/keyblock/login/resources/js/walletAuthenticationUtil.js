@@ -44,6 +44,11 @@ function identification() {
 				console.log("Ethereum enabled with account : " + account);
 				document.getElementById("blockchain-address").value = account[0];
 				document.getElementById("address-label").innerHTML = account[0];
+				// directly submit the form to get the address-id in order to do an sso check
+				if(	document.getElementById("is-sso")) {
+					console.log("sso challenge");
+					document.getElementById("kc-wallet-form").submit();
+				}
 			})
 			.catch((error) => {
 				console.error(error);
