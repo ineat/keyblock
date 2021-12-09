@@ -19,7 +19,7 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public String createSessionAsync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException;
+    public String createSessionAsync(SSOSession ssoSession) throws Exception;
 
     /**
      * Revoke a session. Set end validity date to zero for the user current session. Non blocking
@@ -29,7 +29,7 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public String revokeSessionAsync(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
+    public String revokeSessionAsync(String subjectAddress) throws Exception;
 
     /**
      * Create a session for a user. Blocking until transaction is validated
@@ -39,7 +39,7 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public TxReceipt createSessionSync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException;
+    public TxReceipt createSessionSync(SSOSession ssoSession) throws Exception;
 
     /**
      * Revoke a session. Set end validity date to zero for the user current session. Blocking until transaction is validated
@@ -49,12 +49,12 @@ public interface SSOSessionInterface {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public TxReceipt revokeSessionSync(String subjectAddress) throws IOException, ExecutionException, InterruptedException;
+    public TxReceipt revokeSessionSync(String subjectAddress) throws Exception;
 
     /**
      * Get the current sso session for a user
      * @param subjectAddress the subject address
-     * @return the related SSOSession
+     * @return the related SSOSession if exist, null if the address zero is returned
      * @throws Exception
      */
     public SSOSession getSession(String subjectAddress) throws Exception;

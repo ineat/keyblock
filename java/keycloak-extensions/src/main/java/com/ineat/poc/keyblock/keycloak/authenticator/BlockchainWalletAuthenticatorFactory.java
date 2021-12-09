@@ -12,20 +12,18 @@ import org.keycloak.provider.ProviderConfigProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockchainWalletAuthenticatorFactory implements AuthenticatorFactory, ConfigurableAuthenticatorFactory {
+public class BlockchainWalletAuthenticatorFactory extends AbstractBlockchainAuthenticatorFactory implements AuthenticatorFactory, ConfigurableAuthenticatorFactory {
 
     public static final String PROVIDER_ID = "blockchain-wallet-authenticator";
-
     public static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
             AuthenticationExecutionModel.Requirement.REQUIRED,
             AuthenticationExecutionModel.Requirement.ALTERNATIVE,
-            AuthenticationExecutionModel.Requirement.CONDITIONAL,
+//            AuthenticationExecutionModel.Requirement.CONDITIONAL,
             AuthenticationExecutionModel.Requirement.DISABLED
     };
-
-    private static final List<ProviderConfigProperty> CONFIG_PROPERTIES = new ArrayList<ProviderConfigProperty>();
-
-    public static final String METAMASK_TYPE = "METAMASK_TYPE";
+    public static final String METAMASK_TYPE = "METAMASK";
+    public static final String CREATE_ETH_SSO_SESSION = "createEthSsoSession";
+    protected static final List<ProviderConfigProperty> CONFIG_PROPERTIES = new ArrayList<ProviderConfigProperty>();
 
     static {
         CONFIG_PROPERTIES.add(
@@ -35,7 +33,7 @@ public class BlockchainWalletAuthenticatorFactory implements AuthenticatorFactor
                         "",
                         ProviderConfigProperty.LIST_TYPE,
                         METAMASK_TYPE,
-                        false
+                        METAMASK_TYPE
                 ));
 
         CONFIG_PROPERTIES.add(
@@ -47,6 +45,18 @@ public class BlockchainWalletAuthenticatorFactory implements AuthenticatorFactor
                         "Veuillez signer pour vous authentifier",
                         false
                 ));
+
+        CONFIG_PROPERTIES.add(
+                new ProviderConfigProperty(
+                        CREATE_ETH_SSO_SESSION,
+                        "Enable Ethereum SSO",
+                        "Create an ethereum entry to activate the blockchain SSO.",
+                        ProviderConfigProperty.BOOLEAN_TYPE,
+                        true,
+                        false
+                ));
+        CONFIG_PROPERTIES.addAll(SHARED_CONFIG_PROPERTIES);
+
     }
 
     public String getId() {
@@ -54,11 +64,11 @@ public class BlockchainWalletAuthenticatorFactory implements AuthenticatorFactor
     }
 
     public String getDisplayType() {
-        return "Wallet Blockchain Authenticator";
+        return "Blockchain Wallet (Metamask) Authenticator";
     }
 
     public String getHelpText() {
-        return "A Wallet based blockchain Authenticator ";
+        return "A Wallet based (Metamask) blockchain Authenticator ";
     }
 
     public String getReferenceCategory() {
@@ -77,12 +87,12 @@ public class BlockchainWalletAuthenticatorFactory implements AuthenticatorFactor
         return false;
     }
 
-    public List<ProviderConfigProperty> getConfigProperties() {
-        return CONFIG_PROPERTIES;
-    }
-
     public Authenticator create(KeycloakSession keycloakSession) {
         return BlockchainWalletAuthenticator.SINGLETON;
+    }
+
+    public List<ProviderConfigProperty> getConfigProperties() {
+        return CONFIG_PROPERTIES;
     }
 
     public void init(Config.Scope scope) {

@@ -34,7 +34,7 @@ public class SSOSessionTest {
     }
 
     @Test
-    public void whenCreateSession_ThenOK() throws IOException, ExecutionException, InterruptedException {
+    public void whenCreateSession_ThenOK() throws Exception {
 
         SSOSession session = new SSOSession();
         session.setSessionId(sessionId);
@@ -46,7 +46,7 @@ public class SSOSessionTest {
     }
 
     @Test
-    public void whenRevokeSession_ThenOK() throws IOException, ExecutionException, InterruptedException {
+    public void whenRevokeSession_ThenOK() throws Exception {
         TxReceipt receipt = ssoSessionConnector.revokeSessionSync(subjectAddress);
         assertNotNull(receipt);
     }
@@ -60,7 +60,7 @@ public class SSOSessionTest {
     @Test
     public void whenGetSessionForUnknownUser_ThenNoSession() throws Exception {
         SSOSession session = ssoSessionConnector.getSession(wrongSubjectAddress);
-        assertEquals(session.getSubjectAddress().toUpperCase(), "0X0000000000000000000000000000000000000000");
+        assertEquals(session.getSubjectAddress().toUpperCase(), SSOSessionConnector.ADDRESS_ZERO);
     }
 
     @Test

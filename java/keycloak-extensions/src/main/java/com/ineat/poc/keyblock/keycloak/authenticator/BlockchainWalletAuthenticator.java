@@ -1,6 +1,7 @@
 package com.ineat.poc.keyblock.keycloak.authenticator;
 
 import com.ineat.poc.keyblock.keycloak.authenticator.util.EthRecoverUtil;
+import com.ineat.poc.keyblock.keycloak.authenticator.util.EthSsoUtil;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -16,10 +17,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.security.SignatureException;
 
+import static com.ineat.poc.keyblock.keycloak.authenticator.BlockchainWalletAuthenticatorFactory.CREATE_ETH_SSO_SESSION;
+import static java.lang.Boolean.parseBoolean;
+
 public class BlockchainWalletAuthenticator implements Authenticator {
     public static final BlockchainWalletAuthenticator SINGLETON = new BlockchainWalletAuthenticator();
     public static final String BLOCKCHAIN_ADDRESS_CUSTOM_ATTRIBUTE = "blockchain.address";
-    private static final String BLOCKCHAIN_PAGE = "blockchain-wallet-page.ftl";
+    public static final String BLOCKCHAIN_PAGE = "blockchain-wallet-page.ftl";
     private static Logger logger = Logger.getLogger(BlockchainWalletAuthenticator.class);
 
     public static String getConfigString(AuthenticatorConfigModel config, String configName) {
@@ -50,7 +54,7 @@ public class BlockchainWalletAuthenticator implements Authenticator {
         if (formData.size() > 0) {
             forms.setFormData(formData);
         }
-
+        forms.setAttribute("isAuthentication", true);
         return forms.createForm(BLOCKCHAIN_PAGE);
     }
 
@@ -59,12 +63,12 @@ public class BlockchainWalletAuthenticator implements Authenticator {
         if (error != null) {
             form.setError(error, parameters);
         }
-
+        form.setAttribute("isAuthentication", true);
         return form.createForm(BLOCKCHAIN_PAGE);
     }
 
     public void action(AuthenticationFlowContext context) {
-
+        boolean isEthSsoEnabled = parseBoolean(getConfigString(context.getAuthenticatorConfig(), CREATE_ETH_SSO_SESSION));
         MultivaluedMap<String, String> formData = context.getHttpRequest().getDecodedFormParameters();
 
         if (formData.containsKey("cancel")) {
@@ -109,6 +113,17 @@ public class BlockchainWalletAuthenticator implements Authenticator {
                 if (userModel == null) {
                     context.challenge(this.challenge(context, "userNotFound"));
                     return;
+                }
+
+                if(isEthSsoEnabled){
+                    // creation of an Ethereum block
+                    try {
+                        final String txHash = EthSsoUtil.createSsoSession(context.getAuthenticatorConfig(), ethAddress);
+                        context.getAuthenticationSession().setAuthNote("SSO_ETH_HASH", txHash);
+                        logger.infof("Ethereum sso session successful created with hash %s", txHash);
+                    } catch (Exception e) {
+                        logger.errorf("Unable to create the Ethereum SSO session due to the following error: %s", e.getMessage());
+                    }
                 }
                 context.setUser(userModel);
             }

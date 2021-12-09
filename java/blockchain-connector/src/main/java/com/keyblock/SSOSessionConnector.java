@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public class SSOSessionConnector extends SmartContract implements SSOSessionInterface {
 
     private static final Logger log = LogManager.getLogger(SSOSessionConnector.class);
-
+    public static final String ADDRESS_ZERO = "0X0000000000000000000000000000000000000000";
     private com.keyblock.contract.SSOSession contract;
 
     public SSOSessionConnector(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
@@ -41,7 +41,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public String createSessionAsync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
+    public String createSessionAsync(SSOSession ssoSession) throws Exception {
 
         ssoSession.setIssuerAddress(this.connection.getEthereumAddress());
 
@@ -58,7 +58,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public String revokeSessionAsync(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
+    public String revokeSessionAsync(String subjectAddress) throws Exception {
         // build function call
         Function function = new Function(
                 "revokeSession",
@@ -69,7 +69,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public TxReceipt createSessionSync(SSOSession ssoSession) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt createSessionSync(SSOSession ssoSession) throws Exception {
 
         ssoSession.setIssuerAddress(this.connection.getEthereumAddress());
 
@@ -86,7 +86,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     }
 
     @Override
-    public TxReceipt revokeSessionSync(String subjectAddress) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt revokeSessionSync(String subjectAddress) throws Exception {
         // build function call
         Function function = new Function(
                 "revokeSession",
@@ -100,6 +100,9 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     public SSOSession getSession(String subjectAddress) throws Exception {
         com.keyblock.contract.SSOSession.Session session = this.contract.getSession(subjectAddress).send();
 
+        if(session.subject.equals(ADDRESS_ZERO)){
+            return null;
+        }
         SSOSession ssoSession = new SSOSession();
         ssoSession.setSessionId(session.sessionId);
         ssoSession.setValidityTime(session.validityTime.longValue());

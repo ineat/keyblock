@@ -22,14 +22,14 @@ public interface ClaimsRegistryInterface extends TransactionNotifierInterface {
      * @param claim the claim to create
      * @return the @com.keyblock.Claim created
      */
-    public TxReceipt setClaimSync(Claim claim) throws IOException, ExecutionException, InterruptedException;
+    public TxReceipt setClaimSync(Claim claim) throws Exception;
 
     /**
      * Asynchronous call smart contract function SimpleClaimsRegistry.setClaim to create a new @com.keyblock.Claim and only send transaction.
      * @param claim the claim to create
      * @return the transaction hash
      */
-    public String setClaimAsync(Claim claim) throws IOException, ExecutionException, InterruptedException;
+    public String setClaimAsync(Claim claim) throws Exception;
 
     /**
      * Wait for a transaction to be validated. The call is blocking until receipt is created.

@@ -89,7 +89,7 @@ public class ClaimsRegistryTest {
     }
 
     @Test
-    public void whenUpdateSync_thenAdminChanged() throws IOException, ExecutionException, InterruptedException {
+    public void whenUpdateSync_thenAdminChanged() throws Exception {
         UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 
@@ -114,7 +114,7 @@ public class ClaimsRegistryTest {
     }
 
     @Test
-    public void whenUpdateAsyncWithWait_thenAdminChanged() throws IOException, ExecutionException, InterruptedException {
+    public void whenUpdateAsyncWithWait_thenAdminChanged() throws Exception {
         UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 
@@ -138,8 +138,8 @@ public class ClaimsRegistryTest {
         assertEquals(newReadClaim.getValue(), newValue.toString());
     }
 
-  @Test
-  public void whenUpdateASyncWithListener_thenAdminChanged() throws ExecutionException, InterruptedException, IOException {
+    @Test
+    public void whenUpdateASyncWithListener_thenAdminChanged() throws Exception {
         UserMock user = iam.getUser(IAMMock.USER_TO_UPDATE);
         assertNotNull(user);
 

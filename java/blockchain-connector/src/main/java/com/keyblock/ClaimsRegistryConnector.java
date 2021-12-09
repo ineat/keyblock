@@ -1,29 +1,25 @@
 package com.keyblock;
 
-import com.keyblock.model.Claim;
 import com.keyblock.blockchain.CustomGasProvider;
 import com.keyblock.blockchain.SmartContract;
 import com.keyblock.contract.ClaimsRegistry;
+import com.keyblock.model.Claim;
 import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.DynamicBytes;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
-
 import org.web3j.tuples.generated.Tuple8;
 import org.web3j.utils.Numeric;
-
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Connection wrapper to use @ClaimsRegistry
@@ -115,7 +111,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
      * @param claimValue
      * @return the hash of transaction
      */
-     private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) throws IOException, ExecutionException, InterruptedException {
+     private String sendClaimTransaction(String subjectAddress, String claimId, String claimValue) throws Exception {
 
          // build function call
          Function function = new Function(
@@ -127,7 +123,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
      }
 
     @Override
-    public String setClaimAsync(Claim claim) throws IOException, ExecutionException, InterruptedException {
+    public String setClaimAsync(Claim claim) throws Exception {
 
         claim.setIssuerAddress(this.connection.getEthereumAddress());
 
@@ -145,7 +141,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     }
 
     @Override
-    public TxReceipt setClaimSync(Claim claim) throws IOException, ExecutionException, InterruptedException {
+    public TxReceipt setClaimSync(Claim claim) throws Exception {
 
         claim.setIssuerAddress(this.connection.getEthereumAddress());
 
