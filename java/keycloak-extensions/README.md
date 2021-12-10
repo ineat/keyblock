@@ -55,3 +55,18 @@ This authenticator works with the `Keycloak Wallet Authenticator`. You must acti
 **Limitations**:
 
 Because we use an HTML form to pick up the `eth_address` without validation or controls, anyone can inject an `eth_address` and try to steal a user session based on a non-Metamask identification.
+
+## Keycloak SSO Event Listener
+
+We provide a dedicated EventListener for the `LOGOUT` event in order to revoke the blockchain session when a user decides to logout
+
+This event listener
+- dynamically get the `blockchain-sso-authenticator` configured into the Browser flow in order to communicate with the blockchain
+- we try to get the user's `eth_address` thanks to the event metadata
+- if it is found, we invoke the `revokeSession` in order to set the blockchain session ttl to 0
+
+### Setup
+
+- Go to the `Events` -> `Config`
+- add the `keyblock-eth-logout-event`
+- enjoy!

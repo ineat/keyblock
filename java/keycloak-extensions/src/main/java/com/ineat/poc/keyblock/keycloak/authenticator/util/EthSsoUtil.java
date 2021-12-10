@@ -29,10 +29,17 @@ public abstract class EthSsoUtil {
 
         final SSOSessionConnector connection = initEthConnection(authenticatorConfig);
         final TxReceipt sessionSync = connection.createSessionSync(session);
-        return sessionSync.getBlockHash();
+        return sessionSync.getTransactionHash();
     }
 
-    private static SSOSessionConnector initEthConnection(AuthenticatorConfigModel authenticatorConfig){
+    public static String revoveSsoSession(AuthenticatorConfigModel authenticatorConfig, String ethAddress) throws Exception {
+        final SSOSessionConnector connection = initEthConnection(authenticatorConfig);
+
+        final TxReceipt txReceipt = connection.revokeSessionSync(ethAddress);
+        return txReceipt.getTransactionHash();
+    }
+
+    private static SSOSessionConnector initEthConnection(AuthenticatorConfigModel authenticatorConfig) {
         return new SSOSessionConnector(
                 authenticatorConfig.getConfig().getOrDefault(BLOCKCHAIN_URI, ""),
                 authenticatorConfig.getConfig().getOrDefault(SMART_CONTACT_ADDRESS, ""),

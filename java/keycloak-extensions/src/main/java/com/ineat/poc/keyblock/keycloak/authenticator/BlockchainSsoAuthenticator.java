@@ -24,26 +24,6 @@ public class BlockchainSsoAuthenticator implements Authenticator {
     @Override
     public void authenticate(AuthenticationFlowContext context) {
         context.challenge(context.form().createForm(BLOCKCHAIN_PAGE));
-//        AuthenticationManager.AuthResult authResult = authenticateIdentityBlockchain(context.getAuthenticatorConfig(), context.getSession(),
-//                context.getRealm(), true);
-//        if (authResult == null) {
-//            context.attempted();
-//        } else {
-//            AuthenticationSessionModel clientSession = context.getAuthenticationSession();
-//            LoginProtocol protocol = context.getSession().getProvider(LoginProtocol.class, clientSession.getProtocol());
-//
-//            // Cookie re-authentication is skipped if re-authentication is required
-//            if (protocol.requireReauthentication(authResult.getSession(), clientSession)) {
-//                context.attempted();
-//            } else {
-//                context.getAuthenticationSession().setAuthNote(AuthenticationManager.SSO_AUTH, "true");
-//
-//                context.setUser(authResult.getUser());
-//                context.attachUserSession(authResult.getSession());
-//                context.success();
-//            }
-//        }
-
     }
 
     private SSOSession authenticateIdentityBlockchain(AuthenticatorConfigModel authenticatorConfig, String ethAddress) {
@@ -65,9 +45,6 @@ public class BlockchainSsoAuthenticator implements Authenticator {
         }
 
         return ethSession;
-//        ethSession.
-
-
     }
 
     @Override
@@ -87,13 +64,11 @@ public class BlockchainSsoAuthenticator implements Authenticator {
         }
 
         SSOSession ethSession = authenticateIdentityBlockchain(context.getAuthenticatorConfig(), ethAddress);
-        if(ethSession == null){
-            logger.infof("Unable to do sso because of no decentralized session found for eth address %s", ethAddress);
+        if(ethSession == null || !ethSession.isActive()){
+            logger.infof("Unable to do sso because of no decentralized session found for eth address %s or session is currently not active", ethAddress);
             context.attempted();
 
-            return;
         }else{
-            // TODO check TTL
             UserModel userModel = context.getSession().users().searchForUserByUserAttributeStream(context.getRealm(), BLOCKCHAIN_ADDRESS_CUSTOM_ATTRIBUTE, ethSession.getSubjectAddress()).findFirst().orElse(null);
             if (userModel == null) {
                 logger.infof("Unable to find Keycloak user with eth address %s", ethAddress);
@@ -102,11 +77,10 @@ public class BlockchainSsoAuthenticator implements Authenticator {
             }
 
             context.setUser(userModel);
-
             context.success();
 
-            return;
         }
+        return;
     }
 
     @Override
