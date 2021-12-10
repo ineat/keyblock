@@ -21,13 +21,13 @@ public class SSOSessionTest {
     private String subjectAddress = "0x4769F9301c7DDA7c8BbE7324C9A6D9A09699B6AE";
     private String wrongSubjectAddress = "0xabababababababababababababababababababab";
     private String sessionId = "73dc5016-2a64-46d2-a4fa-39d34fa0ad99";
-    private long endValidityTimestamp = 1668329202;
+    private long validityTime = 3600;
 
     @BeforeAll
     public void init() {
         ssoSessionConnector = new SSOSessionConnector(
                 "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
-                ,"0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A"
+                ,"0x01A824dd7551c905aeb9d18E9F7B086FCadA3028"
                 ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
                 ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723"
         );
@@ -39,7 +39,7 @@ public class SSOSessionTest {
         SSOSession session = new SSOSession();
         session.setSessionId(sessionId);
         session.setSubjectAddress(subjectAddress);
-        session.setEndValidityDateTimestamp(endValidityTimestamp);
+        session.setValidityTime(validityTime);
 
         TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
         assertNotNull(receipt);
@@ -70,7 +70,7 @@ public class SSOSessionTest {
         SSOSession session = new SSOSession();
         session.setSessionId(sessionId);
         session.setSubjectAddress(subjectAddress);
-        session.setEndValidityDateTimestamp(Instant.MAX.getEpochSecond());
+        session.setValidityTime(validityTime);
 
         TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
         assertNotNull(receipt); // valid session has been set
@@ -85,7 +85,7 @@ public class SSOSessionTest {
         SSOSession session = new SSOSession();
         session.setSessionId(sessionId);
         session.setSubjectAddress(subjectAddress);
-        session.setEndValidityDateTimestamp(Instant.now().getEpochSecond()-1000);
+        session.setValidityTime(0);
 
         TxReceipt receipt = ssoSessionConnector.createSessionSync(session);
         assertNotNull(receipt); // valid session has been set

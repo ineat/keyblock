@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENCED
-pragma solidity 0.8.9;
+pragma solidity 0.8.10;
 
 
 /**
@@ -11,14 +11,14 @@ contract SSOSession {
         address subject,
         address issuer,
         uint issuanceDate,
-        uint endValidityDate
+        uint validityTime
     );
 
     event SessionRevoked(
         address subject,
         address issuer,
         uint issuanceDate,
-        uint initialEndValidityDate
+        uint initialValidityTime
     );
 
     struct Session {
@@ -26,7 +26,7 @@ contract SSOSession {
         address subject;
         address issuer;
         uint issuanceDate;
-        uint endValidityDate;
+        uint validityTime;
         bytes signature;
     }
 
@@ -40,14 +40,14 @@ contract SSOSession {
     /**
      * Creates a new session for a user, or update it if the session has been create by the same issuer
      */
-    function createSession(string calldata sessionId, address subject, uint endValidityDate, bytes calldata signature) public returns (string memory) {
+    function createSession(string calldata sessionId, address subject, uint validityTime, bytes calldata signature) public returns (string memory) {
 
         Session storage session = sessions[subject];
 
         // Session must not exist yet, or be created by the same issuer, or be expired
         require( ( session.subject == address(0x0) )
         || ( session.subject != address(0x0) && session.issuer == msg.sender )
-            || ( session.subject != address(0x0) && session.issuer != msg.sender && session.endValidityDate < block.timestamp )
+            || ( session.subject != address(0x0) && session.issuer != msg.sender && (session.issuanceDate + session.validityTime) < block.timestamp )
         ,"Cannot override an existing valid session created by another provider");
 
 
@@ -55,12 +55,12 @@ contract SSOSession {
         session.subject = subject;
         session.issuer = msg.sender;
         session.issuanceDate = block.timestamp;
-        session.endValidityDate = endValidityDate;
+        session.validityTime = validityTime;
         session.signature = signature;
 
         sessionsById[sessionId] = session;
 
-        emit SessionCreated(subject, msg.sender, block.timestamp, endValidityDate);
+        emit SessionCreated(subject, msg.sender, block.timestamp, validityTime);
 
         return sessionId;
     }
@@ -81,14 +81,14 @@ contract SSOSession {
         // Check that only issuer can revoke session it created
         require(session.issuer == msg.sender, "Only issuer can revoke a session");
 
-        uint initialEndValidityDate = session.endValidityDate;
+        uint initialValidityTime = session.validityTime;
 
-        // Set new validity date timestamp to zero
-        session.endValidityDate = block.timestamp;
+        // Set new validity timestamp to zero
+        session.validityTime = 0;
 
         delete sessionsById[session.sessionId];
 
-        emit SessionRevoked(session.subject, session.issuer, session.issuanceDate, initialEndValidityDate);
+        emit SessionRevoked(session.subject, session.issuer, session.issuanceDate, initialValidityTime);
 
     }
 

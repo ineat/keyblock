@@ -8,16 +8,16 @@ public class SSOSession extends Signable {
     private String subjectAddress;
     private String issuerAddress;
     private long issuanceDateTimestamp;
-    private long endValidityDateTimestamp;
+    private long validityTime;
 
     public SSOSession(){}
 
-    public SSOSession(String sessionId, String subjectAddress, String issuerAddress, long issuanceDateTimestamp, long endValidityDateTimestamp) {
+    public SSOSession(String sessionId, String subjectAddress, String issuerAddress, long issuanceDateTimestamp, long validityTime) {
         this.sessionId = sessionId;
         this.subjectAddress = subjectAddress;
         this.issuerAddress = issuerAddress;
         this.issuanceDateTimestamp = issuanceDateTimestamp;
-        this.endValidityDateTimestamp = endValidityDateTimestamp;
+        this.validityTime = validityTime;
     }
 
     public String getSessionId() {
@@ -52,12 +52,12 @@ public class SSOSession extends Signable {
         this.issuanceDateTimestamp = issuanceDateTimestamp;
     }
 
-    public long getEndValidityDateTimestamp() {
-        return endValidityDateTimestamp;
+    public long getValidityTime() {
+        return validityTime;
     }
 
-    public void setEndValidityDateTimestamp(long endValidityDateTimestamp) {
-        this.endValidityDateTimestamp = endValidityDateTimestamp;
+    public void setValidityTime(long validityTime) {
+        this.validityTime = validityTime;
     }
 
     public String getSignatureDataString() {
@@ -66,7 +66,7 @@ public class SSOSession extends Signable {
         dataString.append(subjectAddress.toLowerCase());
         dataString.append(issuerAddress.toLowerCase());
         dataString.append(issuanceDateTimestamp);
-        dataString.append(endValidityDateTimestamp);
+        dataString.append(validityTime);
         return dataString.toString();
     }
 }

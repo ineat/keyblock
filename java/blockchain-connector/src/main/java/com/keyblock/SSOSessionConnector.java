@@ -5,7 +5,6 @@ import com.keyblock.blockchain.SmartContract;
 import com.keyblock.model.SSOSession;
 import com.keyblock.model.TxReceipt;
 import com.keyblock.util.CryptoUtils;
-import jnr.ffi.annotations.In;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.web3j.abi.datatypes.*;
@@ -52,7 +51,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         // build function call
         Function function = new Function(
                 "createSession",
-                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getEndValidityDateTimestamp())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
+                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getValidityTime())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
                 Collections.emptyList());
 
         return callContractFunctionAsync(function);
@@ -80,7 +79,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
         // build function call
         Function function = new Function(
                 "createSession",
-                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getEndValidityDateTimestamp())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
+                Arrays.asList(new Utf8String(ssoSession.getSessionId()), new Address(ssoSession.getSubjectAddress()), new Uint(BigInteger.valueOf(ssoSession.getValidityTime())), new DynamicBytes(CryptoUtils.hexStringToBytesArray(ssoSession.getSignature()))),
                 Collections.emptyList());
 
         return callContractFunctionSync(function);
@@ -103,7 +102,7 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
 
         SSOSession ssoSession = new SSOSession();
         ssoSession.setSessionId(session.sessionId);
-        ssoSession.setEndValidityDateTimestamp(session.endValidityDate.longValue());
+        ssoSession.setValidityTime(session.validityTime.longValue());
         ssoSession.setIssuanceDateTimestamp(session.issuanceDate.longValue());
         ssoSession.setIssuerAddress(session.issuer);
         ssoSession.setSignature(new String(session.signature, StandardCharsets.UTF_8));// TODO check cast
@@ -116,9 +115,10 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     public boolean isSessionActive(String subjectAddress) throws Exception {
         SSOSession session = getSession(subjectAddress);
 
-        long endValidity = session.getEndValidityDateTimestamp();
+        long validityTime = session.getValidityTime();
+        long issuanceTime = session.getIssuanceDateTimestamp();
 
         Instant instant = Instant.now();
-        return endValidity > instant.getEpochSecond();
+        return (issuanceTime + validityTime) > instant.getEpochSecond();
     }
 }
