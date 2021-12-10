@@ -4,6 +4,9 @@ import com.keyblock.util.Signable;
 
 import java.time.Instant;
 
+/**
+ * Represent a Claim, that handles assertions about a user on the blockchain
+ */
 public class Claim extends Signable {
     private String subjectAddress;
     private String issuerAddress;

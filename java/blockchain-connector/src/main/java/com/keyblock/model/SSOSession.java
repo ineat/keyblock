@@ -2,6 +2,11 @@ package com.keyblock.model;
 
 import com.keyblock.util.Signable;
 
+import java.time.Instant;
+
+/**
+ * Represents a SSO session shard accross blockchain nodes
+ */
 public class SSOSession extends Signable {
 
     private String sessionId;
@@ -52,14 +57,26 @@ public class SSOSession extends Signable {
         this.issuanceDateTimestamp = issuanceDateTimestamp;
     }
 
+    /**
+     * Get the session validity time, in seconds
+     * @return validityTime this validity time, in seconds
+     */
     public long getValidityTime() {
         return validityTime;
     }
 
+    /**
+     * Set the session validity time, in seconds
+     * @param validityTime this validity time, in seconds
+     */
     public void setValidityTime(long validityTime) {
         this.validityTime = validityTime;
     }
 
+    /**
+     * Special toString to get text data of a SSOSession to be used to sign
+     * @return a String representation of SSOSession to be signed as session content
+     */
     public String getSignatureDataString() {
         StringBuffer dataString = new StringBuffer();
         dataString.append(sessionId.toLowerCase());
@@ -68,5 +85,14 @@ public class SSOSession extends Signable {
         dataString.append(issuanceDateTimestamp);
         dataString.append(validityTime);
         return dataString.toString();
+    }
+
+    /**
+     * Check if a session is active
+     * @return true if the session is active, false otherwise
+     */
+    public boolean isActive() {
+        return Instant.ofEpochSecond(this.getIssuanceDateTimestamp()+this.getValidityTime())
+                .isAfter(Instant.now());
     }
 }

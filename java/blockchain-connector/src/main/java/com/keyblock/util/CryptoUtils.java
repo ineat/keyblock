@@ -32,6 +32,12 @@ public class CryptoUtils {
         return publicKeyInBT.toString();
     }
 
+    /**
+     * Convert an ASCII string to its hexadecimal value
+     * @param asciiString the input text data
+     * @param prefix true to add the "0x" prefix to the result
+     * @return the hexadecimal value of input string
+     */
     public static String asciiToHex(String asciiString, boolean prefix) {
         char[] ch = asciiString.toCharArray();
         StringBuilder builder = new StringBuilder();
@@ -47,6 +53,11 @@ public class CryptoUtils {
         return builder.toString();
     }
 
+    /**
+     * Convert a hexadecimal representation of a string to its ASCII value
+     * @param hexString the input hexadecimal data
+     * @return the ASCII value of the input hexadecimal string
+     */
     public static String hexToAscii(String hexString) {
 
         if(hexString.startsWith("0x")) {
@@ -63,6 +74,11 @@ public class CryptoUtils {
         return output.toString();
     }
 
+    /**
+     * Converts an hexadecimal string to an array of bytes
+     * @param hexString the hexadecimal input string
+     * @return the bytes array that represents the hexadecimal input string
+     */
     public static byte[] hexStringToBytesArray(String hexString) {
 
         if(hexString.startsWith("0x")) {

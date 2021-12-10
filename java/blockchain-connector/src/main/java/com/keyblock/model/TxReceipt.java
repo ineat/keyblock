@@ -5,6 +5,9 @@ import org.web3j.protocol.core.methods.response.Log;
 
 import java.util.List;
 
+/**
+ * Hanles the receipt of a transaction
+ */
 public class TxReceipt {
 
     private String transactionHash;

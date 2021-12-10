@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Provides generic methods to work with smart contracts.
+ */
 public abstract class SmartContract extends TransactionNotifier  {
 
     private static final Logger log = LogManager.getLogger(SmartContract.class);
@@ -145,6 +148,11 @@ public abstract class SmartContract extends TransactionNotifier  {
         }
     }
 
+    /**
+     * Waits for a given transaction to be validated. Blocking until validation.
+     * @param transactionHash the hash of transaction to wait for
+     * @return the receipt of transaction once validated
+     */
     public TxReceipt waitForReceipt(String transactionHash) {
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(this.web3j, TransactionManager.DEFAULT_POLLING_FREQUENCY,
@@ -163,6 +171,12 @@ public abstract class SmartContract extends TransactionNotifier  {
         return TxReceipt.fromWeb3TransactionReceipt(txReceipt);
     }
 
+    /**
+     * Calls a smart contract function and wait (blocking) for transaction validation
+     * @param function
+     * @return
+     * @throws Exception
+     */
     public TxReceipt callContractFunctionSync(Function function) throws Exception {
         String txHash = callContractFunctionAsync(function);
         return waitForReceipt(txHash);

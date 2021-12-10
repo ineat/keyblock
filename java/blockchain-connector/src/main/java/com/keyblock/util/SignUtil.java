@@ -7,6 +7,9 @@ import org.web3j.utils.Numeric;
 
 import java.security.SignatureException;
 
+/**
+ * Provides helper methods to deal with data cryptographic signature
+ */
 public abstract class SignUtil {
 
     /**

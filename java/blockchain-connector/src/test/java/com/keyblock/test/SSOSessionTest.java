@@ -76,6 +76,7 @@ public class SSOSessionTest {
         assertNotNull(receipt); // valid session has been set
 
         assertTrue(ssoSessionConnector.isSessionActive(subjectAddress));
+        assertTrue(ssoSessionConnector.getSession(subjectAddress).isActive());
     }
 
     @Test
@@ -91,5 +92,6 @@ public class SSOSessionTest {
         assertNotNull(receipt); // valid session has been set
 
         assertFalse(ssoSessionConnector.isSessionActive(subjectAddress));
+        assertFalse(ssoSessionConnector.getSession(subjectAddress).isActive());
     }
 }

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 /**
- * Obervable pattern to be notified for transaction validation
+ * Observable pattern to be notified for transaction validation
  */
 public class TransactionNotifier implements TransactionNotifierInterface{
 
