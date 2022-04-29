@@ -36,26 +36,44 @@ function initWeb3Metamask() {
 	}
 }
 
-function identification() {
+function metamaskIdentification() {
 	ethereum = window.ethereum;
 	if (ethereum) {
-		ethereum.request({method: 'eth_requestAccounts'})
-			.then((account) => {
-				console.log("Ethereum enabled with account : " + account);
-				document.getElementById("blockchain-address").value = account[0];
-				document.getElementById("address-label").innerHTML = account[0];
-				// directly submit the form to get the address-id in order to do an sso check
-				if(	document.getElementById("is-sso")) {
-					console.log("sso challenge");
-					document.getElementById("kc-wallet-form").submit();
-				}
-			})
-			.catch((error) => {
-				console.error(error);
-			})
+		return ethereum.request({method: 'eth_requestAccounts'});
 	} else {
-		displayErrorDivsWithMessages();
+		return new Promise((resolve, reject) => {
+			throw 'Metamask not found';
+		});
 	}
+}
+
+function identification() {
+	metamaskIdentification()
+		.then((account) => {
+			console.log("Ethereum enabled with account : " + account);
+			document.getElementById("blockchain-address").value = account[0];
+			document.getElementById("address-label").innerHTML = account[0];
+			// directly submit the form to get the address-id in order to do an sso check
+			if (document.getElementById("is-sso")) {
+				console.log("sso challenge");
+				document.getElementById("kc-wallet-form").submit();
+			}
+		})
+		.catch((error) => {
+			console.warn(error);
+			displayErrorDivsWithMessages();
+		})
+}
+
+function setupRegistrationField() {
+	metamaskIdentification()
+		.then((account) => {
+			console.log("Ethereum enabled with account : " + account);
+			document.getElementById("user.attributes.blockchain.address").value = account[0];
+		})
+		.catch((error) => {
+			console.warn(error);
+		})
 }
 
 async function authentication() {

@@ -40,7 +40,7 @@
             </div>
             <div id="pluginOkDivs">
                 <div class="${properties.kcFormGroupClass!} text-center">
-                    <img src="https://metamask.io/images/mm-logo.svg">
+                    <img src="https://avatars.githubusercontent.com/u/11744586?s=200&v=4">
                 </div>
                 <div class="${properties.kcFormGroupClass!} text-center">
                     <div class="${properties.kcLabelWrapperClass!}">

@@ -122,7 +122,7 @@
                     <label for="user.attributes.blockchain.address" class="${properties.kcLabelClass!}">Blockchain address</label>
                 </div>
                 <div class="${properties.kcInputWrapperClass!}">
-                    <input type="text" id="user.attributes.blockchain.address" class="${properties.kcInputClass!}" name="user.attributes.blockchain.address" />
+                    <input type="text" id="user.attributes.blockchain.address" class="${properties.kcInputClass!}" name="user.attributes.blockchain.address"  onfocus="setupRegistrationField()"/>
                 </div>
             </div>
 
