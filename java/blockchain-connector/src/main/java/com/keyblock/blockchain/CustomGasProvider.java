@@ -17,7 +17,8 @@ public class CustomGasProvider implements ContractGasProvider {
      */
     @Override
     public BigInteger getGasPrice(String contractFunc) {
-        return DefaultGasProvider.GAS_PRICE;
+        // boost the GAS Price to ensure that the transaction is validated shortly
+        return DefaultGasProvider.GAS_PRICE.multiply(BigInteger.valueOf(500l));
     }
 
     /**
