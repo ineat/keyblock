@@ -2,3 +2,9 @@
 webapp/node_modules
 **/target
 *.iml
+java/**.iml
+**/**dependency-reduced-pom.xml
+**/.DS_Store
+java/blockchain-connector/dependency-reduced-pom.xml
+java/keycloak-extensions/keycloak-blockchain-registration.iml
+java/keycloak-extensions/keycloak-extensions.iml

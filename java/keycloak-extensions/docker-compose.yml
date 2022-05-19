@@ -1,0 +1,19 @@
+version: "3.5"
+
+services:
+  keyblock:
+      container_name: keyblock
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+        - ./keyblock-realm-export.json:/tmp/keyblock-realm-export.json
+      environment:
+        DEBUG: "true"
+        DEBUG_PORT: "*:8787"
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: password
+        KEYCLOAK_IMPORT: /tmp/keyblock-realm-export.json
+      ports:
+        - "8580:8080"
+        - "8887:8787"

@@ -44,7 +44,8 @@
                 </div>
                 <div class="${properties.kcFormGroupClass!} text-center">
                     <div class="${properties.kcLabelWrapperClass!}">
-                        <label for="user.attributes.blockchain.address" class="${properties.kcLabelClass!}">We recognize your Blockchain
+                        <label for="user.attributes.blockchain.address" class="${properties.kcLabelClass!}">We recognize
+                            your Blockchain
                             address as: </label>
                         <span id="address-label"></span>
                     </div>
@@ -55,14 +56,22 @@
                         <input class="${properties.kcButtonClass!} ${properties.kcButtonDefaultClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
                                name="cancel" id="kc-cancel" type="submit" value="${msg("doCancel")}"/>
                         <#if isAuthentication??>
-                        <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
-                               name="login" id="kc-login" type="button" value="Authenticate with MetaMask"
-                               onclick="javascript:authentication()"/>
+                            <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
+                                   name="login" id="kc-login" type="button" value="Authenticate with MetaMask"
+                                   onclick="javascript:authentication()"/>
                         </#if>
                     </div>
                 </div>
             </div>
         </form>
     </#if>
+        <#if realm.registrationAllowed && !registrationDisabled??>
+            <div id="kc-registration-container">
+                <div id="kc-registration">
+                    <span>${msg("noAccount")} <a tabindex="6"
+                                                 href="${url.registrationUrl}">${msg("doRegister")}</a></span>
+                </div>
+            </div>
+        </#if>
 
 </@layout.registrationLayout>
