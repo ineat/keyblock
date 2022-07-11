@@ -65,7 +65,6 @@ Les interfaces `SSOSessionInterface` et `ClaimRegistryInterface` documentent les
 
 Ils doivent être initialisés avec :
 - l'URL du endpoint RPC de la blockchain à laquelle se connecter
-- le chain ID
 - L'adresse du smart contract
 - L'adresse utilisée par l'entité qui va les appeler
 - La clé privée associée à cette adresse
@@ -78,18 +77,15 @@ L'`issuer` et la `signature` seront automatiquement mis à jour ou calculés ava
 
 Ethereum / Ropsten :
 - URL de la blockchain avec Infura : https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98
-- chain ID : 3
 - Adresse de SSOSession : 0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A
 - Adresse de ClaimsRegistry : 0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6 
 
 Polygon / Mumbai :
 - URL de la blockchain : https://rpc-mumbai.maticvigil.com/
-- chain ID : 80001
 - Adresse de SSOSession : 0x209144decd2b3a0a2bc943baa29d3b28e221bfdf
 
 Avalanche / Fuji :
 - URL de la blockchain : https://api.avax-test.network/ext/bc/C/rpc
-- chain ID : 43113
 - Adresse de SSOSession : 0x2166338F208E97003e3844E5A0C4DB11E7509383
 
 ## Utilisation
@@ -130,7 +126,6 @@ pom.xml:
 ```java
 ClaimsRegistryConnector claimsRegistry = new ClaimsRegistryConnector(
         blockchainRpcEndpoint
-        ,chainId
         ,smartContractAddress
         ,serverEthereumAddress
         ,serverEthereumPrivateKey
@@ -197,7 +192,6 @@ registry.subscribe(txHash, listener);
 ```java
 SSOSessionConnector ssoSessionConnector = new SSOSessionConnector(
         blockchainRpcEndpoint
-        ,chainId
         ,smartContractAddress
         ,serverEthereumAddress
         ,serverEthereumPrivateKey
