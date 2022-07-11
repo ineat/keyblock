@@ -47,13 +47,12 @@ public class BlockchainConnection {
     /**
      * Create a context
      */
-    public BlockchainConnection(String endpointUrl, Integer chainId, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
+    public BlockchainConnection(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
 
         this.endpointUrl = endpointUrl;
         this.contractAddress = contractAddress;
         this.ethereumAddress = ethereumAddress;
         this.ethereumPrivateKey = ethereumPrivateKey;
-        this.chainId = chainId;
     }
 
     public String getEndpointUrl() {

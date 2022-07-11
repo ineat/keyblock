@@ -23,8 +23,8 @@ public class SSOSessionConnector extends SmartContract implements SSOSessionInte
     public static final String ADDRESS_ZERO = "0X0000000000000000000000000000000000000000";
     private com.keyblock.contract.SSOSession contract;
 
-    public SSOSessionConnector(String endpointUrl, Integer chainId, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
-        super(endpointUrl, chainId, contractAddress, ethereumAddress, ethereumPrivateKey);
+    public SSOSessionConnector(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
+        super(endpointUrl, contractAddress, ethereumAddress, ethereumPrivateKey);
         loadContract();
     }
 

@@ -63,8 +63,8 @@ public abstract class SmartContract extends TransactionNotifier  {
      */
     protected BlockchainConnection connection;
 
-    protected SmartContract(String endpointUrl, Integer chainId, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
-        connection = new BlockchainConnection(endpointUrl, chainId, contractAddress, ethereumAddress, ethereumPrivateKey);
+    protected SmartContract(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
+        connection = new BlockchainConnection(endpointUrl, contractAddress, ethereumAddress, ethereumPrivateKey);
         connection.setEthereumPublicKey(CryptoUtils.getPublicKeyInHex(ethereumPrivateKey));
         gasProvider = new CustomGasProvider();
         this.connection();
@@ -76,6 +76,12 @@ public abstract class SmartContract extends TransactionNotifier  {
     protected void connection() {
         this.web3j = Web3j.build(new HttpService(connection.getEndpointUrl()));
         log.info("Connected, current head: "+getBlockNumber().getBlockNumber());
+        try {
+            log.info("Current chain id: "+web3j.netVersion().send().getNetVersion());
+            this.connection.setChainId(Integer.valueOf(web3j.netVersion().send().getNetVersion()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.credentials =  Credentials.create(connection.getEthereumPrivateKey(), connection.getEthereumPublicKey());
     }
 

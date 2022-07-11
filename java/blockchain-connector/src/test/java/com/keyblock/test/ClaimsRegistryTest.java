@@ -39,7 +39,6 @@ public class ClaimsRegistryTest {
         log.info("Init smart contract");
         this.registry = new ClaimsRegistryConnector(
                 "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
-                , 3
                 ,"0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6"
                 ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
                 ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723"
