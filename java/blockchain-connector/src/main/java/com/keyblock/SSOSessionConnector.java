@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 public class SSOSessionConnector extends SmartContract implements SSOSessionInterface {
 

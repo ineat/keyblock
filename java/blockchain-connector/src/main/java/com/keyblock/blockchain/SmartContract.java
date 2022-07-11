@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
@@ -22,10 +20,8 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
-import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -135,19 +131,7 @@ public abstract class SmartContract extends TransactionNotifier  {
                     , this.connection.getContractAddress()
                     , encodedFunction
                     , BigInteger.ZERO);
-/*
-            RawTransaction rawTx = RawTransaction.createTransaction(
-                    nonce
-                    ,gasProvider.getGasPrice(encodedFunction)
-                    ,gasProvider.getGasLimit(encodedFunction)
-                    ,this.connection.getContractAddress()
-                    ,BigInteger.ZERO
-                    ,encodedFunction);
 
-            byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
-            String hexValue = Numeric.toHexString(signedMessage);
-
-            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();*/
             if(ethSendTransaction.getError() != null) {
                 log.error(ethSendTransaction.getError().getCode());
                 log.error(ethSendTransaction.getError().getMessage());
