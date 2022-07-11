@@ -25,12 +25,20 @@ public class SSOSessionTest {
 
     @BeforeAll
     public void init() {
-        ssoSessionConnector = new SSOSessionConnector(
+        SSOSessionConnector ethereumConector = new SSOSessionConnector(
                 "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
                 ,"0x01A824dd7551c905aeb9d18E9F7B086FCadA3028"
                 ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
                 ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723"
         );
+
+        SSOSessionConnector avalancheConnector = new SSOSessionConnector(
+                "https://api.avax-test.network/ext/bc/C/rpc"
+                ,"0x2166338F208E97003e3844E5A0C4DB11E7509383"
+                ,"0x41f6B225846863E3C037e92F229cD40f5d575258"
+                ,"85d4fc54c9c6de275f5b0ac1a975657ed95d3959cdb97edc9da953bf1a75c723");
+
+        ssoSessionConnector = avalancheConnector;
     }
 
     @Test
