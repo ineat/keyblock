@@ -40,8 +40,8 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
      * @param address public address of account used to create transactions
      * @param privateKey private key of account used to sign transactions
      */
-    public ClaimsRegistryConnector(String endpointUrl, String contractAddress, String address, String privateKey) {
-        super(endpointUrl, contractAddress, address, privateKey);
+    public ClaimsRegistryConnector(String endpointUrl, Integer chainId, String contractAddress, String address, String privateKey) {
+        super(endpointUrl, chainId, contractAddress, address, privateKey);
         loadContract();
 
         super.setWeb3j(this.web3j);

@@ -19,8 +19,10 @@ import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Numeric;
@@ -61,8 +63,8 @@ public abstract class SmartContract extends TransactionNotifier  {
      */
     protected BlockchainConnection connection;
 
-    protected SmartContract(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
-        connection = new BlockchainConnection(endpointUrl, contractAddress, ethereumAddress, ethereumPrivateKey);
+    protected SmartContract(String endpointUrl, Integer chainId, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
+        connection = new BlockchainConnection(endpointUrl, chainId, contractAddress, ethereumAddress, ethereumPrivateKey);
         connection.setEthereumPublicKey(CryptoUtils.getPublicKeyInHex(ethereumPrivateKey));
         gasProvider = new CustomGasProvider();
         this.connection();
@@ -118,6 +120,16 @@ public abstract class SmartContract extends TransactionNotifier  {
             String encodedFunction = FunctionEncoder.encode(function);
             log.info("encodedFunction: "+encodedFunction);
 
+            TransactionManager transactionManager = new RawTransactionManager(
+                    web3j, credentials, connection.getChainId());
+
+            EthSendTransaction ethSendTransaction = transactionManager.sendTransaction(
+                    gasProvider.getGasPrice(encodedFunction)
+                    , gasProvider.getGasLimit(encodedFunction)
+                    , this.connection.getContractAddress()
+                    , encodedFunction
+                    , BigInteger.ZERO);
+/*
             RawTransaction rawTx = RawTransaction.createTransaction(
                     nonce
                     ,gasProvider.getGasPrice(encodedFunction)
@@ -129,7 +141,7 @@ public abstract class SmartContract extends TransactionNotifier  {
             byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
             String hexValue = Numeric.toHexString(signedMessage);
 
-            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();
+            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();*/
             if(ethSendTransaction.getError() != null) {
                 log.error(ethSendTransaction.getError().getCode());
                 log.error(ethSendTransaction.getError().getMessage());
