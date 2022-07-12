@@ -34,7 +34,7 @@ public class ClaimsRegistryConnector extends SmartContract implements ClaimsRegi
     private ClaimsRegistry contract;
 
     /**
-     * Create a BlockchainCoonector with provided parameters
+     * Create a BlockchainConnector with provided parameters
      * @param endpointUrl RPC endpoint of Ethereum node to connect to
      * @param contractAddress @ClaimsRegistry smart contract address to use
      * @param address public address of account used to create transactions
