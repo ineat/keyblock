@@ -1,15 +1,18 @@
 package com.keyblock.blockchain;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Manage blockchain context for the connector
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class BlockchainConnection {
-
-    private static final Logger log = LogManager.getLogger(BlockchainConnection.class);
-
 
     /**
      * Blockchain RPC endpoint
@@ -43,58 +46,9 @@ public class BlockchainConnection {
      * Create a context
      */
     public BlockchainConnection(String endpointUrl, String contractAddress, String ethereumAddress, String ethereumPrivateKey) {
-
         this.endpointUrl = endpointUrl;
         this.contractAddress = contractAddress;
         this.ethereumAddress = ethereumAddress;
         this.ethereumPrivateKey = ethereumPrivateKey;
-    }
-
-    public String getEndpointUrl() {
-        return endpointUrl;
-    }
-
-    public void setEndpointUrl(String endpointUrl) {
-        this.endpointUrl = endpointUrl;
-    }
-
-    public String getEthereumAddress() {
-        return ethereumAddress;
-    }
-
-    public void setEthereumAddress(String ethereumAddress) {
-        this.ethereumAddress = ethereumAddress;
-    }
-
-    public String getEthereumPrivateKey() {
-        return ethereumPrivateKey;
-    }
-
-    public void setEthereumPrivateKey(String ethereumPrivateKey) {
-        this.ethereumPrivateKey = ethereumPrivateKey;
-    }
-
-    public String getContractAddress() {
-        return contractAddress;
-    }
-
-    public void setContractAddress(String contractAddress) {
-        this.contractAddress = contractAddress;
-    }
-
-    public String getEthereumPublicKey() {
-        return ethereumPublicKey;
-    }
-
-    public void setEthereumPublicKey(String ethereumPublicKey) {
-        this.ethereumPublicKey = ethereumPublicKey;
-    }
-
-    public Integer getChainId() {
-        return chainId;
-    }
-
-    public void setChainId(Integer chainId) {
-        this.chainId = chainId;
     }
 }
