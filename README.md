@@ -21,7 +21,7 @@ See the [related README to get started](java/keycloak-extensions/README.md)
 
 ### Start the Keyblock middleware
 
-To start the keyblock middleware, just run `make start`. You local instance is accessible on `http://localhost:8580`
+To start the keyblock middleware, just run `make start` (that build the jars and run keycloak in a container mode). Your local instance is accessible on `http://localhost:8580`
 
 > you can individually build and run each project thanks to the make targets. For details, see the make file content.
 

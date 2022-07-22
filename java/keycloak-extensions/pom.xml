@@ -9,8 +9,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <keycloak.version>16.1.0</keycloak.version>
+        <keycloak.version>18.0.2</keycloak.version>
         <web3j.crypto.version>4.8.4</web3j.crypto.version>
+        <blockchain.connector.version>1.1.0-SNAPSHOT</blockchain.connector.version>
     </properties>
 
     <build>
@@ -71,14 +72,12 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
             <version>${keycloak.version}</version>
-
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi</artifactId>
             <version>${keycloak.version}</version>
-
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -102,7 +101,7 @@
         <dependency>
             <groupId>com.ineat.keyblock</groupId>
             <artifactId>blockchain-connector</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${blockchain.connector.version}</version>
         </dependency>
         <dependency>
             <groupId>org.web3j</groupId>

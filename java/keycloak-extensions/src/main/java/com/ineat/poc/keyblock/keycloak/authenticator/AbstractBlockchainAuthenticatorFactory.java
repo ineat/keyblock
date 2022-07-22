@@ -13,16 +13,16 @@ public class AbstractBlockchainAuthenticatorFactory {
     public static final String IAM_PRIVATE_KEY = "iamPrivateKey";
     public static final String SESSION_TTL = "sessionTtl";
 
-    protected static final List<ProviderConfigProperty> SHARED_CONFIG_PROPERTIES = new ArrayList<ProviderConfigProperty>();
+    protected static final List<ProviderConfigProperty> SHARED_CONFIG_PROPERTIES = new ArrayList<>();
 
     static {
         SHARED_CONFIG_PROPERTIES.add(
                 new ProviderConfigProperty(
                         BLOCKCHAIN_URI,
                         "The blockchain URI",
-                        "The blockchain uri to connect to (Infura for example)",
+                        "The blockchain URI to connect to (Infura for example)",
                         ProviderConfigProperty.STRING_TYPE,
-                        "https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98"
+                        "https://api.avax-test.network/ext/bc/C/rpc"
                 ));
 
         SHARED_CONFIG_PROPERTIES.add(
@@ -31,7 +31,7 @@ public class AbstractBlockchainAuthenticatorFactory {
                         "SSO Smart contract address.",
                         "The address of the SSO Smart Contract",
                         ProviderConfigProperty.STRING_TYPE,
-                        "0x01A824dd7551c905aeb9d18E9F7B086FCadA3028",
+                        "0x2166338F208E97003e3844E5A0C4DB11E7509383",
                         false
                 ));
 

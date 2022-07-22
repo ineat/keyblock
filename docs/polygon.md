@@ -33,7 +33,7 @@ Then, we need some MATIC, the Polygon cryptocurrency, to pay transaction fees.
 
 ## Connect to smart contract deployed on Polygon/Mumbai
 
-Mumbai RPC URL: https://rpc-mumbai.matic.today/
+Mumbai RPC URL: https://rpc-mumbai.maticvigil.com/
 
 SSOSession smart contract address on Mumbai: 0x209144decd2b3a0a2bc943baa29d3b28e221bfdf
 
