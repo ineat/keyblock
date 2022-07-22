@@ -6,7 +6,7 @@ For further considerations, take a look at [our ideations document](docs/README.
 
 ## Keyblock extensions
 
-We provide some Keycloak extensions to play with Keycloak and the Ethereum Blockchain.
+We provide some Keycloak extensions to play with Keycloak and the blockchain world.
 
 See the [related README to get started](java/keycloak-extensions/README.md)
 
@@ -17,7 +17,11 @@ See the [related README to get started](java/keycloak-extensions/README.md)
 - Maven
 - Java 11
 - Docker
-- A Metamask wallet (browser extension) installed and connected on the Test Ropsten network
+- A Metamask wallet (browser extension) installed 
+- A supported blockchain configured into the Wallet
+  - [Avalanche](/docs/avalanche.md)
+  - [Polygon](/docs/polygon.md)
+  - [ropsten](/docs/ropsten.md)
 
 ### Start the Keyblock middleware
 

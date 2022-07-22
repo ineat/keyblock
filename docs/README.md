@@ -137,12 +137,6 @@ Un token (exemple: ERC-20) peut alors être adossé à la blockchain contenant l
 
 ## Run
 
-### Blockchain
-
-Smart contract déployé sur Ropsten : 
-- SimpleClaimsRegistry [0xad9388311e96031d9cF2D1370826D8940d057362](https://ropsten.etherscan.io/address/0xad9388311e96031d9cF2D1370826D8940d057362)
-- ClaimsRegistry [0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b](https://ropsten.etherscan.io/address/0x864cf6e7547C37B06c9C49fa4B3D681B273E8E0b)
-
 ### Client
 
 Installer [Metamask](https://metamask.io) sur le navigateur.
