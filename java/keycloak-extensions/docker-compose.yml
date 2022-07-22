@@ -6,13 +6,20 @@ services:
       build:
         context: .
         dockerfile: Dockerfile
+        args:
+          KEYCLOAK_VERSION: 18.0.2
       volumes:
-        - ./keyblock-realm-export.json:/tmp/keyblock-realm-export.json
+        - ./keyblock-realm-export.json:/opt/keycloak/data/import/keyblock-realm-export.json
+      command:
+        - "start-dev"
+        - "--http-enabled=true"
+        - "--http-port=8080"
+        - "--import-realm"
       environment:
         DEBUG: "true"
         DEBUG_PORT: "*:8787"
-        KEYCLOAK_USER: admin
-        KEYCLOAK_PASSWORD: password
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: password
         KEYCLOAK_IMPORT: /tmp/keyblock-realm-export.json
       ports:
         - "8580:8080"
