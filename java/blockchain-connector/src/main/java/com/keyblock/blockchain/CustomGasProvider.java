@@ -18,7 +18,8 @@ public class CustomGasProvider implements ContractGasProvider {
     @Override
     public BigInteger getGasPrice(String contractFunc) {
         // boost the GAS Price to ensure that the transaction is validated shortly
-        return DefaultGasProvider.GAS_PRICE.multiply(BigInteger.valueOf(500l));
+       // return DefaultGasProvider.GAS_PRICE.multiply(BigInteger.valueOf(500l));
+        return BigInteger.valueOf(25_000_000_000L);
     }
 
     /**
@@ -29,7 +30,8 @@ public class CustomGasProvider implements ContractGasProvider {
     @Override
     public BigInteger getGasLimit(String contractFunc) {
         // TODO find a way to compute it more accurately
-        return BigInteger.valueOf(800000L);
+        //return BigInteger.valueOf(800000L);
+        return BigInteger.valueOf(8_000_000);
     }
 
     @Override

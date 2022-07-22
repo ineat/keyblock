@@ -75,9 +75,18 @@ L'`issuer` et la `signature` seront automatiquement mis à jour ou calculés ava
 
 #### Paramètres
 
+Ethereum / Ropsten :
 - URL de la blockchain avec Infura : https://ropsten.infura.io/v3/e6293df88f0a4648ad7624dad8822a98
-- Adresse de SSOSession sur Ropsten : 0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A
-- Adresse de ClaimsRegistry sur Ropsten : 0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6 
+- Adresse de SSOSession : 0x05603AFa90048DAEB8Bd52933bC60F58E3ba1b3A
+- Adresse de ClaimsRegistry : 0xaDe68eCf6F1bC7A4374B58FdFC4DF29Ebc7b26e6 
+
+Polygon / Mumbai :
+- URL de la blockchain : https://rpc-mumbai.maticvigil.com/
+- Adresse de SSOSession : 0x209144decd2b3a0a2bc943baa29d3b28e221bfdf
+
+Avalanche / Fuji :
+- URL de la blockchain : https://api.avax-test.network/ext/bc/C/rpc
+- Adresse de SSOSession : 0x2166338F208E97003e3844E5A0C4DB11E7509383
 
 ## Utilisation
 

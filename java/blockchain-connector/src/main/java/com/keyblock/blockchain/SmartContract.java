@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
@@ -19,11 +17,11 @@ import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
-import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -74,6 +72,12 @@ public abstract class SmartContract extends TransactionNotifier  {
     protected void connection() {
         this.web3j = Web3j.build(new HttpService(connection.getEndpointUrl()));
         log.info("Connected, current head: "+getBlockNumber().getBlockNumber());
+        try {
+            log.info("Current chain id: "+web3j.netVersion().send().getNetVersion());
+            this.connection.setChainId(Integer.valueOf(web3j.netVersion().send().getNetVersion()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.credentials =  Credentials.create(connection.getEthereumPrivateKey(), connection.getEthereumPublicKey());
     }
 
@@ -118,18 +122,16 @@ public abstract class SmartContract extends TransactionNotifier  {
             String encodedFunction = FunctionEncoder.encode(function);
             log.info("encodedFunction: "+encodedFunction);
 
-            RawTransaction rawTx = RawTransaction.createTransaction(
-                    nonce
-                    ,gasProvider.getGasPrice(encodedFunction)
-                    ,gasProvider.getGasLimit(encodedFunction)
-                    ,this.connection.getContractAddress()
-                    ,BigInteger.ZERO
-                    ,encodedFunction);
+            TransactionManager transactionManager = new RawTransactionManager(
+                    web3j, credentials, connection.getChainId());
 
-            byte[] signedMessage = TransactionEncoder.signMessage(rawTx, this.credentials);
-            String hexValue = Numeric.toHexString(signedMessage);
+            EthSendTransaction ethSendTransaction = transactionManager.sendTransaction(
+                    gasProvider.getGasPrice(encodedFunction)
+                    , gasProvider.getGasLimit(encodedFunction)
+                    , this.connection.getContractAddress()
+                    , encodedFunction
+                    , BigInteger.ZERO);
 
-            EthSendTransaction ethSendTransaction = this.web3j.ethSendRawTransaction(hexValue).send();
             if(ethSendTransaction.getError() != null) {
                 log.error(ethSendTransaction.getError().getCode());
                 log.error(ethSendTransaction.getError().getMessage());

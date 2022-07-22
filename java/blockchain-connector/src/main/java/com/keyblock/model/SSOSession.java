@@ -1,12 +1,20 @@
 package com.keyblock.model;
 
 import com.keyblock.util.Signable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
 /**
- * Represents a SSO session shard accross blockchain nodes
+ * Represents a SSO session shard across blockchain nodes
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SSOSession extends Signable {
 
     private String sessionId;
@@ -14,64 +22,6 @@ public class SSOSession extends Signable {
     private String issuerAddress;
     private long issuanceDateTimestamp;
     private long validityTime;
-
-    public SSOSession(){}
-
-    public SSOSession(String sessionId, String subjectAddress, String issuerAddress, long issuanceDateTimestamp, long validityTime) {
-        this.sessionId = sessionId;
-        this.subjectAddress = subjectAddress;
-        this.issuerAddress = issuerAddress;
-        this.issuanceDateTimestamp = issuanceDateTimestamp;
-        this.validityTime = validityTime;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getSubjectAddress() {
-        return subjectAddress;
-    }
-
-    public void setSubjectAddress(String subjectAddress) {
-        this.subjectAddress = subjectAddress;
-    }
-
-    public String getIssuerAddress() {
-        return issuerAddress;
-    }
-
-    public void setIssuerAddress(String issuerAddress) {
-        this.issuerAddress = issuerAddress;
-    }
-
-    public long getIssuanceDateTimestamp() {
-        return issuanceDateTimestamp;
-    }
-
-    public void setIssuanceDateTimestamp(long issuanceDateTimestamp) {
-        this.issuanceDateTimestamp = issuanceDateTimestamp;
-    }
-
-    /**
-     * Get the session validity time, in seconds
-     * @return validityTime this validity time, in seconds
-     */
-    public long getValidityTime() {
-        return validityTime;
-    }
-
-    /**
-     * Set the session validity time, in seconds
-     * @param validityTime this validity time, in seconds
-     */
-    public void setValidityTime(long validityTime) {
-        this.validityTime = validityTime;
-    }
 
     /**
      * Special toString to get text data of a SSOSession to be used to sign

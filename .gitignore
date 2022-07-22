@@ -8,3 +8,4 @@ java/**.iml
 java/blockchain-connector/dependency-reduced-pom.xml
 java/keycloak-extensions/keycloak-blockchain-registration.iml
 java/keycloak-extensions/keycloak-extensions.iml
+.vscode/
