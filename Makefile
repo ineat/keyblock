@@ -1,15 +1,11 @@
 help:
 	echo "Usage: make [target]"
 
-start: build-blockchain-connector build-extensions run
+start: build run
 
-build: build-blockchain-connector build-extensions
+build: build-keyblock
 
-build-blockchain-connector:
-	cd java/blockchain-connector; mvn clean install
-
-build-extensions:
-	cd java/keycloak-extensions; \
+build-keyblock:
 	mvn clean package
 
 run:
